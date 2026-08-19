@@ -1,7 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Shuffle, Play, Pause, RotateCcw, Gavel, LogOut } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader2,
+  Shuffle,
+  Play,
+  Pause,
+  RotateCcw,
+  Gavel,
+  LogOut,
+  Users,
+  UserX,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,16 +40,19 @@ import {
   lotteryAssign,
   resetAuction,
   resetTimer,
+  kickDevice,
 } from "@/lib/auction.functions";
 import { RosterBoard } from "@/components/RosterBoard";
 import { TeamCrest } from "@/components/TeamCrest";
 import { CountdownTimer } from "@/components/CountdownTimer";
-import { ChatPanel } from "@/components/ChatPanel";
+import { ChatPopup } from "@/components/ChatPopup";
+import { ViewerCount } from "@/components/ViewerCount";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
   useAuctionLog,
+  usePresence,
   rosterOf,
   categoryCounts,
   topBid,
@@ -49,6 +63,7 @@ import {
   type Player,
   type Team,
   type Bid,
+  type Viewer,
 } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/admin")({
@@ -154,6 +169,7 @@ function AdminConsole({
   onSignOut: () => void;
 }) {
   const { teams, players, tiers, bids, state } = data;
+  const { viewers, count } = usePresence("admin", "Organizer");
   const player = players.find((p) => p.id === state?.current_player_id) ?? null;
   const ranked = bids
     .filter((b) => b.player_id === player?.id)
@@ -200,6 +216,7 @@ function AdminConsole({
                  )
                }
              />
+            <ViewerCount count={count} />
             <Button variant="secondary" size="sm" onClick={onSignOut}>
               <LogOut className="mr-1 h-4 w-4" /> Sign out
             </Button>
@@ -366,7 +383,7 @@ function AdminConsole({
                 </div>
               </div>
               <Dashboard teams={teams} players={players} />
-              <ChatPanel adminPasscode={passcode} />
+              <ViewersPanel viewers={viewers} passcode={passcode} run={run} />
             </div>
           </TabsContent>
 
@@ -453,6 +470,7 @@ function AdminConsole({
           </TabsContent>
         </Tabs>
       </div>
+      <ChatPopup adminPasscode={passcode} />
     </main>
   );
 }
@@ -1157,6 +1175,77 @@ function AnalyticsTab({ teams, players }: { teams: Team[]; players: Player[] }) 
             );
           })}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ViewersPanel({
+  viewers,
+  passcode,
+  run,
+}: {
+  viewers: Viewer[];
+  passcode: string;
+  run: (fn: () => Promise<unknown>, msg?: string) => Promise<void>;
+}) {
+  const sorted = viewers
+    .slice()
+    .sort((a, b) => (a.role === "admin" ? -1 : 0) - (b.role === "admin" ? -1 : 0));
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="flex items-center gap-2">
+        <Users className="h-4 w-4 text-muted-foreground" />
+        <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
+          Live viewers ({viewers.length})
+        </h3>
+      </div>
+      <p className="mt-0.5 text-[11px] text-muted-foreground">
+        Everyone currently on the platform. Kick removes a person from chat (they can still watch)
+        and deletes their messages.
+      </p>
+      <div className="mt-3 max-h-64 space-y-1.5 overflow-auto">
+        {sorted.map((v) => (
+          <div
+            key={v.device_id}
+            className="flex items-center gap-2 rounded-lg border border-border px-3 py-1.5 text-sm"
+          >
+            <span
+              className={`h-2 w-2 rounded-full ${
+                v.role === "admin"
+                  ? "bg-primary"
+                  : v.role === "captain"
+                    ? "bg-accent"
+                    : "bg-success"
+              }`}
+            />
+            <span className="min-w-0 flex-1 truncate">{v.name || "Guest"}</span>
+            <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              {v.role}
+            </span>
+            {v.role !== "admin" && (
+              <Button
+                size="sm"
+                variant="destructive"
+                className="h-6 px-2 text-[11px]"
+                onClick={() =>
+                  void run(
+                    () =>
+                      kickDevice({
+                        data: { passcode, deviceId: v.device_id, displayName: v.name },
+                      }),
+                    `${v.name || "Guest"} removed from chat`,
+                  )
+                }
+              >
+                <UserX className="mr-1 h-3 w-3" /> Kick
+              </Button>
+            )}
+          </div>
+        ))}
+        {viewers.length === 0 && (
+          <p className="text-sm text-muted-foreground">No one online right now.</p>
+        )}
       </div>
     </div>
   );

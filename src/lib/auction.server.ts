@@ -198,6 +198,12 @@ export async function sendChatServer(displayName: string, message: string, devic
   }
 
   const db = supabaseAdmin;
+  const { data: ban } = await db
+    .from("banned_devices")
+    .select("device_id")
+    .eq("device_id", deviceId)
+    .maybeSingle();
+  if (ban) throw new Error("You've been removed from the chat by the organizer");
   const { data: last } = await db
     .from("chat_messages")
     .select("created_at")
