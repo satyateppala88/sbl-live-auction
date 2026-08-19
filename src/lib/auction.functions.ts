@@ -295,3 +295,24 @@ export const resetAuction = createServerFn({ method: "POST" })
       .eq("id", 1);
     return { ok: true };
   });
+
+export const uploadPhoto = createServerFn({ method: "POST" })
+  .inputValidator(
+    (d: {
+      passcode: string;
+      kind: "player" | "team";
+      id: string;
+      base64: string;
+      contentType?: string;
+    }) => d,
+  )
+  .handler(async ({ data }) => {
+    const { assertAdmin, uploadPhotoServer } = await import("./auction.server");
+    await assertAdmin(data.passcode);
+    return uploadPhotoServer({
+      kind: data.kind,
+      id: data.id,
+      base64: data.base64,
+      contentType: data.contentType,
+    });
+  });
