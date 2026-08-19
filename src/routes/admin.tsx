@@ -189,15 +189,30 @@ function AdminConsole({
             <TabsTrigger value="players">Players</TabsTrigger>
             <TabsTrigger value="board">Roster Board</TabsTrigger>
             <TabsTrigger value="tools">Unsold &amp; Lottery</TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
           <TabsContent value="auction" className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
             <div className="glow-card rounded-2xl border border-border bg-card p-5">
               {player ? (
                 <div key={player.id} className="animate-block-in">
-                  <p className="text-smash text-xs font-bold uppercase tracking-widest">
-                    On the block {state?.round_type === "unsold" && "· second round"}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-smash text-xs font-bold uppercase tracking-widest">
+                      On the block {state?.round_type === "unsold" && "· second round"}
+                    </p>
+                    <CountdownTimer state={state} size="sm" />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 px-2 text-xs text-muted-foreground"
+                      onClick={() =>
+                        void run(() => resetTimer({ data: { passcode } }), "Timer reset")
+                      }
+                    >
+                      <RotateCcw className="mr-1 h-3 w-3" /> Reset timer
+                    </Button>
+                  </div>
                   <h2 className="font-display text-5xl uppercase leading-none">{player.name}</h2>
                   <p className="text-sm text-muted-foreground">
                     {CATEGORY_LABEL[player.category]} ·{" "}
