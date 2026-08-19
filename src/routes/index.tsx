@@ -3,6 +3,7 @@ import { Gavel, Users, Tv } from "lucide-react";
 import { useAuctionData, rosterOf } from "@/lib/auction-data";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
 import { CountUp } from "@/components/CountUp";
+import { TeamCrest } from "@/components/TeamCrest";
 
 export const Route = createFileRoute("/")({
   head: () => ({
