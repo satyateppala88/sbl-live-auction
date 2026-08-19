@@ -70,8 +70,8 @@ function Index() {
           </h1>
 
           <p className="animate-rise-in stagger-2 mx-auto mt-4 max-w-md text-sm text-muted-foreground lg:mx-0">
-            Ten teams, one arena. Every bid, every sold stamp, every squad coming
-            together — live, on any device.
+            Ten teams. Two captains each. One block. Watch the SMR Badminton
+            League squads take shape as captains bid live for every player.
           </p>
 
           <div className="animate-rise-in stagger-2 mx-auto mt-7 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
