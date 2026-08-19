@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Shuffle, Play, Pause } from "lucide-react";
+import { ArrowLeft, Loader2, Shuffle, Play, Pause, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,12 +28,16 @@ import {
   relistPlayer,
   lotteryAssign,
   resetAuction,
+  resetTimer,
 } from "@/lib/auction.functions";
 import { RosterBoard } from "@/components/RosterBoard";
 import { TeamCrest } from "@/components/TeamCrest";
+import { CountdownTimer } from "@/components/CountdownTimer";
+import { ChatPanel } from "@/components/ChatPanel";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
+  useAuctionLog,
   rosterOf,
   categoryCounts,
   topBid,
@@ -42,6 +46,7 @@ import {
   type Cat,
   type Player,
   type Team,
+  type Bid,
 } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/admin")({
@@ -184,15 +189,30 @@ function AdminConsole({
             <TabsTrigger value="players">Players</TabsTrigger>
             <TabsTrigger value="board">Roster Board</TabsTrigger>
             <TabsTrigger value="tools">Unsold &amp; Lottery</TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
           <TabsContent value="auction" className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
             <div className="glow-card rounded-2xl border border-border bg-card p-5">
               {player ? (
                 <div key={player.id} className="animate-block-in">
-                  <p className="text-smash text-xs font-bold uppercase tracking-widest">
-                    On the block {state?.round_type === "unsold" && "· second round"}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-smash text-xs font-bold uppercase tracking-widest">
+                      On the block {state?.round_type === "unsold" && "· second round"}
+                    </p>
+                    <CountdownTimer state={state} size="sm" />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 px-2 text-xs text-muted-foreground"
+                      onClick={() =>
+                        void run(() => resetTimer({ data: { passcode } }), "Timer reset")
+                      }
+                    >
+                      <RotateCcw className="mr-1 h-3 w-3" /> Reset timer
+                    </Button>
+                  </div>
                   <h2 className="font-display text-5xl uppercase leading-none">{player.name}</h2>
                   <p className="text-sm text-muted-foreground">
                     {CATEGORY_LABEL[player.category]} ·{" "}
@@ -317,6 +337,7 @@ function AdminConsole({
                 </div>
               </div>
               <Dashboard teams={teams} players={players} />
+              <ChatPanel adminPasscode={passcode} />
             </div>
           </TabsContent>
 
@@ -386,6 +407,20 @@ function AdminConsole({
                 Reset auction
               </Button>
             </div>
+          </TabsContent>
+
+          <TabsContent value="history" className="mt-4">
+            <AuditTrailTab
+              teams={teams}
+              players={players}
+              bids={bids}
+              passcode={passcode}
+              run={run}
+            />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-4">
+            <AnalyticsTab teams={teams} players={players} />
           </TabsContent>
         </Tabs>
       </div>
@@ -877,6 +912,223 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div className="grid gap-1.5">
       <Label className="text-xs text-muted-foreground">{label}</Label>
       {children}
+    </div>
+  );
+}
+
+const EVENT_LABEL: Record<string, string> = {
+  sold: "SOLD",
+  unsold: "UNSOLD",
+  relisted: "RE-LISTED",
+  lottery: "LOTTERY",
+  reset: "AUCTION RESET",
+};
+
+function AuditTrailTab({
+  teams,
+  players,
+  bids,
+}: {
+  teams: Team[];
+  players: Player[];
+  bids: Bid[];
+  passcode: string;
+  run: (fn: () => Promise<unknown>, msg?: string) => Promise<void>;
+}) {
+  const { events, loading } = useAuctionLog();
+
+  type Row = {
+    id: string;
+    at: string;
+    kind: "bid" | "event";
+    label: string;
+    playerName: string;
+    teamName: string | null;
+    teamColor: string | null;
+    amount: number | null;
+    note: string | null;
+  };
+
+  const rows: Row[] = [
+    ...bids.map((b): Row => {
+      const p = players.find((x) => x.id === b.player_id);
+      const t = teams.find((x) => x.id === b.team_id);
+      return {
+        id: `bid-${b.id}`,
+        at: b.created_at,
+        kind: "bid",
+        label: "BID",
+        playerName: p?.name ?? "Unknown player",
+        teamName: t?.name ?? "Unknown team",
+        teamColor: t?.color ?? null,
+        amount: Number(b.amount),
+        note: null,
+      };
+    }),
+    ...events.map((ev): Row => {
+      const p = players.find((x) => x.id === ev.player_id);
+      const t = teams.find((x) => x.id === ev.team_id);
+      return {
+        id: `log-${ev.id}`,
+        at: ev.created_at,
+        kind: "event",
+        label: EVENT_LABEL[ev.event_type] ?? ev.event_type.toUpperCase(),
+        playerName: p?.name ?? (ev.event_type === "reset" ? "—" : "Unknown player"),
+        teamName: t?.name ?? null,
+        teamColor: t?.color ?? null,
+        amount: ev.amount !== null ? Number(ev.amount) : null,
+        note: ev.note,
+      };
+    }),
+  ].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h3 className="font-bold">Dispute-proof audit trail</h3>
+          <p className="text-xs text-muted-foreground">
+            Every bid and every sold / unsold / re-listed / lottery event, timestamped, in one
+            place. Nothing here can be edited from the app -- use it to settle disputes.
+          </p>
+        </div>
+        <span className="text-xs text-muted-foreground">{rows.length} events</span>
+      </div>
+
+      <div className="mt-3 max-h-[32rem] space-y-1 overflow-auto">
+        {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
+        {!loading && rows.length === 0 && (
+          <p className="text-sm text-muted-foreground">No activity yet.</p>
+        )}
+        {rows.map((r) => (
+          <div
+            key={r.id}
+            className="grid grid-cols-[88px_84px_1fr_auto] items-center gap-2 rounded-lg border border-border px-3 py-1.5 text-xs sm:text-sm"
+          >
+            <span className="font-mono text-muted-foreground">
+              {new Date(r.at).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </span>
+            <span
+              className={`font-bold ${
+                r.label === "SOLD"
+                  ? "text-primary"
+                  : r.label === "UNSOLD"
+                    ? "text-destructive"
+                    : "text-muted-foreground"
+              }`}
+            >
+              {r.label}
+            </span>
+            <span className="min-w-0 truncate">
+              {r.playerName}
+              {r.teamName && (
+                <>
+                  {" "}
+                  <span style={{ color: r.teamColor ?? undefined }}>→ {r.teamName}</span>
+                </>
+              )}
+              {r.note && <span className="text-muted-foreground"> ({r.note})</span>}
+            </span>
+            <span className="font-mono font-bold">
+              {r.amount !== null ? `${r.amount} pts` : ""}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AnalyticsTab({ teams, players }: { teams: Team[]; players: Player[] }) {
+  const sold = players.filter(
+    (p) => p.status === "sold" && p.sold_to_team_id && p.sold_price !== null,
+  );
+  const totalSpend = sold.reduce((sum, p) => sum + Number(p.sold_price), 0);
+  const mostExpensive = sold.slice().sort((a, b) => Number(b.sold_price) - Number(a.sold_price))[0];
+  const unsoldCount = players.filter(
+    (p) => p.status === "unsold" || p.status === "in_unsold_pool",
+  ).length;
+
+  const perTeam = teams
+    .map((t) => {
+      const roster = sold.filter((p) => p.sold_to_team_id === t.id);
+      const spend = roster.reduce((sum, p) => sum + Number(p.sold_price), 0);
+      const counts = categoryCounts(rosterOf(players, t.id));
+      const top = roster.slice().sort((a, b) => Number(b.sold_price) - Number(a.sold_price))[0];
+      return { team: t, roster, spend, counts, top };
+    })
+    .sort((a, b) => b.spend - a.spend);
+
+  return (
+    <div className="grid gap-4">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Total spend</p>
+          <p className="text-gold font-display text-4xl">{totalSpend} pts</p>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">
+            Most expensive buy
+          </p>
+          {mostExpensive ? (
+            <>
+              <p className="font-display text-2xl uppercase">{mostExpensive.name}</p>
+              <p className="text-sm text-muted-foreground">
+                {Number(mostExpensive.sold_price)} pts ·{" "}
+                {teams.find((t) => t.id === mostExpensive.sold_to_team_id)?.name}
+              </p>
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">No sales yet</p>
+          )}
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Players sold</p>
+          <p className="font-display text-4xl">
+            {sold.length} <span className="text-base text-muted-foreground">/ {players.length}</span>
+          </p>
+          <p className="text-xs text-muted-foreground">{unsoldCount} still unsold</p>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-4">
+        <h3 className="text-xs uppercase tracking-widest text-muted-foreground">Spend by team</h3>
+        <div className="mt-3 space-y-2">
+          {perTeam.map(({ team, roster, spend, counts, top }) => {
+            const pct = totalSpend > 0 ? Math.round((spend / totalSpend) * 100) : 0;
+            return (
+              <div key={team.id} className="rounded-lg border border-border p-3">
+                <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
+                  <TeamCrest team={team} size={28} />
+                  <span className="min-w-0 truncate font-semibold">{team.name}</span>
+                  <span className="text-gold font-display text-xl tabular-nums">{spend} pts</span>
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-background">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${pct}%`, backgroundColor: team.color }}
+                  />
+                </div>
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                  <span>{roster.length} bought</span>
+                  <span>
+                    {counts.male}M / {counts.female}F / {counts.kid}K
+                  </span>
+                  {top && (
+                    <span>
+                      Top buy: {top.name} ({Number(top.sold_price)} pts)
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

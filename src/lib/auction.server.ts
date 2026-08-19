@@ -101,8 +101,20 @@ export async function sellServer(passcode: string) {
     .eq("id", top.team_id);
   await db
     .from("auction_state")
-    .update({ current_player_id: null, bidding_open: false, updated_at: new Date().toISOString() })
+    .update({
+      current_player_id: null,
+      bidding_open: false,
+      block_started_at: null,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", 1);
+  await db.from("auction_log").insert({
+    event_type: "sold",
+    player_id: state.current_player_id,
+    team_id: top.team_id,
+    amount: top.amount,
+  });
+
 
   return { teamId: top.team_id, amount: Number(top.amount) };
 }
@@ -151,4 +163,64 @@ export async function uploadPhotoServer(opts: {
     if (error) throw new Error(error.message);
   }
   return { url: signed.signedUrl };
+}
+
+const CHAT_MESSAGE_MAX = 200;
+const CHAT_NAME_MAX = 40;
+const CHAT_MIN_INTERVAL_MS = 2000;
+// Small, deliberately conservative blocklist -- basic guardrail, not a full moderation system.
+const CHAT_BLOCKLIST = [
+  "fuck",
+  "shit",
+  "bitch",
+  "asshole",
+  "bastard",
+  "randi",
+  "chutiya",
+  "madarchod",
+  "behenchod",
+  "bhosdi",
+];
+
+function containsBlockedWord(text: string) {
+  const lower = text.toLowerCase();
+  return CHAT_BLOCKLIST.some((w) => lower.includes(w));
+}
+
+export async function sendChatServer(displayName: string, message: string, deviceId: string) {
+  const name = displayName.trim().slice(0, CHAT_NAME_MAX);
+  const msg = message.trim().slice(0, CHAT_MESSAGE_MAX);
+  if (!name) throw new Error("Enter a display name first");
+  if (!msg) throw new Error("Message can't be empty");
+  if (!deviceId) throw new Error("Missing device id");
+  if (containsBlockedWord(name) || containsBlockedWord(msg)) {
+    throw new Error("Please keep the chat friendly");
+  }
+
+  const db = supabaseAdmin;
+  const { data: last } = await db
+    .from("chat_messages")
+    .select("created_at")
+    .eq("device_id", deviceId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (last) {
+    const elapsed = Date.now() - new Date(last.created_at).getTime();
+    if (elapsed < CHAT_MIN_INTERVAL_MS) throw new Error("You're sending messages too fast");
+  }
+
+  const { error } = await db
+    .from("chat_messages")
+    .insert({ display_name: name, message: msg, device_id: deviceId });
+  if (error) throw new Error(error.message);
+  return { ok: true };
+}
+
+export async function deleteChatServer(passcode: string, id: string) {
+  await assertAdmin(passcode);
+  const db = supabaseAdmin;
+  const { error } = await db.from("chat_messages").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  return { ok: true };
 }

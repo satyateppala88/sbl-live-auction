@@ -159,8 +159,24 @@ export const setOnBlock = createServerFn({ method: "POST" })
       .update({
         current_player_id: data.playerId,
         bidding_open: true,
+        block_started_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
+      .eq("id", 1);
+    return { ok: true };
+  });
+
+export const resetTimer = createServerFn({ method: "POST" })
+  .inputValidator((d: { passcode: string }) => d)
+  .handler(async ({ data }) => {
+    const { assertAdmin } = await import("./auction.server");
+    await assertAdmin(data.passcode);
+    const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+    const { data: state } = await db.from("auction_state").select("*").eq("id", 1).maybeSingle();
+    if (!state?.current_player_id) throw new Error("No player on the block");
+    await db
+      .from("auction_state")
+      .update({ block_started_at: new Date().toISOString() })
       .eq("id", 1);
     return { ok: true };
   });
@@ -209,8 +225,12 @@ export const markUnsold = createServerFn({ method: "POST" })
       .eq("id", state.current_player_id);
     await db
       .from("auction_state")
-      .update({ current_player_id: null, bidding_open: false })
+      .update({ current_player_id: null, bidding_open: false, block_started_at: null })
       .eq("id", 1);
+    await db.from("auction_log").insert({
+      event_type: "unsold",
+      player_id: state.current_player_id,
+    });
     return { ok: true };
   });
 
@@ -238,9 +258,16 @@ export const relistPlayer = createServerFn({ method: "POST" })
         current_player_id: data.playerId,
         bidding_open: true,
         round_type: "unsold",
+        block_started_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq("id", 1);
+    await db.from("auction_log").insert({
+      event_type: "relisted",
+      player_id: data.playerId,
+      amount: half,
+      note: "Relisted at half base price",
+    });
     return { basePrice: half };
   });
 
@@ -271,6 +298,13 @@ export const lotteryAssign = createServerFn({ method: "POST" })
       .from("teams")
       .update({ remaining_budget: Math.max(0, Number(team.remaining_budget) - 1) })
       .eq("id", data.teamId);
+    await db.from("auction_log").insert({
+      event_type: "lottery",
+      player_id: pick.id,
+      team_id: data.teamId,
+      amount: 1,
+      note: `Lottery assignment (${data.category})`,
+    });
     return { player: pick.name };
   });
 
@@ -291,8 +325,14 @@ export const resetAuction = createServerFn({ method: "POST" })
     }
     await db
       .from("auction_state")
-      .update({ current_player_id: null, bidding_open: false, round_type: "main" })
+      .update({
+        current_player_id: null,
+        bidding_open: false,
+        round_type: "main",
+        block_started_at: null,
+      })
       .eq("id", 1);
+    await db.from("auction_log").insert({ event_type: "reset", note: "Auction reset by admin" });
     return { ok: true };
   });
 
@@ -315,4 +355,18 @@ export const uploadPhoto = createServerFn({ method: "POST" })
       base64: data.base64,
       ...(data.contentType ? { contentType: data.contentType } : {}),
     });
+  });
+
+export const sendChat = createServerFn({ method: "POST" })
+  .inputValidator((d: { displayName: string; message: string; deviceId: string }) => d)
+  .handler(async ({ data }) => {
+    const { sendChatServer } = await import("./auction.server");
+    return sendChatServer(data.displayName, data.message, data.deviceId);
+  });
+
+export const deleteChat = createServerFn({ method: "POST" })
+  .inputValidator((d: { passcode: string; id: string }) => d)
+  .handler(async ({ data }) => {
+    const { deleteChatServer } = await import("./auction.server");
+    return deleteChatServer(data.passcode, data.id);
   });
