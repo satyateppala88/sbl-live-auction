@@ -198,6 +198,12 @@ export async function sendChatServer(displayName: string, message: string, devic
   }
 
   const db = supabaseAdmin;
+  const { data: ban } = await db
+    .from("banned_devices")
+    .select("device_id")
+    .eq("device_id", deviceId)
+    .maybeSingle();
+  if (ban) throw new Error("You've been removed from the chat by the organizer");
   const { data: last } = await db
     .from("chat_messages")
     .select("created_at")
@@ -221,6 +227,31 @@ export async function deleteChatServer(passcode: string, id: string) {
   await assertAdmin(passcode);
   const db = supabaseAdmin;
   const { error } = await db.from("chat_messages").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  return { ok: true };
+}
+
+export async function kickDeviceServer(
+  passcode: string,
+  deviceId: string,
+  displayName?: string,
+  reason?: string,
+) {
+  await assertAdmin(passcode);
+  const db = supabaseAdmin;
+  const { error } = await db
+    .from("banned_devices")
+    .upsert({ device_id: deviceId, display_name: displayName ?? null, reason: reason ?? null });
+  if (error) throw new Error(error.message);
+  // scrub their existing messages so nothing abusive lingers
+  await db.from("chat_messages").delete().eq("device_id", deviceId);
+  return { ok: true };
+}
+
+export async function unbanDeviceServer(passcode: string, deviceId: string) {
+  await assertAdmin(passcode);
+  const db = supabaseAdmin;
+  const { error } = await db.from("banned_devices").delete().eq("device_id", deviceId);
   if (error) throw new Error(error.message);
   return { ok: true };
 }

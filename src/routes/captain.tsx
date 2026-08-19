@@ -13,12 +13,15 @@ import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMome
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { TeamCrest } from "@/components/TeamCrest";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
+import { ChatPopup } from "@/components/ChatPopup";
+import { ViewerCount } from "@/components/ViewerCount";
 import {
   useAuctionData,
   rosterOf,
   categoryCounts,
   maxBidFor,
   topBid,
+  usePresence,
   CATEGORY_LABEL,
   REQUIREMENT,
   type Team,
@@ -174,6 +177,7 @@ function BiddingRoom({
   onLogout: () => void;
 }) {
   const { players, bids, state, teams, tiers } = data;
+  const { count, banned } = usePresence("captain", team.name);
   const [busy, setBusy] = useState(false);
 
   const roster = rosterOf(players, team.id);
@@ -219,6 +223,7 @@ function BiddingRoom({
             <h1 className="font-display text-xl uppercase leading-tight">{team.name}</h1>
             <p className="text-xs text-muted-foreground">{team.captain_name}</p>
           </div>
+          <ViewerCount count={count} />
           <Button variant="secondary" size="sm" onClick={onLogout}>
             <LogOut className="mr-1 h-4 w-4" /> Sign out
           </Button>
@@ -346,6 +351,7 @@ function BiddingRoom({
           )}
         </div>
       </div>
+      <ChatPopup banned={banned} />
     </main>
   );
 }

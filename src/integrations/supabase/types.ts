@@ -115,6 +115,27 @@ export type Database = {
           },
         ]
       }
+      banned_devices: {
+        Row: {
+          created_at: string
+          device_id: string
+          display_name: string | null
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          display_name?: string | null
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          display_name?: string | null
+          reason?: string | null
+        }
+        Relationships: []
+      }
       bids: {
         Row: {
           amount: number
