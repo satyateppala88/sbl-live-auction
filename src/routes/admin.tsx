@@ -408,6 +408,20 @@ function AdminConsole({
               </Button>
             </div>
           </TabsContent>
+
+          <TabsContent value="history" className="mt-4">
+            <AuditTrailTab
+              teams={teams}
+              players={players}
+              bids={bids}
+              passcode={passcode}
+              run={run}
+            />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-4">
+            <AnalyticsTab teams={teams} players={players} />
+          </TabsContent>
         </Tabs>
       </div>
     </main>
