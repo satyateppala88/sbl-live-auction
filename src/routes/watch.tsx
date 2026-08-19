@@ -6,6 +6,7 @@ import { CountUp } from "@/components/CountUp";
 import { TeamCrest } from "@/components/TeamCrest";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { ChatPanel } from "@/components/ChatPanel";
+import { StarEmblem } from "@/components/StarEmblem";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import { useAuctionData, topBid, CATEGORY_LABEL } from "@/lib/auction-data";
 
@@ -46,12 +47,13 @@ function WatchPage() {
 
       <div className="mx-auto max-w-7xl">
         <header className="flex items-center gap-3">
-          <ShuttleIcon className="text-shuttle h-6 w-6" />
+          <StarEmblem className="text-star h-6 w-6" glow />
           <h1 className="font-display text-2xl uppercase tracking-tight">
             <span className="text-gold">SBL</span> Live Auction
           </h1>
-          <span className="border-smash/60 text-smash animate-live-pulse rounded-full border px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest">
-            ● Live
+          <span className="border-smash/60 text-smash flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-widest">
+            <span className="animate-energy-pulse h-1.5 w-1.5 rounded-full bg-smash" />
+            Live
           </span>
           <Link to="/" className="ml-auto text-xs text-muted-foreground underline">
             Home

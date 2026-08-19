@@ -3,6 +3,7 @@ import { Gavel, Users, Tv, ArrowRight } from "lucide-react";
 import { useAuctionData } from "@/lib/auction-data";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
+import { StarEmblem } from "@/components/StarEmblem";
 import { CountUp } from "@/components/CountUp";
 
 export const Route = createFileRoute("/")({
@@ -43,12 +44,16 @@ function Index() {
         style={{ top: "34%", left: "58%", animationDelay: "3.4s" }}
         aria-hidden
       />
+      {/* a shuttle streaking across at speed -- badminton velocity */}
+      <ShuttleIcon
+        className="animate-shuttle-zip text-shuttle/70 pointer-events-none absolute left-[8%] top-[46%] hidden h-10 w-10 lg:block"
+      />
 
       <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
         {/* ---------- left: identity + CTAs ---------- */}
         <div className="text-center lg:text-left">
-          <div className="animate-shuttle-arc mx-auto flex w-fit items-center gap-2 rounded-full border border-gold-solid/30 bg-card/60 px-4 py-1.5 backdrop-blur lg:mx-0">
-            <span className="h-1.5 w-1.5 rounded-full bg-gold-solid" />
+          <div className="animate-shuttle-arc mx-auto flex w-fit items-center gap-2 rounded-full border border-star/40 bg-card/60 px-4 py-1.5 backdrop-blur lg:mx-0">
+            <StarEmblem className="text-star h-3.5 w-3.5" glow />
             <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-gold-solid">
               SMR Vinay Galaxy
             </p>
@@ -59,7 +64,7 @@ function Index() {
           </p>
 
           <h1 className="font-display animate-rise-in stagger-1 mt-2 text-6xl font-extrabold uppercase leading-[0.85] tracking-tight sm:text-7xl lg:text-8xl">
-            <span className="text-gold">SBL Live</span>
+            <span className="text-sweep">SBL Live</span>
             <br />
             Auction
           </h1>
@@ -118,6 +123,7 @@ function Index() {
           />
           <div className="arena-bg court-lines absolute inset-4 overflow-hidden rounded-full border border-gold-solid/25">
             <div className="court-lines-layer" aria-hidden />
+            <StarEmblem className="animate-spin-slow text-star/15 absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2" />
             <PlayerSilhouette className="text-gold-solid/90 absolute bottom-0 left-1/2 h-[85%] w-[85%] -translate-x-1/2" />
           </div>
 
@@ -236,8 +242,9 @@ function RoleCard({
           {icon}
         </span>
         {live ? (
-          <span className="text-smash animate-live-pulse text-[11px] font-bold uppercase tracking-widest">
-            ● Live
+          <span className="text-smash flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest">
+            <span className="animate-energy-pulse h-2 w-2 rounded-full bg-smash" />
+            Live
           </span>
         ) : (
           <ArrowRight className="h-4 w-4 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" />
