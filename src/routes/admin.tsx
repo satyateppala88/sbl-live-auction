@@ -271,7 +271,8 @@ function AdminConsole({
                       )}
                     </div>
                   </div>
-                </>
+                </div>
+
               ) : (
                 <p className="py-16 text-center text-muted-foreground">
                   No player on the block. Pick one from the list →
