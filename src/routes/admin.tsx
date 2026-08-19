@@ -540,6 +540,7 @@ function TeamsTab({
   const empty = {
     name: "",
     captain_name: "",
+    captain2_name: "",
     color: "#e11d48",
     starting_budget: 100,
     max_roster_size: 5,
@@ -565,12 +566,20 @@ function TeamsTab({
           <Field label="Team name">
             <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </Field>
-          <Field label="Captain name">
-            <Input
-              value={form.captain_name}
-              onChange={(e) => setForm({ ...form, captain_name: e.target.value })}
-            />
-          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Captain 1 (male)">
+              <Input
+                value={form.captain_name}
+                onChange={(e) => setForm({ ...form, captain_name: e.target.value })}
+              />
+            </Field>
+            <Field label="Captain 2 (female)">
+              <Input
+                value={form.captain2_name}
+                onChange={(e) => setForm({ ...form, captain2_name: e.target.value })}
+              />
+            </Field>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Starting budget">
               <Input
@@ -624,10 +633,18 @@ function TeamsTab({
                 photoUrl={t.captain_photo_url}
                 passcode={passcode}
               />
+              <SinglePhotoButton
+                kind="team2"
+                id={t.id}
+                name={t.captain2_name || t.name}
+                photoUrl={t.captain2_photo_url}
+                passcode={passcode}
+              />
               <div className="flex-1">
                 <p className="font-semibold">{t.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {t.captain_name} · {rosterOf(players, t.id).length}/{t.max_roster_size} ·{" "}
+                  {[t.captain_name, t.captain2_name].filter(Boolean).join(" & ") || "No captains"} ·{" "}
+                  {rosterOf(players, t.id).length}/{t.max_roster_size} ·{" "}
                   {Number(t.remaining_budget)}/{Number(t.starting_budget)} pts
                 </p>
               </div>
@@ -639,6 +656,7 @@ function TeamsTab({
                     id: t.id,
                     name: t.name,
                     captain_name: t.captain_name,
+                    captain2_name: t.captain2_name,
                     color: t.color,
                     starting_budget: Number(t.starting_budget),
                     max_roster_size: t.max_roster_size,
