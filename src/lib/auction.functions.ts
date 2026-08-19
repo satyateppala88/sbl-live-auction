@@ -159,8 +159,24 @@ export const setOnBlock = createServerFn({ method: "POST" })
       .update({
         current_player_id: data.playerId,
         bidding_open: true,
+        block_started_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
+      .eq("id", 1);
+    return { ok: true };
+  });
+
+export const resetTimer = createServerFn({ method: "POST" })
+  .inputValidator((d: { passcode: string }) => d)
+  .handler(async ({ data }) => {
+    const { assertAdmin } = await import("./auction.server");
+    await assertAdmin(data.passcode);
+    const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+    const { data: state } = await db.from("auction_state").select("*").eq("id", 1).maybeSingle();
+    if (!state?.current_player_id) throw new Error("No player on the block");
+    await db
+      .from("auction_state")
+      .update({ block_started_at: new Date().toISOString() })
       .eq("id", 1);
     return { ok: true };
   });
