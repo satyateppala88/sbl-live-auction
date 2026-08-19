@@ -131,7 +131,7 @@ function decodeBase64(b64: string) {
 }
 
 export async function uploadPhotoServer(opts: {
-  kind: "player" | "team";
+  kind: "player" | "team" | "team2";
   id: string;
   base64: string;
   contentType?: string;
@@ -158,7 +158,11 @@ export async function uploadPhotoServer(opts: {
   } else {
     const { error } = await db
       .from("teams")
-      .update({ captain_photo_url: signed.signedUrl })
+      .update(
+        opts.kind === "team"
+          ? { captain_photo_url: signed.signedUrl }
+          : { captain2_photo_url: signed.signedUrl },
+      )
       .eq("id", opts.id);
     if (error) throw new Error(error.message);
   }

@@ -14,7 +14,7 @@ import { uploadPhoto } from "@/lib/auction.functions";
 import { bestMatch, baseName, fileToJpegBase64 } from "@/lib/photo-upload";
 import type { Player, Team } from "@/lib/auction-data";
 
-type Target = { key: string; kind: "player" | "team"; id: string; label: string };
+type Target = { key: string; kind: "player" | "team" | "team2"; id: string; label: string };
 
 function buildTargets(players: Player[], teams: Team[]): Target[] {
   return [
@@ -29,6 +29,12 @@ function buildTargets(players: Player[], teams: Team[]): Target[] {
       kind: "team" as const,
       id: t.id,
       label: `${t.captain_name || t.name} (captain · ${t.name})`,
+    })),
+    ...teams.map((t) => ({
+      key: `team2:${t.id}`,
+      kind: "team2" as const,
+      id: t.id,
+      label: `${t.captain2_name || t.name} (captain 2 · ${t.name})`,
     })),
   ];
 }
@@ -66,7 +72,12 @@ export function BulkPhotoUpload({
         const base64 = await fileToJpegBase64(file);
         const candidates = targets.map((t) => ({
           id: t.key,
-          name: t.kind === "team" ? (teams.find((x) => x.id === t.id)?.captain_name ?? "") : t.label,
+          name:
+            t.kind === "team"
+              ? (teams.find((x) => x.id === t.id)?.captain_name ?? "")
+              : t.kind === "team2"
+                ? (teams.find((x) => x.id === t.id)?.captain2_name ?? "")
+                : t.label,
         }));
         const m = bestMatch(file.name, candidates);
         next.push({
@@ -204,7 +215,7 @@ export function SinglePhotoButton({
   photoUrl,
   passcode,
 }: {
-  kind: "player" | "team";
+  kind: "player" | "team" | "team2";
   id: string;
   name: string;
   photoUrl: string | null;
