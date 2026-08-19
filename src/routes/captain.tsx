@@ -374,6 +374,39 @@ function BiddingRoom({
   );
 }
 
+function BidAdvisor({ advice }: { advice: Advice[] }) {
+  if (advice.length === 0) return null;
+  const icon = {
+    info: <Info className="h-3.5 w-3.5 text-muted-foreground" />,
+    good: <CheckCircle2 className="h-3.5 w-3.5 text-success" />,
+    warn: <AlertTriangle className="h-3.5 w-3.5 text-smash" />,
+  };
+  return (
+    <div className="mb-2 rounded-xl border border-border bg-card/70 px-3 py-2">
+      <p className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gold-solid">
+        <Gavel className="h-3 w-3" /> Bidding advisor
+      </p>
+      <ul className="grid gap-1">
+        {advice.slice(0, 4).map((a, i) => (
+          <li
+            key={i}
+            className={`flex items-start gap-1.5 text-xs ${
+              a.tone === "warn"
+                ? "text-smash"
+                : a.tone === "good"
+                  ? "text-success"
+                  : "text-foreground/90"
+            }`}
+          >
+            <span className="mt-px shrink-0">{icon[a.tone]}</span>
+            {a.text}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Stat({
   label,
   value,
