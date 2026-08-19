@@ -11,31 +11,38 @@ export function RosterSlots({
   size?: "sm" | "md";
 }) {
   const roster = rosterOf(players, team.id);
-  const total = Math.max(team.max_roster_size, roster.length + 1);
-  const emptyCount = Math.max(0, total - 1 - roster.length);
+  const captains = [
+    { name: team.captain_name, photo: team.captain_photo_url, badge: "Capt (M)" },
+    { name: team.captain2_name, photo: team.captain2_photo_url, badge: "Capt (F)" },
+  ];
+  const total = Math.max(team.max_roster_size, roster.length + captains.length);
+  const emptyCount = Math.max(0, total - captains.length - roster.length);
   const box = size === "sm" ? "h-14 w-14 text-sm" : "h-20 w-20 text-lg";
 
   return (
     <div className="flex flex-wrap gap-2">
-      <div className="flex flex-col items-center gap-1">
-        <div className="relative">
-          <PlayerAvatar
-            name={team.captain_name || "Captain"}
-            photoUrl={team.captain_photo_url}
-            className={box}
-            accent={team.color}
-          />
-          <span
-            className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-1.5 py-px text-[9px] font-bold uppercase tracking-wide text-background"
-            style={{ backgroundColor: team.color }}
-          >
-            Captain
+      {captains.map((c, i) => (
+        <div key={`cap-${i}`} className="flex flex-col items-center gap-1">
+          <div className="relative">
+            <PlayerAvatar
+              name={c.name || "Captain"}
+              photoUrl={c.photo}
+              className={box}
+              accent={team.color}
+            />
+            <span
+              className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-px text-[9px] font-bold uppercase tracking-wide text-background"
+              style={{ backgroundColor: team.color }}
+            >
+              {c.badge}
+            </span>
+          </div>
+          <span className="max-w-[5rem] truncate text-[11px] text-muted-foreground">
+            {c.name || "—"}
           </span>
         </div>
-        <span className="max-w-[5rem] truncate text-[11px] text-muted-foreground">
-          {team.captain_name || "—"}
-        </span>
-      </div>
+      ))}
+
 
       {roster.map((p) => (
         <div key={p.id} className="animate-slot-in flex flex-col items-center gap-1">
