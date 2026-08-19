@@ -200,6 +200,17 @@ function BiddingRoom({
   else if (nextAmount > Number(team.remaining_budget)) disabledReason = "Over your budget";
   else if (nextAmount > cap) disabledReason = `Reserve rule — your max bid is ${cap} pts`;
 
+  const advice = biddingAdvice({
+    team,
+    players,
+    currentPlayer: player,
+    filled,
+    cap,
+    nextAmount,
+    leadingIsMe: leading?.team_id === team.id,
+  });
+
+
   async function bid() {
     setBusy(true);
     try {
