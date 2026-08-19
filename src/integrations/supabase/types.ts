@@ -190,6 +190,7 @@ export type Database = {
           color: string
           created_at: string
           id: string
+          logo_url: string | null
           max_roster_size: number
           name: string
           remaining_budget: number
@@ -201,6 +202,7 @@ export type Database = {
           color?: string
           created_at?: string
           id?: string
+          logo_url?: string | null
           max_roster_size?: number
           name: string
           remaining_budget?: number
@@ -212,6 +214,7 @@ export type Database = {
           color?: string
           created_at?: string
           id?: string
+          logo_url?: string | null
           max_roster_size?: number
           name?: string
           remaining_budget?: number
