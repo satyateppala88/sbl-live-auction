@@ -29,10 +29,57 @@ export type Database = {
         }
         Relationships: []
       }
+      auction_log: {
+        Row: {
+          amount: number | null
+          created_at: string
+          event_type: string
+          id: string
+          note: string | null
+          player_id: string | null
+          team_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          event_type: string
+          id?: string
+          note?: string | null
+          player_id?: string | null
+          team_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          note?: string | null
+          player_id?: string | null
+          team_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auction_log_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auction_log_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       auction_state: {
         Row: {
           bid_increment: number
           bidding_open: boolean
+          block_seconds: number
+          block_started_at: string | null
           current_player_id: string | null
           id: number
           round_type: string
@@ -41,6 +88,8 @@ export type Database = {
         Insert: {
           bid_increment?: number
           bidding_open?: boolean
+          block_seconds?: number
+          block_started_at?: string | null
           current_player_id?: string | null
           id?: number
           round_type?: string
@@ -49,6 +98,8 @@ export type Database = {
         Update: {
           bid_increment?: number
           bidding_open?: boolean
+          block_seconds?: number
+          block_started_at?: string | null
           current_player_id?: string | null
           id?: number
           round_type?: string
@@ -102,6 +153,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      chat_messages: {
+        Row: {
+          created_at: string
+          device_id: string
+          display_name: string
+          id: string
+          message: string
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          display_name: string
+          id?: string
+          message: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          display_name?: string
+          id?: string
+          message?: string
+        }
+        Relationships: []
       }
       players: {
         Row: {
