@@ -2,6 +2,12 @@ import { PlayerAvatar } from "./PlayerAvatar";
 import { TeamCrest } from "./TeamCrest";
 import { CATEGORY_LABEL, type Player, type Team, type Tier } from "@/lib/auction-data";
 
+function tierRank(p: Player, tiers: Tier[]) {
+  return tiers.find((t) => t.id === p.tier_id)?.sort_order ?? 99;
+}
+
+
+
 function statusMeta(p: Player, teams: Team[]) {
   switch (p.status) {
     case "sold": {
@@ -37,7 +43,11 @@ export function RosterBoard({
   return (
     <div className="grid gap-6">
       {(["male", "female", "kid"] as const).map((cat) => {
-        const group = players.filter((p) => p.category === cat);
+        const group = players
+          .filter((p) => p.category === cat)
+          .slice()
+          .sort((a, b) => tierRank(a, tiers) - tierRank(b, tiers));
+
         return (
           <section key={cat}>
             <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">

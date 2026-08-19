@@ -44,7 +44,7 @@ function WatchPage() {
       <div className="court-lines-layer" aria-hidden />
       <AuctionMomentOverlay moment={moment} />
 
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <header className="flex items-center gap-3">
           <ShuttleIcon className="text-shuttle h-6 w-6" />
           <h1 className="font-display text-2xl uppercase tracking-tight">
@@ -116,7 +116,7 @@ function WatchPage() {
         <div className="court-divider mt-8" aria-hidden />
 
         <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_320px]">
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {teams.map((t) => (
               <div
                 key={t.id}

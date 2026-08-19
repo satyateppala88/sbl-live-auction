@@ -12,6 +12,7 @@ import { CountUp } from "@/components/CountUp";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { TeamCrest } from "@/components/TeamCrest";
+import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import {
   useAuctionData,
   rosterOf,
@@ -104,9 +105,10 @@ function CaptainLogin({
   }
 
   return (
-    <main className="arena-bg court-lines min-h-screen px-4 py-10">
-      <div className="court-lines-layer" aria-hidden />
-      <div className="mx-auto max-w-md">
+    <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-10">
+      <div className="star-field-layer" aria-hidden />
+      <PlayerSilhouette className="text-foreground/[0.03] pointer-events-none absolute -right-16 -top-10 hidden h-96 w-96 rotate-6 lg:block" />
+      <div className="mx-auto max-w-3xl">
         <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground">
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
@@ -117,32 +119,32 @@ function CaptainLogin({
         <p className="mt-1 text-sm text-muted-foreground">Pick your team, then enter your PIN.</p>
 
 
-        <div className="mt-6 grid gap-2">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {teams.map((t) => (
             <button
               key={t.id}
               onClick={() => setTeamId(t.id)}
-              className={`flex items-center gap-3 rounded-xl border bg-card px-4 py-3 text-left transition ${
+              className={`lift-card flex items-center gap-3 rounded-2xl border bg-card px-4 py-3 text-left transition hover:[transform:translateY(-2px)] ${
                 teamId === t.id ? "border-primary glow-card" : "border-border"
               }`}
             >
               <TeamCrest team={t} size={40} />
 
-              <span className="flex-1">
-                <span className="block font-semibold">{t.name}</span>
-                <span className="block text-xs text-muted-foreground">{t.captain_name}</span>
+              <span className="flex-1 min-w-0">
+                <span className="block truncate font-semibold">{t.name}</span>
+                <span className="block truncate text-xs text-muted-foreground">{t.captain_name}</span>
               </span>
             </button>
           ))}
           {teams.length === 0 && (
-            <p className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
+            <p className="rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground sm:col-span-2 lg:col-span-3">
               No teams yet — ask the organizer to add them.
             </p>
           )}
         </div>
 
         {teamId && (
-          <div className="mt-6 flex gap-2">
+          <div className="mt-6 flex max-w-sm gap-2">
             <Input
               value={pin}
               onChange={(e) => setPin(e.target.value)}

@@ -141,6 +141,23 @@ export function topBid(bids: Bid[], playerId: string | null | undefined) {
   return forPlayer[0] ?? null;
 }
 
+/** Auction run order: Male before Female before Kid, and within each category,
+ * Icon before Challenger before Game Changer (i.e. tier.sort_order). Players whose
+ * tier isn't set yet sort last within their category. */
+const AUCTION_CATEGORY_ORDER: Record<Cat, number> = { male: 0, female: 1, kid: 2 };
+
+export function auctionSortKey(player: Player, tiers: Tier[]): number {
+  const tier = tiers.find((t) => t.id === player.tier_id);
+  const tierRank = tier ? tier.sort_order : 99;
+  return AUCTION_CATEGORY_ORDER[player.category] * 100 + tierRank;
+}
+
+export function sortForAuction<T extends Player>(players: T[], tiers: Tier[]): T[] {
+  return players.slice().sort((a, b) => auctionSortKey(a, tiers) - auctionSortKey(b, tiers));
+}
+
+
+
 /** Seconds remaining on the per-player countdown, floored at 0. Null when no timer is running. */
 export function secondsLeft(state: AuctionState | null): number | null {
   if (!state || !state.block_started_at || !state.bidding_open) return null;

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Shuffle, Play, Pause, RotateCcw } from "lucide-react";
+import { ArrowLeft, Loader2, Shuffle, Play, Pause, RotateCcw, Gavel } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +34,7 @@ import { RosterBoard } from "@/components/RosterBoard";
 import { TeamCrest } from "@/components/TeamCrest";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { ChatPanel } from "@/components/ChatPanel";
+import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
@@ -41,6 +42,7 @@ import {
   rosterOf,
   categoryCounts,
   topBid,
+  sortForAuction,
   CATEGORY_LABEL,
   REQUIREMENT,
   type Cat,
@@ -99,12 +101,19 @@ function AdminPage() {
 
   if (!passcode) {
     return (
-      <main className="arena-bg flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-6">
+      <main className="arena-bg star-field relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+        <div className="star-field-layer" aria-hidden />
+        <PlayerSilhouette className="text-foreground/[0.04] pointer-events-none absolute -bottom-10 -left-10 hidden h-80 w-80 -rotate-6 md:block" />
+        <div className="glow-card relative w-full max-w-sm rounded-[2rem] border border-border bg-card p-6">
           <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground">
             <ArrowLeft className="h-4 w-4" /> Home
           </Link>
-          <h1 className="mt-3 text-2xl font-black uppercase">Organizer access</h1>
+          <div className="mt-3 flex items-center gap-2">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <Gavel className="h-5 w-5" />
+            </span>
+            <h1 className="text-2xl font-black uppercase">Organizer access</h1>
+          </div>
           <div className="mt-4 flex gap-2">
             <Input
               type="password"
@@ -159,7 +168,7 @@ function AdminConsole({
 
   return (
     <main className="arena-bg min-h-screen px-4 py-6">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <header className="flex flex-wrap items-center gap-3">
           <Link to="/" className="text-sm text-muted-foreground">
             <ArrowLeft className="h-4 w-4" />
@@ -306,31 +315,36 @@ function AdminConsole({
                 <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
                   Next up (available)
                 </h3>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  Sorted in draw order: Male → Female → Kid, Icon → Challenger → Game Changer
+                </p>
                 <div className="mt-2 max-h-80 space-y-1.5 overflow-auto">
-                  {players
-                    .filter((p) => p.status === "available")
-                    .map((p) => (
-                      <div
-                        key={p.id}
-                        className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm"
+                  {sortForAuction(
+                    players.filter((p) => p.status === "available"),
+                    tiers,
+                  ).map((p) => (
+                    <div
+                      key={p.id}
+                      className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm"
+                    >
+                      <span className="flex-1">{p.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {CATEGORY_LABEL[p.category]} ·{" "}
+                        {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"}
+                      </span>
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          void run(
+                            () => setOnBlock({ data: { passcode, playerId: p.id } }),
+                            `${p.name} is on the block`,
+                          )
+                        }
                       >
-                        <span className="flex-1">{p.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {CATEGORY_LABEL[p.category]}
-                        </span>
-                        <Button
-                          size="sm"
-                          onClick={() =>
-                            void run(
-                              () => setOnBlock({ data: { passcode, playerId: p.id } }),
-                              `${p.name} is on the block`,
-                            )
-                          }
-                        >
-                          Block
-                        </Button>
-                      </div>
-                    ))}
+                        Block
+                      </Button>
+                    </div>
+                  ))}
                   {players.filter((p) => p.status === "available").length === 0 && (
                     <p className="text-sm text-muted-foreground">No available players.</p>
                   )}
