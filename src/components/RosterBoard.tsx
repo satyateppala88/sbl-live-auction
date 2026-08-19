@@ -2,6 +2,12 @@ import { PlayerAvatar } from "./PlayerAvatar";
 import { TeamCrest } from "./TeamCrest";
 import { CATEGORY_LABEL, type Player, type Team, type Tier } from "@/lib/auction-data";
 
+function tierRank(p: Player, tiers: Tier[]) {
+  return tiers.find((t) => t.id === p.tier_id)?.sort_order ?? 99;
+}
+
+
+
 function statusMeta(p: Player, teams: Team[]) {
   switch (p.status) {
     case "sold": {
