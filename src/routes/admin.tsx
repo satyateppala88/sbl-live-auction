@@ -68,7 +68,7 @@ const KEY = "sbl_admin";
 function AdminPage() {
   const data = useAuctionData();
   const [passcode, setPasscode] = useState<string | null>(null);
-  const [входа, setEntry] = useState("");
+  const [entry, setEntry] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -79,9 +79,9 @@ function AdminPage() {
   async function login() {
     setBusy(true);
     try {
-      await verifyAdmin({ data: { passcode: входа } });
-      localStorage.setItem(KEY, входа);
-      setPasscode(входа);
+      await verifyAdmin({ data: { passcode: entry } });
+      localStorage.setItem(KEY, entry);
+      setPasscode(entry);
     } catch {
       toast.error("Wrong passcode");
     } finally {
@@ -100,7 +100,7 @@ function AdminPage() {
           <div className="mt-4 flex gap-2">
             <Input
               type="password"
-              value={входа}
+              value={entry}
               onChange={(e) => setEntry(e.target.value)}
               placeholder="Admin passcode"
               onKeyDown={(e) => e.key === "Enter" && void login()}
