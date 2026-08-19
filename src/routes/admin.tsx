@@ -30,6 +30,7 @@ import {
   resetAuction,
 } from "@/lib/auction.functions";
 import { RosterBoard } from "@/components/RosterBoard";
+import { TeamCrest } from "@/components/TeamCrest";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
