@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Gavel, Users } from "lucide-react";
+import { Gavel, Users, Tv } from "lucide-react";
 import { useAuctionData, rosterOf } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/")({
