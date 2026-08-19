@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { captainLogin, placeBid } from "@/lib/auction.functions";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { RosterSlots } from "@/components/RosterSlots";
+import { ShuttleIcon } from "@/components/ShuttleIcon";
+import { CountUp } from "@/components/CountUp";
+import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import {
   useAuctionData,
   rosterOf,
@@ -17,6 +20,7 @@ import {
   REQUIREMENT,
   type Team,
 } from "@/lib/auction-data";
+
 
 export const Route = createFileRoute("/captain")({
   head: () => ({
