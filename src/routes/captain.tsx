@@ -105,9 +105,10 @@ function CaptainLogin({
   }
 
   return (
-    <main className="arena-bg court-lines min-h-screen px-4 py-10">
-      <div className="court-lines-layer" aria-hidden />
-      <div className="mx-auto max-w-md">
+    <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-10">
+      <div className="star-field-layer" aria-hidden />
+      <PlayerSilhouette className="text-foreground/[0.03] pointer-events-none absolute -right-16 -top-10 hidden h-96 w-96 rotate-6 lg:block" />
+      <div className="mx-auto max-w-3xl">
         <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground">
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
