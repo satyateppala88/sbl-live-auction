@@ -102,13 +102,18 @@ function CaptainLogin({
   }
 
   return (
-    <main className="arena-bg min-h-screen px-4 py-10">
+    <main className="arena-bg court-lines min-h-screen px-4 py-10">
+      <div className="court-lines-layer" aria-hidden />
       <div className="mx-auto max-w-md">
         <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground">
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
-        <h1 className="mt-4 text-3xl font-black uppercase">Captain check-in</h1>
+        <div className="animate-rise-in mt-4 flex items-center gap-2">
+          <ShuttleIcon className="text-shuttle h-7 w-7" />
+          <h1 className="font-display text-4xl uppercase leading-none">Captain check-in</h1>
+        </div>
         <p className="mt-1 text-sm text-muted-foreground">Pick your team, then enter your PIN.</p>
+
 
         <div className="mt-6 grid gap-2">
           {teams.map((t) => (
@@ -336,11 +341,27 @@ function BiddingRoom({
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  suffix,
+  gold,
+}: {
+  label: string;
+  value: number;
+  suffix?: string;
+  gold?: boolean;
+}) {
   return (
-    <div className="rounded-xl border border-border bg-card px-2 py-3">
+    <div className="rounded-xl border border-border bg-card/80 px-2 py-3 backdrop-blur">
       <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p>
-      <p className="text-xl font-bold tabular-nums">{value}</p>
+      <p
+        className={`font-display text-2xl tabular-nums ${gold ? "text-gold-solid" : "text-foreground"}`}
+      >
+        <CountUp value={value} duration={350} />
+        {suffix}
+      </p>
     </div>
   );
+
 }
