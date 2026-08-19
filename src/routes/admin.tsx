@@ -48,6 +48,7 @@ import { CountdownTimer } from "@/components/CountdownTimer";
 import { ChatPopup } from "@/components/ChatPopup";
 import { ViewerCount } from "@/components/ViewerCount";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
+import { HoloCard } from "@/components/HoloCard";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
@@ -254,12 +255,23 @@ function AdminConsole({
                       <RotateCcw className="mr-1 h-3 w-3" /> Reset timer
                     </Button>
                   </div>
-                  <h2 className="font-display text-5xl uppercase leading-none">{player.name}</h2>
-                  <p className="text-sm text-muted-foreground">
-                    {CATEGORY_LABEL[player.category]} ·{" "}
-                    {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"} · base{" "}
-                    {Number(player.base_price)}
-                  </p>
+                  <div className="mt-2 flex items-center gap-4">
+                    <HoloCard
+                      name={player.name}
+                      photoUrl={player.photo_url}
+                      className="h-24 w-24 shrink-0 text-2xl sm:h-28 sm:w-28"
+                    />
+                    <div className="min-w-0">
+                      <h2 className="font-display truncate text-5xl uppercase leading-none">
+                        {player.name}
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {CATEGORY_LABEL[player.category]} ·{" "}
+                        {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"} · base{" "}
+                        {Number(player.base_price)}
+                      </p>
+                    </div>
+                  </div>
                   <p
                     key={leading?.id ?? "none"}
                     className="text-gold font-display animate-bid-pop mt-4 origin-left text-7xl tabular-nums"
