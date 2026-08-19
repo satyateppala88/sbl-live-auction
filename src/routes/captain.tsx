@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { captainLogin, placeBid } from "@/lib/auction.functions";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { RosterSlots } from "@/components/RosterSlots";
+import { ShuttleIcon } from "@/components/ShuttleIcon";
+import { CountUp } from "@/components/CountUp";
+import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import {
   useAuctionData,
   rosterOf,
@@ -17,6 +20,7 @@ import {
   REQUIREMENT,
   type Team,
 } from "@/lib/auction-data";
+
 
 export const Route = createFileRoute("/captain")({
   head: () => ({
@@ -98,13 +102,18 @@ function CaptainLogin({
   }
 
   return (
-    <main className="arena-bg min-h-screen px-4 py-10">
+    <main className="arena-bg court-lines min-h-screen px-4 py-10">
+      <div className="court-lines-layer" aria-hidden />
       <div className="mx-auto max-w-md">
         <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground">
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
-        <h1 className="mt-4 text-3xl font-black uppercase">Captain check-in</h1>
+        <div className="animate-rise-in mt-4 flex items-center gap-2">
+          <ShuttleIcon className="text-shuttle h-7 w-7" />
+          <h1 className="font-display text-4xl uppercase leading-none">Captain check-in</h1>
+        </div>
         <p className="mt-1 text-sm text-muted-foreground">Pick your team, then enter your PIN.</p>
+
 
         <div className="mt-6 grid gap-2">
           {teams.map((t) => (
@@ -196,30 +205,39 @@ function BiddingRoom({
     }
   }
 
+  const moment = useAuctionMoment(players, teams);
+
   return (
-    <main className="arena-bg min-h-screen px-4 pb-32 pt-6">
+    <main className="arena-bg court-lines min-h-screen px-4 pb-32 pt-6">
+      <div className="court-lines-layer" aria-hidden />
+      <AuctionMomentOverlay moment={moment} />
       <div className="mx-auto max-w-md">
         <header className="flex items-center gap-3">
           <span className="h-9 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
           <div className="flex-1">
-            <h1 className="text-lg font-bold leading-tight">{team.name}</h1>
+            <h1 className="font-display text-xl uppercase leading-tight">{team.name}</h1>
             <p className="text-xs text-muted-foreground">{team.captain_name}</p>
           </div>
+          <ShuttleIcon className="text-shuttle/50 h-5 w-5" />
           <button onClick={onLogout} className="text-xs text-muted-foreground underline">
             switch
           </button>
         </header>
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-          <Stat label="Budget" value={`${Number(team.remaining_budget)}`} />
-          <Stat label="Roster" value={`${filled}/${team.max_roster_size}`} />
-          <Stat label="Max bid" value={`${Math.max(0, cap)}`} />
+          <Stat label="Budget" value={Number(team.remaining_budget)} gold />
+          <Stat label="Roster" value={filled} suffix={`/${team.max_roster_size}`} />
+          <Stat label="Max bid" value={Math.max(0, cap)} />
         </div>
 
-        <section className="glow-card mt-5 rounded-2xl border border-border bg-card p-5 text-center">
+        <section
+          className={`mt-5 rounded-2xl border bg-card/90 p-5 text-center backdrop-blur ${
+            player && state?.bidding_open ? "smash-card border-accent/40" : "glow-card border-border"
+          }`}
+        >
           {player ? (
-            <>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+            <div key={player.id} className="animate-block-in">
+              <p className="text-smash text-xs font-bold uppercase tracking-widest">
                 {state?.round_type === "unsold" ? "Second round" : "On the block"}
               </p>
               <PlayerAvatar
@@ -227,7 +245,7 @@ function BiddingRoom({
                 photoUrl={player.photo_url}
                 className="mx-auto mt-3 h-28 w-28 text-3xl"
               />
-              <h2 className="mt-3 text-3xl font-black uppercase">{player.name}</h2>
+              <h2 className="font-display mt-3 text-4xl uppercase leading-none">{player.name}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {CATEGORY_LABEL[player.category]} ·{" "}
                 {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"} · base{" "}
@@ -237,18 +255,19 @@ function BiddingRoom({
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   Current bid
                 </p>
-                <p className="text-gold text-6xl font-black tabular-nums">
-                  {leading ? Number(leading.amount) : Number(player.base_price)}
+                <p className="text-gold font-display text-6xl tabular-nums">
+                  <CountUp value={leading ? Number(leading.amount) : Number(player.base_price)} />
                 </p>
                 <p className="mt-1 text-sm font-semibold" style={{ color: leadingTeam?.color }}>
                   {leadingTeam ? `${leadingTeam.name} leading` : "No bids yet"}
                 </p>
               </div>
-            </>
+            </div>
           ) : (
             <p className="py-10 text-muted-foreground">Waiting for the organizer…</p>
           )}
         </section>
+
 
         <section className="mt-5">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -322,11 +341,27 @@ function BiddingRoom({
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  suffix,
+  gold,
+}: {
+  label: string;
+  value: number;
+  suffix?: string;
+  gold?: boolean;
+}) {
   return (
-    <div className="rounded-xl border border-border bg-card px-2 py-3">
+    <div className="rounded-xl border border-border bg-card/80 px-2 py-3 backdrop-blur">
       <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p>
-      <p className="text-xl font-bold tabular-nums">{value}</p>
+      <p
+        className={`font-display text-2xl tabular-nums ${gold ? "text-gold-solid" : "text-foreground"}`}
+      >
+        <CountUp value={value} duration={350} />
+        {suffix}
+      </p>
     </div>
   );
+
 }

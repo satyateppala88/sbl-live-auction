@@ -188,19 +188,23 @@ function AdminConsole({
           <TabsContent value="auction" className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
             <div className="glow-card rounded-2xl border border-border bg-card p-5">
               {player ? (
-                <>
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                <div key={player.id} className="animate-block-in">
+                  <p className="text-smash text-xs font-bold uppercase tracking-widest">
                     On the block {state?.round_type === "unsold" && "· second round"}
                   </p>
-                  <h2 className="text-4xl font-black uppercase">{player.name}</h2>
+                  <h2 className="font-display text-5xl uppercase leading-none">{player.name}</h2>
                   <p className="text-sm text-muted-foreground">
                     {CATEGORY_LABEL[player.category]} ·{" "}
                     {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"} · base{" "}
                     {Number(player.base_price)}
                   </p>
-                  <p className="text-gold mt-4 text-7xl font-black tabular-nums">
+                  <p
+                    key={leading?.id ?? "none"}
+                    className="text-gold font-display animate-bid-pop mt-4 origin-left text-7xl tabular-nums"
+                  >
                     {leading ? Number(leading.amount) : Number(player.base_price)}
                   </p>
+
                   <p className="font-semibold" style={{ color: leadingTeam?.color }}>
                     {leadingTeam ? `${leadingTeam.name} leading` : "No bids yet"}
                   </p>
@@ -267,7 +271,8 @@ function AdminConsole({
                       )}
                     </div>
                   </div>
-                </>
+                </div>
+
               ) : (
                 <p className="py-16 text-center text-muted-foreground">
                   No player on the block. Pick one from the list →

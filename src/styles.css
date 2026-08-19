@@ -5,17 +5,10 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * SBL Live Auction design system.
+ * Court-under-stadium-lights palette: deep court navy/green base,
+ * cream "shuttlecock" highlights, gold for money, smash orange-red for live moments.
+ * All colors MUST use oklch.
  */
 
 @theme inline {
@@ -61,51 +54,68 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-gold-solid: var(--gold-solid);
+  --color-gold-line: var(--gold-solid);
+  --color-smash: var(--smash);
+  --color-shuttle: var(--shuttle);
+  --color-court: var(--court-line);
+  --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.875rem;
-  --background: oklch(0.16 0.03 264);
-  --foreground: oklch(0.97 0.01 90);
-  --card: oklch(0.21 0.035 265);
-  --card-foreground: oklch(0.97 0.01 90);
-  --popover: oklch(0.21 0.035 265);
-  --popover-foreground: oklch(0.97 0.01 90);
-  --primary: oklch(0.78 0.18 68);
-  --primary-foreground: oklch(0.18 0.04 60);
-  --secondary: oklch(0.28 0.05 268);
-  --secondary-foreground: oklch(0.97 0.01 90);
-  --muted: oklch(0.26 0.04 266);
-  --muted-foreground: oklch(0.72 0.03 260);
-  --accent: oklch(0.62 0.21 350);
+  /* deep court navy-green under floodlights */
+  --background: oklch(0.18 0.04 190);
+  --foreground: oklch(0.97 0.012 95);
+  --card: oklch(0.23 0.045 192);
+  --card-foreground: oklch(0.97 0.012 95);
+  --popover: oklch(0.23 0.045 192);
+  --popover-foreground: oklch(0.97 0.012 95);
+  --primary: oklch(0.8 0.16 85);
+  --primary-foreground: oklch(0.2 0.04 80);
+  --secondary: oklch(0.29 0.05 195);
+  --secondary-foreground: oklch(0.97 0.012 95);
+  --muted: oklch(0.27 0.04 194);
+  --muted-foreground: oklch(0.74 0.025 190);
+  --accent: oklch(0.65 0.21 32);
   --accent-foreground: oklch(0.98 0.01 90);
   --destructive: oklch(0.6 0.23 27);
   --destructive-foreground: oklch(0.98 0.01 90);
-  --success: oklch(0.72 0.18 150);
+  --success: oklch(0.74 0.17 155);
   --success-foreground: oklch(0.18 0.04 150);
-  --border: oklch(0.32 0.04 266);
-  --input: oklch(0.3 0.04 266);
-  --ring: oklch(0.78 0.18 68);
+  --border: oklch(0.33 0.045 194);
+  --input: oklch(0.31 0.045 194);
+  --ring: oklch(0.8 0.16 85);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.21 0.035 265);
-  --sidebar-foreground: oklch(0.97 0.01 90);
-  --sidebar-primary: oklch(0.78 0.18 68);
-  --sidebar-primary-foreground: oklch(0.18 0.04 60);
-  --sidebar-accent: oklch(0.28 0.05 268);
-  --sidebar-accent-foreground: oklch(0.97 0.01 90);
-  --sidebar-border: oklch(0.32 0.04 266);
-  --sidebar-ring: oklch(0.78 0.18 68);
+  --sidebar: oklch(0.23 0.045 192);
+  --sidebar-foreground: oklch(0.97 0.012 95);
+  --sidebar-primary: oklch(0.8 0.16 85);
+  --sidebar-primary-foreground: oklch(0.2 0.04 80);
+  --sidebar-accent: oklch(0.29 0.05 195);
+  --sidebar-accent-foreground: oklch(0.97 0.012 95);
+  --sidebar-border: oklch(0.33 0.045 194);
+  --sidebar-ring: oklch(0.8 0.16 85);
 
-  --gradient-arena: linear-gradient(140deg, oklch(0.24 0.07 300), oklch(0.18 0.04 250) 55%, oklch(0.22 0.08 40));
-  --gradient-gold: linear-gradient(100deg, oklch(0.85 0.16 85), oklch(0.72 0.2 45));
-  --shadow-glow: 0 0 0 1px oklch(0.78 0.18 68 / 0.35), 0 18px 50px -18px oklch(0.78 0.18 68 / 0.55);
+  --gold-solid: oklch(0.83 0.16 85);
+  --smash: oklch(0.65 0.21 32);
+  --shuttle: oklch(0.97 0.015 95);
+  --court-line: oklch(0.97 0.015 95 / 0.09);
+
+  --gradient-arena: radial-gradient(
+      ellipse 90% 55% at 50% -10%,
+      oklch(0.34 0.08 190 / 0.9),
+      transparent 70%
+    ),
+    linear-gradient(160deg, oklch(0.2 0.05 195), oklch(0.16 0.035 200) 55%, oklch(0.21 0.06 160));
+  --gradient-gold: linear-gradient(100deg, oklch(0.9 0.13 95), oklch(0.76 0.18 60));
+  --shadow-glow: 0 0 0 1px oklch(0.8 0.16 85 / 0.3), 0 18px 50px -18px oklch(0.8 0.16 85 / 0.5);
+  --shadow-smash: 0 0 0 1px oklch(0.65 0.21 32 / 0.45), 0 18px 50px -18px oklch(0.65 0.21 32 / 0.6);
 }
-
-
 
 @layer base {
   * {
@@ -115,12 +125,50 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
   }
 }
+
+/* ---------- surfaces ---------- */
 
 @utility arena-bg {
   background-image: var(--gradient-arena);
   background-attachment: fixed;
+}
+
+/* faint badminton court lines as page texture */
+@utility court-lines {
+  position: relative;
+  isolation: isolate;
+}
+
+@utility court-lines-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--court-line) 2px, transparent 2px),
+    linear-gradient(to bottom, var(--court-line) 2px, transparent 2px);
+  background-size: 160px 160px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black, transparent 75%);
+  animation: court-drift 40s linear infinite;
+}
+
+@utility court-divider {
+  height: 1px;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--court-line) 0 28px,
+    transparent 28px 44px
+  );
 }
 
 @utility text-gold {
@@ -129,16 +177,231 @@
   color: transparent;
 }
 
+@utility font-display {
+  font-family: var(--font-display);
+}
+
 @utility glow-card {
   box-shadow: var(--shadow-glow);
 }
 
-@keyframes bid-pop {
-  0% { transform: scale(0.88); opacity: 0.4; }
-  60% { transform: scale(1.06); }
-  100% { transform: scale(1); opacity: 1; }
+@utility smash-card {
+  box-shadow: var(--shadow-smash);
 }
 
+@utility lift-card {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+@utility lift-card-hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ---------- keyframes ---------- */
+
+@keyframes bid-pop {
+  0% {
+    transform: scale(0.86);
+    filter: brightness(1.9);
+  }
+  55% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes block-in {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slot-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes rise-in {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes stamp {
+  0% {
+    opacity: 0;
+    transform: scale(2.4) rotate(-14deg);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(0.94) rotate(-8deg);
+  }
+  60% {
+    transform: scale(1.02) rotate(-8deg);
+  }
+  85% {
+    opacity: 1;
+    transform: scale(1) rotate(-8deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1) rotate(-8deg);
+  }
+}
+
+@keyframes shake-out {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(-8px);
+  }
+  30% {
+    transform: translateX(8px);
+  }
+  45% {
+    transform: translateX(-5px);
+  }
+  60% {
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes shuttle-arc {
+  0% {
+    opacity: 0;
+    transform: translate3d(-70px, 40px, 0) rotate(-70deg) scale(0.7);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes shuttle-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(4deg);
+  }
+}
+
+@keyframes court-drift {
+  0% {
+    background-position:
+      0 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      160px 80px,
+      160px 80px;
+  }
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- animation utilities ---------- */
+
 @utility animate-bid-pop {
-  animation: bid-pop 0.35s ease-out;
+  animation: bid-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility animate-block-in {
+  animation: block-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility animate-slot-in {
+  animation: slot-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility animate-rise-in {
+  animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-stamp {
+  animation: stamp 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@utility animate-shake-out {
+  animation: shake-out 0.75s ease-in-out forwards;
+}
+
+@utility animate-shuttle-arc {
+  animation: shuttle-arc 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-shuttle-float {
+  animation: shuttle-float 5s ease-in-out infinite;
+}
+
+@utility animate-live-pulse {
+  animation: live-pulse 1.4s ease-in-out infinite;
+}
+
+@utility stagger-1 {
+  animation-delay: 90ms;
+}
+@utility stagger-2 {
+  animation-delay: 180ms;
+}
+@utility stagger-3 {
+  animation-delay: 270ms;
+}
+@utility stagger-4 {
+  animation-delay: 360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
