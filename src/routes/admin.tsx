@@ -516,6 +516,13 @@ function TeamsTab({
           <div key={t.id} className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-2">
               <span className="h-6 w-1.5 rounded-full" style={{ backgroundColor: t.color }} />
+              <SinglePhotoButton
+                kind="team"
+                id={t.id}
+                name={t.captain_name || t.name}
+                photoUrl={t.captain_photo_url}
+                passcode={passcode}
+              />
               <div className="flex-1">
                 <p className="font-semibold">{t.name}</p>
                 <p className="text-xs text-muted-foreground">
