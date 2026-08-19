@@ -213,10 +213,10 @@ function BiddingRoom({
   const moment = useAuctionMoment(players, teams);
 
   return (
-    <main className="arena-bg court-lines min-h-screen px-4 pb-32 pt-6">
+    <main className="arena-bg court-lines min-h-screen px-4 pb-32 pt-6 lg:h-[100dvh] lg:overflow-hidden lg:pb-28">
       <div className="court-lines-layer" aria-hidden />
       <AuctionMomentOverlay moment={moment} />
-      <div className="mx-auto max-w-md">
+      <div className="mx-auto max-w-md lg:max-w-6xl">
         <header className="flex items-center gap-3">
           <TeamCrest team={team} size={48} />
           <div className="flex-1">
@@ -235,8 +235,9 @@ function BiddingRoom({
           <Stat label="Max bid" value={Math.max(0, cap)} />
         </div>
 
+        <div className="mt-5 lg:grid lg:grid-cols-[1.15fr_1fr] lg:gap-5 lg:items-start">
         <section
-          className={`mt-5 rounded-2xl border bg-card/90 p-5 text-center backdrop-blur ${
+          className={`rounded-2xl border bg-card/90 p-5 text-center backdrop-blur ${
             player && state?.bidding_open ? "smash-card border-accent/40" : "glow-card border-border"
           }`}
         >
@@ -282,9 +283,10 @@ function BiddingRoom({
         </section>
 
 
-        <section className="mt-5">
+        <div className="mt-5 space-y-5 lg:mt-0">
+        <section>
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Your squad
+            Your squad · build it together
           </h3>
           <div className="mt-2 flex flex-wrap gap-2">
             {(["male", "female", "kid"] as const).map((c) => (
@@ -305,7 +307,7 @@ function BiddingRoom({
           </div>
         </section>
 
-        <section className="mt-6">
+        <section>
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Other teams
           </h3>
@@ -328,10 +330,13 @@ function BiddingRoom({
               ))}
           </div>
         </section>
+        </div>
+        </div>
       </div>
 
       <div className="fixed inset-x-0 bottom-0 border-t border-border bg-background/95 p-4 backdrop-blur">
         <div className="mx-auto max-w-md">
+          {player && <BidAdvisor advice={advice} />}
           <Button
             size="lg"
             className="h-16 w-full text-lg font-black uppercase"
