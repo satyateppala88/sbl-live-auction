@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Gavel, ArrowLeft } from "lucide-react";
+import { Loader2, Gavel, ArrowLeft, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { captainLogin, placeBid } from "@/lib/auction.functions";
@@ -219,10 +219,9 @@ function BiddingRoom({
             <h1 className="font-display text-xl uppercase leading-tight">{team.name}</h1>
             <p className="text-xs text-muted-foreground">{team.captain_name}</p>
           </div>
-          <ShuttleIcon className="text-shuttle/50 h-5 w-5" />
-          <button onClick={onLogout} className="text-xs text-muted-foreground underline">
-            switch
-          </button>
+          <Button variant="secondary" size="sm" onClick={onLogout}>
+            <LogOut className="mr-1 h-4 w-4" /> Sign out
+          </Button>
         </header>
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">

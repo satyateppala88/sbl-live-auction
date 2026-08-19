@@ -33,7 +33,6 @@ export function PlayerAvatar({
         <img
           src={photoUrl}
           alt={name}
-          loading="lazy"
           className="h-full w-full object-cover"
         />
       ) : (
