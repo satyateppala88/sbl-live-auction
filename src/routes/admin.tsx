@@ -101,12 +101,19 @@ function AdminPage() {
 
   if (!passcode) {
     return (
-      <main className="arena-bg flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-6">
+      <main className="arena-bg star-field relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+        <div className="star-field-layer" aria-hidden />
+        <PlayerSilhouette className="text-foreground/[0.04] pointer-events-none absolute -bottom-10 -left-10 hidden h-80 w-80 -rotate-6 md:block" />
+        <div className="glow-card relative w-full max-w-sm rounded-[2rem] border border-border bg-card p-6">
           <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground">
             <ArrowLeft className="h-4 w-4" /> Home
           </Link>
-          <h1 className="mt-3 text-2xl font-black uppercase">Organizer access</h1>
+          <div className="mt-3 flex items-center gap-2">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <Gavel className="h-5 w-5" />
+            </span>
+            <h1 className="text-2xl font-black uppercase">Organizer access</h1>
+          </div>
           <div className="mt-4 flex gap-2">
             <Input
               type="password"
