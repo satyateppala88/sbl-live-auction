@@ -1,7 +1,10 @@
 import { cn } from "@/lib/utils";
 
 function initials(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
+  // Strip anything that isn't a letter/space/hyphen before splitting, so placeholder
+  // names like "TBD (lottery)" don't leak stray punctuation into the initials.
+  const cleaned = name.replace(/[^\p{L}\s-]/gu, " ");
+  const parts = cleaned.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "?";
   if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase();
   return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase();

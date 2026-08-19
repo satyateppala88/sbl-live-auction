@@ -101,8 +101,20 @@ export async function sellServer(passcode: string) {
     .eq("id", top.team_id);
   await db
     .from("auction_state")
-    .update({ current_player_id: null, bidding_open: false, updated_at: new Date().toISOString() })
+    .update({
+      current_player_id: null,
+      bidding_open: false,
+      block_started_at: null,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", 1);
+  await db.from("auction_log").insert({
+    event_type: "sold",
+    player_id: state.current_player_id,
+    team_id: top.team_id,
+    amount: top.amount,
+  });
+
 
   return { teamId: top.team_id, amount: Number(top.amount) };
 }
