@@ -3,6 +3,7 @@ import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { RosterSlots } from "@/components/RosterSlots";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
 import { CountUp } from "@/components/CountUp";
+import { TeamCrest } from "@/components/TeamCrest";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import { useAuctionData, topBid, CATEGORY_LABEL } from "@/lib/auction-data";
 
@@ -90,11 +91,13 @@ function WatchPage() {
                     <CountUp value={amount} />
                   </p>
                   <p
-                    className="mt-1 text-lg font-bold"
+                    className="mt-1 flex items-center gap-2 text-lg font-bold"
                     style={leadingTeam ? { color: leadingTeam.color } : undefined}
                   >
+                    {leadingTeam && <TeamCrest team={leadingTeam} size={24} />}
                     {leadingTeam ? `${leadingTeam.name} leading` : "No bids yet"}
                   </p>
+
                 </div>
               </div>
             </div>
@@ -107,20 +110,23 @@ function WatchPage() {
 
         <div className="court-divider mt-8" aria-hidden />
 
-        <section className="mt-6 grid gap-4 lg:grid-cols-2">
+        <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {teams.map((t) => (
             <div
               key={t.id}
               className="lift-card rounded-2xl border border-border bg-card/85 p-4 backdrop-blur hover:[transform:translateY(-2px)]"
             >
-              <div className="flex items-center gap-2">
-                <span className="h-6 w-1.5 rounded-full" style={{ backgroundColor: t.color }} />
-                <span className="font-display flex-1 text-xl uppercase">{t.name}</span>
-                <span className="text-gold font-display text-2xl tabular-nums">
-                  <CountUp value={Number(t.remaining_budget)} />
+              <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
+                <TeamCrest team={t} size={48} />
+                <span className="font-display min-w-0 truncate text-xl uppercase">{t.name}</span>
+                <span className="flex items-baseline gap-1">
+                  <span className="text-gold font-display text-2xl tabular-nums">
+                    <CountUp value={Number(t.remaining_budget)} />
+                  </span>
+                  <span className="text-xs text-muted-foreground">pts left</span>
                 </span>
-                <span className="text-xs text-muted-foreground">pts left</span>
               </div>
+
               <div className="mt-4">
                 <RosterSlots team={t} players={players} size="sm" />
               </div>

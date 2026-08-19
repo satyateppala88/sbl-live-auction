@@ -1,4 +1,5 @@
 import { PlayerAvatar } from "./PlayerAvatar";
+import { TeamCrest } from "./TeamCrest";
 import { CATEGORY_LABEL, type Player, type Team, type Tier } from "@/lib/auction-data";
 
 function statusMeta(p: Player, teams: Team[]) {
@@ -9,6 +10,7 @@ function statusMeta(p: Player, teams: Team[]) {
         text: `${t?.name ?? "Sold"} · ${Number(p.sold_price)} pts`,
         className: "bg-success/15 text-success",
         accent: t?.color,
+        team: t,
       };
     }
     case "on_auction":
@@ -21,6 +23,7 @@ function statusMeta(p: Player, teams: Team[]) {
       return { text: "Available", className: "bg-muted text-muted-foreground" };
   }
 }
+
 
 export function RosterBoard({
   players,
@@ -62,10 +65,12 @@ export function RosterBoard({
                         {Number(p.base_price)}
                       </p>
                       <span
-                        className={`mt-1 inline-block max-w-full truncate rounded-full px-2 py-0.5 text-[10px] ${meta.className}`}
+                        className={`mt-1 inline-flex max-w-full items-center gap-1 rounded-full px-2 py-0.5 text-[10px] ${meta.className}`}
                       >
-                        {meta.text}
+                        {"team" in meta && meta.team && <TeamCrest team={meta.team} size={16} />}
+                        <span className="truncate">{meta.text}</span>
                       </span>
+
                     </div>
                   </div>
                 );

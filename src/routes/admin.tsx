@@ -30,6 +30,7 @@ import {
   resetAuction,
 } from "@/lib/auction.functions";
 import { RosterBoard } from "@/components/RosterBoard";
+import { TeamCrest } from "@/components/TeamCrest";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
@@ -396,15 +397,16 @@ function Dashboard({ teams, players }: { teams: Team[]; players: Player[] }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-4">
       <h3 className="text-xs uppercase tracking-widest text-muted-foreground">Live dashboard</h3>
-      <div className="mt-2 grid gap-1.5">
+      <div className="mt-2 grid gap-1.5 lg:grid-cols-2">
         {teams.map((t) => {
           const roster = rosterOf(players, t.id);
           const c = categoryCounts(roster);
           return (
             <div key={t.id} className="rounded-lg border border-border px-3 py-2">
-              <div className="flex items-center gap-2">
-                <span className="h-4 w-1 rounded-full" style={{ backgroundColor: t.color }} />
-                <span className="flex-1 font-semibold">{t.name}</span>
+              <div className="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2">
+                <TeamCrest team={t} size={28} />
+                <span className="min-w-0 truncate font-semibold">{t.name}</span>
+
                 <span className="text-sm text-muted-foreground">
                   {roster.length}/{t.max_roster_size}
                 </span>
@@ -520,7 +522,7 @@ function TeamsTab({
         {teams.map((t) => (
           <div key={t.id} className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-2">
-              <span className="h-6 w-1.5 rounded-full" style={{ backgroundColor: t.color }} />
+              <TeamCrest team={t} size={40} />
               <SinglePhotoButton
                 kind="team"
                 id={t.id}
