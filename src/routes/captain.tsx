@@ -12,6 +12,7 @@ import { CountUp } from "@/components/CountUp";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { TeamCrest } from "@/components/TeamCrest";
+import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import {
   useAuctionData,
   rosterOf,
