@@ -101,22 +101,20 @@ function Index() {
         </div>
 
         {teams.length > 0 && (
-          <div className="animate-rise-in stagger-4 mt-10 grid gap-2 text-left">
+          <div className="animate-rise-in stagger-4 mt-10 grid gap-2 text-left sm:grid-cols-2">
             {teams.map((t) => {
               const roster = rosterOf(players, t.id);
               return (
                 <div
                   key={t.id}
-                  className="lift-card flex items-center gap-3 rounded-xl border border-border bg-card/70 px-4 py-3 hover:[transform:translateY(-2px)]"
+                  className="lift-card grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-border bg-card/70 px-4 py-3 hover:[transform:translateY(-2px)]"
                 >
-                  <span
-                    className="h-8 w-1.5 rounded-full"
-                    style={{ backgroundColor: t.color }}
-                    aria-hidden
-                  />
-                  <span className="flex-1 font-semibold">{t.name}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {roster.length}/{t.max_roster_size} players
+                  <TeamCrest team={t} size={44} />
+                  <span className="min-w-0">
+                    <span className="block truncate font-semibold">{t.name}</span>
+                    <span className="block text-xs text-muted-foreground">
+                      {roster.length}/{t.max_roster_size} players
+                    </span>
                   </span>
                   <span className="text-gold-solid font-mono font-bold">
                     {Number(t.remaining_budget)} pts
@@ -126,6 +124,7 @@ function Index() {
             })}
           </div>
         )}
+
       </div>
     </main>
   );
