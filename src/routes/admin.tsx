@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Shuffle, Play, Pause } from "lucide-react";
+import { ArrowLeft, Loader2, Shuffle, Play, Pause, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,12 +28,16 @@ import {
   relistPlayer,
   lotteryAssign,
   resetAuction,
+  resetTimer,
 } from "@/lib/auction.functions";
 import { RosterBoard } from "@/components/RosterBoard";
 import { TeamCrest } from "@/components/TeamCrest";
+import { CountdownTimer } from "@/components/CountdownTimer";
+import { ChatPanel } from "@/components/ChatPanel";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
+  useAuctionLog,
   rosterOf,
   categoryCounts,
   topBid,
@@ -42,6 +46,7 @@ import {
   type Cat,
   type Player,
   type Team,
+  type Bid,
 } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/admin")({
