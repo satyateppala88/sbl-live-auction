@@ -57,6 +57,7 @@
   --color-gold-solid: var(--gold-solid);
   --color-gold-line: var(--gold-solid);
   --color-smash: var(--smash);
+  --color-star: var(--star-red);
   --color-shuttle: var(--shuttle);
   --color-court: var(--court-line);
   --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
@@ -103,6 +104,7 @@
 
   --gold-solid: oklch(0.83 0.16 85);
   --smash: oklch(0.65 0.21 32);
+  --star-red: oklch(0.62 0.24 25);
   --shuttle: oklch(0.97 0.015 95);
   --court-line: oklch(0.97 0.015 95 / 0.09);
 
@@ -585,6 +587,94 @@
 
 @utility animate-orbit {
   animation: orbit var(--orbit-duration, 18s) linear infinite;
+}
+
+/* ---------- electric / velocity motion (badminton = fastest sport) ---------- */
+
+@keyframes shuttle-zip {
+  0% {
+    transform: translate(-120%, 60%) rotate(-38deg) scale(0.9);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  38% {
+    transform: translate(160%, -80%) rotate(-38deg) scale(1);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(160%, -80%) rotate(-38deg) scale(1);
+    opacity: 0;
+  }
+}
+
+@utility animate-shuttle-zip {
+  animation: shuttle-zip 4.5s cubic-bezier(0.5, 0, 0.2, 1) infinite;
+}
+
+@keyframes headline-sweep {
+  0% {
+    background-position: -140% 0;
+  }
+  55%,
+  100% {
+    background-position: 240% 0;
+  }
+}
+
+@utility text-sweep {
+  background-image: linear-gradient(
+    100deg,
+    var(--gold-solid) 0%,
+    var(--gold-solid) 38%,
+    oklch(0.99 0.02 95) 50%,
+    var(--gold-solid) 62%,
+    var(--gold-solid) 100%
+  );
+  background-size: 240% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: headline-sweep 4s ease-in-out infinite;
+}
+
+@keyframes energy-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.62 0.24 25 / 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px oklch(0.62 0.24 25 / 0);
+  }
+}
+
+@utility animate-energy-pulse {
+  animation: energy-pulse 1.6s ease-out infinite;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+
+@keyframes speed-drift {
+  to {
+    background-position: 120px 0;
+  }
+}
+
+@utility speed-lines {
+  background-image: repeating-linear-gradient(
+    -38deg,
+    oklch(0.97 0.015 95 / 0.05) 0 2px,
+    transparent 2px 22px
+  );
+  animation: speed-drift 3.2s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

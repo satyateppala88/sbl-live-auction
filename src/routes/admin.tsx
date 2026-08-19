@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Shuffle, Play, Pause, RotateCcw, Gavel } from "lucide-react";
+import { ArrowLeft, Loader2, Shuffle, Play, Pause, RotateCcw, Gavel, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -131,15 +131,27 @@ function AdminPage() {
     );
   }
 
-  return <AdminConsole data={data} passcode={passcode} />;
+  return (
+    <AdminConsole
+      data={data}
+      passcode={passcode}
+      onSignOut={() => {
+        localStorage.removeItem(KEY);
+        setPasscode(null);
+        setEntry("");
+      }}
+    />
+  );
 }
 
 function AdminConsole({
   data,
   passcode,
+  onSignOut,
 }: {
   data: ReturnType<typeof useAuctionData>;
   passcode: string;
+  onSignOut: () => void;
 }) {
   const { teams, players, tiers, bids, state } = data;
   const player = players.find((p) => p.id === state?.current_player_id) ?? null;
@@ -185,11 +197,14 @@ function AdminConsole({
               onBlur={(e) =>
                 void run(() =>
                   setIncrement({ data: { passcode, increment: Number(e.target.value) || 1 } }),
-                )
-              }
-            />
-          </div>
-        </header>
+                 )
+               }
+             />
+            <Button variant="secondary" size="sm" onClick={onSignOut}>
+              <LogOut className="mr-1 h-4 w-4" /> Sign out
+            </Button>
+           </div>
+         </header>
 
         <Tabs defaultValue="auction" className="mt-6">
           <TabsList>
