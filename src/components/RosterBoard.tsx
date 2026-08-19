@@ -46,7 +46,7 @@ export function RosterBoard({
                 return (
                   <div
                     key={p.id}
-                    className="overflow-hidden rounded-xl border border-border bg-card"
+                    className="lift-card overflow-hidden rounded-xl border border-border bg-card hover:[transform:translateY(-3px)] hover:[box-shadow:var(--shadow-glow)]"
                     style={meta.accent ? { borderColor: meta.accent } : undefined}
                   >
                     <PlayerAvatar
@@ -55,6 +55,7 @@ export function RosterBoard({
                       className="aspect-square w-full rounded-none text-3xl"
                     />
                     <div className="p-2">
+
                       <p className="truncate text-sm font-semibold">{p.name}</p>
                       <p className="truncate text-[11px] text-muted-foreground">
                         {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"} · base{" "}
