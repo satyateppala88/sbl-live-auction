@@ -11,6 +11,7 @@ export type Team = {
   starting_budget: number;
   remaining_budget: number;
   max_roster_size: number;
+  captain_photo_url: string | null;
 };
 export type Tier = { id: string; label: string; base_price: number; sort_order: number };
 export type Player = {
@@ -23,6 +24,7 @@ export type Player = {
   status: "available" | "on_auction" | "sold" | "unsold" | "in_unsold_pool";
   sold_to_team_id: string | null;
   sold_price: number | null;
+  photo_url: string | null;
 };
 export type Bid = {
   id: string;

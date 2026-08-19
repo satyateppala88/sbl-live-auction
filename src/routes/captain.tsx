@@ -5,6 +5,8 @@ import { Loader2, Gavel, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { captainLogin, placeBid } from "@/lib/auction.functions";
+import { PlayerAvatar } from "@/components/PlayerAvatar";
+import { RosterSlots } from "@/components/RosterSlots";
 import {
   useAuctionData,
   rosterOf,
@@ -220,7 +222,12 @@ function BiddingRoom({
               <p className="text-xs uppercase tracking-widest text-muted-foreground">
                 {state?.round_type === "unsold" ? "Second round" : "On the block"}
               </p>
-              <h2 className="mt-1 text-3xl font-black uppercase">{player.name}</h2>
+              <PlayerAvatar
+                name={player.name}
+                photoUrl={player.photo_url}
+                className="mx-auto mt-3 h-28 w-28 text-3xl"
+              />
+              <h2 className="mt-3 text-3xl font-black uppercase">{player.name}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {CATEGORY_LABEL[player.category]} ·{" "}
                 {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"} · base{" "}
@@ -261,19 +268,8 @@ function BiddingRoom({
               </span>
             ))}
           </div>
-          <div className="mt-3 grid gap-1.5">
-            {roster.map((p) => (
-              <div
-                key={p.id}
-                className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2 text-sm"
-              >
-                <span>{p.name}</span>
-                <span className="font-mono text-primary">{Number(p.sold_price)} pts</span>
-              </div>
-            ))}
-            {roster.length === 0 && (
-              <p className="text-sm text-muted-foreground">No players won yet.</p>
-            )}
+          <div className="mt-3 rounded-xl border border-border bg-card p-3">
+            <RosterSlots team={team} players={players} size="sm" />
           </div>
         </section>
 

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Gavel, Users } from "lucide-react";
+import { Gavel, Users, Tv } from "lucide-react";
 import { useAuctionData, rosterOf } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/")({
@@ -63,7 +63,18 @@ function Index() {
               Set up teams and players, run the block, mark sold or unsold.
             </p>
           </Link>
+          <Link
+            to="/watch"
+            className="group rounded-2xl border border-border bg-card p-6 text-left transition-transform hover:-translate-y-1 sm:col-span-2"
+          >
+            <Tv className="h-7 w-7 text-gold" />
+            <h2 className="mt-3 text-xl font-bold">Watch live</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Spectator broadcast — current player, live bids and every squad filling up. No login.
+            </p>
+          </Link>
         </div>
+
 
         {teams.length > 0 && (
           <div className="mt-10 grid gap-2 text-left">

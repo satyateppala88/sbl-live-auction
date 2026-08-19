@@ -111,6 +111,7 @@ export type Database = {
           id: string
           name: string
           original_base_price: number
+          photo_url: string | null
           sold_price: number | null
           sold_to_team_id: string | null
           status: Database["public"]["Enums"]["player_status"]
@@ -123,6 +124,7 @@ export type Database = {
           id?: string
           name: string
           original_base_price?: number
+          photo_url?: string | null
           sold_price?: number | null
           sold_to_team_id?: string | null
           status?: Database["public"]["Enums"]["player_status"]
@@ -135,6 +137,7 @@ export type Database = {
           id?: string
           name?: string
           original_base_price?: number
+          photo_url?: string | null
           sold_price?: number | null
           sold_to_team_id?: string | null
           status?: Database["public"]["Enums"]["player_status"]
@@ -183,6 +186,7 @@ export type Database = {
       teams: {
         Row: {
           captain_name: string
+          captain_photo_url: string | null
           color: string
           created_at: string
           id: string
@@ -193,6 +197,7 @@ export type Database = {
         }
         Insert: {
           captain_name?: string
+          captain_photo_url?: string | null
           color?: string
           created_at?: string
           id?: string
@@ -203,6 +208,7 @@ export type Database = {
         }
         Update: {
           captain_name?: string
+          captain_photo_url?: string | null
           color?: string
           created_at?: string
           id?: string

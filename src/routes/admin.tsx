@@ -29,6 +29,8 @@ import {
   lotteryAssign,
   resetAuction,
 } from "@/lib/auction.functions";
+import { RosterBoard } from "@/components/RosterBoard";
+import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
   rosterOf,
@@ -179,6 +181,7 @@ function AdminConsole({
             <TabsTrigger value="auction">Auction</TabsTrigger>
             <TabsTrigger value="teams">Teams</TabsTrigger>
             <TabsTrigger value="players">Players</TabsTrigger>
+            <TabsTrigger value="board">Roster Board</TabsTrigger>
             <TabsTrigger value="tools">Unsold &amp; Lottery</TabsTrigger>
           </TabsList>
 
@@ -317,6 +320,10 @@ function AdminConsole({
 
           <TabsContent value="players" className="mt-4">
             <PlayersTab data={data} passcode={passcode} />
+          </TabsContent>
+
+          <TabsContent value="board" className="mt-4">
+            <RosterBoard players={players} teams={teams} tiers={tiers} />
           </TabsContent>
 
           <TabsContent value="tools" className="mt-4 grid gap-4 lg:grid-cols-2">
@@ -509,6 +516,13 @@ function TeamsTab({
           <div key={t.id} className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-2">
               <span className="h-6 w-1.5 rounded-full" style={{ backgroundColor: t.color }} />
+              <SinglePhotoButton
+                kind="team"
+                id={t.id}
+                name={t.captain_name || t.name}
+                photoUrl={t.captain_photo_url}
+                passcode={passcode}
+              />
               <div className="flex-1">
                 <p className="font-semibold">{t.name}</p>
                 <p className="text-xs text-muted-foreground">
@@ -653,6 +667,8 @@ function PlayersTab({
           </div>
         </div>
 
+        <BulkPhotoUpload players={players} teams={teams} passcode={passcode} />
+
         <div className="rounded-2xl border border-border bg-card p-4">
           <h3 className="font-bold">Tiers</h3>
           <div className="mt-2 grid gap-1.5">
@@ -722,6 +738,13 @@ function PlayersTab({
             key={p.id}
             className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm"
           >
+            <SinglePhotoButton
+              kind="player"
+              id={p.id}
+              name={p.name}
+              photoUrl={p.photo_url}
+              passcode={passcode}
+            />
             <span className="flex-1 font-medium">{p.name}</span>
             <span className="text-xs text-muted-foreground">{CATEGORY_LABEL[p.category]}</span>
             <span className="text-xs text-muted-foreground">

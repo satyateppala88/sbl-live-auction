@@ -1,0 +1,81 @@
+import { PlayerAvatar } from "./PlayerAvatar";
+import { CATEGORY_LABEL, type Player, type Team, type Tier } from "@/lib/auction-data";
+
+function statusMeta(p: Player, teams: Team[]) {
+  switch (p.status) {
+    case "sold": {
+      const t = teams.find((x) => x.id === p.sold_to_team_id);
+      return {
+        text: `${t?.name ?? "Sold"} · ${Number(p.sold_price)} pts`,
+        className: "bg-success/15 text-success",
+        accent: t?.color,
+      };
+    }
+    case "on_auction":
+      return { text: "On the block", className: "bg-primary/20 text-primary animate-pulse" };
+    case "in_unsold_pool":
+      return { text: "Unsold pool", className: "bg-amber-500/15 text-amber-400" };
+    case "unsold":
+      return { text: "Unsold", className: "bg-destructive/15 text-destructive" };
+    default:
+      return { text: "Available", className: "bg-muted text-muted-foreground" };
+  }
+}
+
+export function RosterBoard({
+  players,
+  teams,
+  tiers,
+}: {
+  players: Player[];
+  teams: Team[];
+  tiers: Tier[];
+}) {
+  return (
+    <div className="grid gap-6">
+      {(["male", "female", "kid"] as const).map((cat) => {
+        const group = players.filter((p) => p.category === cat);
+        return (
+          <section key={cat}>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              {CATEGORY_LABEL[cat]} · {group.length}
+            </h3>
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+              {group.map((p) => {
+                const meta = statusMeta(p, teams);
+                return (
+                  <div
+                    key={p.id}
+                    className="overflow-hidden rounded-xl border border-border bg-card"
+                    style={meta.accent ? { borderColor: meta.accent } : undefined}
+                  >
+                    <PlayerAvatar
+                      name={p.name}
+                      photoUrl={p.photo_url}
+                      className="aspect-square w-full rounded-none text-3xl"
+                    />
+                    <div className="p-2">
+                      <p className="truncate text-sm font-semibold">{p.name}</p>
+                      <p className="truncate text-[11px] text-muted-foreground">
+                        {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"} · base{" "}
+                        {Number(p.base_price)}
+                      </p>
+                      <span
+                        className={`mt-1 inline-block max-w-full truncate rounded-full px-2 py-0.5 text-[10px] ${meta.className}`}
+                      >
+                        {meta.text}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+              {group.length === 0 && (
+                <p className="text-sm text-muted-foreground">No players in this category.</p>
+              )}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
