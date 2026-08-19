@@ -124,11 +124,8 @@ function CaptainLogin({
                 teamId === t.id ? "border-primary glow-card" : "border-border"
               }`}
             >
-              <span
-                className="h-8 w-1.5 rounded-full"
-                style={{ backgroundColor: t.color }}
-                aria-hidden
-              />
+              <TeamCrest team={t} size={40} />
+
               <span className="flex-1">
                 <span className="block font-semibold">{t.name}</span>
                 <span className="block text-xs text-muted-foreground">{t.captain_name}</span>
@@ -213,7 +210,7 @@ function BiddingRoom({
       <AuctionMomentOverlay moment={moment} />
       <div className="mx-auto max-w-md">
         <header className="flex items-center gap-3">
-          <span className="h-9 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
+          <TeamCrest team={team} size={48} />
           <div className="flex-1">
             <h1 className="font-display text-xl uppercase leading-tight">{team.name}</h1>
             <p className="text-xs text-muted-foreground">{team.captain_name}</p>
@@ -258,9 +255,14 @@ function BiddingRoom({
                 <p className="text-gold font-display text-6xl tabular-nums">
                   <CountUp value={leading ? Number(leading.amount) : Number(player.base_price)} />
                 </p>
-                <p className="mt-1 text-sm font-semibold" style={{ color: leadingTeam?.color }}>
+                <p
+                  className="mt-1 flex items-center justify-center gap-2 text-sm font-semibold"
+                  style={leadingTeam ? { color: leadingTeam.color } : undefined}
+                >
+                  {leadingTeam && <TeamCrest team={leadingTeam} size={22} />}
                   {leadingTeam ? `${leadingTeam.name} leading` : "No bids yet"}
                 </p>
+
               </div>
             </div>
           ) : (
@@ -304,8 +306,9 @@ function BiddingRoom({
                   key={t.id}
                   className="flex items-center gap-2 rounded-lg border border-border bg-card/70 px-3 py-2 text-sm"
                 >
-                  <span className="h-4 w-1 rounded-full" style={{ backgroundColor: t.color }} />
-                  <span className="flex-1">{t.name}</span>
+                  <TeamCrest team={t} size={24} />
+                  <span className="min-w-0 flex-1 truncate">{t.name}</span>
+
                   <span className="text-muted-foreground">
                     {rosterOf(players, t.id).length}/{t.max_roster_size}
                   </span>
