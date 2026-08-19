@@ -225,8 +225,12 @@ export const markUnsold = createServerFn({ method: "POST" })
       .eq("id", state.current_player_id);
     await db
       .from("auction_state")
-      .update({ current_player_id: null, bidding_open: false })
+      .update({ current_player_id: null, bidding_open: false, block_started_at: null })
       .eq("id", 1);
+    await db.from("auction_log").insert({
+      event_type: "unsold",
+      player_id: state.current_player_id,
+    });
     return { ok: true };
   });
 
@@ -254,9 +258,16 @@ export const relistPlayer = createServerFn({ method: "POST" })
         current_player_id: data.playerId,
         bidding_open: true,
         round_type: "unsold",
+        block_started_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq("id", 1);
+    await db.from("auction_log").insert({
+      event_type: "relisted",
+      player_id: data.playerId,
+      amount: half,
+      note: "Relisted at half base price",
+    });
     return { basePrice: half };
   });
 
@@ -287,6 +298,13 @@ export const lotteryAssign = createServerFn({ method: "POST" })
       .from("teams")
       .update({ remaining_budget: Math.max(0, Number(team.remaining_budget) - 1) })
       .eq("id", data.teamId);
+    await db.from("auction_log").insert({
+      event_type: "lottery",
+      player_id: pick.id,
+      team_id: data.teamId,
+      amount: 1,
+      note: `Lottery assignment (${data.category})`,
+    });
     return { player: pick.name };
   });
 
@@ -307,8 +325,14 @@ export const resetAuction = createServerFn({ method: "POST" })
     }
     await db
       .from("auction_state")
-      .update({ current_player_id: null, bidding_open: false, round_type: "main" })
+      .update({
+        current_player_id: null,
+        bidding_open: false,
+        round_type: "main",
+        block_started_at: null,
+      })
       .eq("id", 1);
+    await db.from("auction_log").insert({ event_type: "reset", note: "Auction reset by admin" });
     return { ok: true };
   });
 
