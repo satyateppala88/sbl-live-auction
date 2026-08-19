@@ -106,3 +106,49 @@ export async function sellServer(passcode: string) {
 
   return { teamId: top.team_id, amount: Number(top.amount) };
 }
+
+const PHOTO_BUCKET = "player-photos";
+const TEN_YEARS = 60 * 60 * 24 * 3650;
+
+function decodeBase64(b64: string) {
+  const clean = b64.includes(",") ? b64.slice(b64.indexOf(",") + 1) : b64;
+  const binary = atob(clean);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+export async function uploadPhotoServer(opts: {
+  kind: "player" | "team";
+  id: string;
+  base64: string;
+  contentType?: string;
+}) {
+  const db = supabaseAdmin;
+  const bytes = decodeBase64(opts.base64);
+  const path = `${opts.kind}/${opts.id}-${Date.now()}.jpg`;
+  const { error: upErr } = await db.storage
+    .from(PHOTO_BUCKET)
+    .upload(path, bytes, { contentType: opts.contentType ?? "image/jpeg", upsert: true });
+  if (upErr) throw new Error(upErr.message);
+
+  const { data: signed, error: signErr } = await db.storage
+    .from(PHOTO_BUCKET)
+    .createSignedUrl(path, TEN_YEARS);
+  if (signErr || !signed) throw new Error(signErr?.message ?? "Could not create photo URL");
+
+  if (opts.kind === "player") {
+    const { error } = await db
+      .from("players")
+      .update({ photo_url: signed.signedUrl })
+      .eq("id", opts.id);
+    if (error) throw new Error(error.message);
+  } else {
+    const { error } = await db
+      .from("teams")
+      .update({ captain_photo_url: signed.signedUrl })
+      .eq("id", opts.id);
+    if (error) throw new Error(error.message);
+  }
+  return { url: signed.signedUrl };
+}
