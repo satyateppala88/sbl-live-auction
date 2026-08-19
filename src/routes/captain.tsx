@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Gavel, ArrowLeft, LogOut } from "lucide-react";
+import { Loader2, Gavel, ArrowLeft, LogOut, Info, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { captainLogin, placeBid } from "@/lib/auction.functions";
@@ -22,9 +22,11 @@ import {
   maxBidFor,
   topBid,
   usePresence,
+  biddingAdvice,
   CATEGORY_LABEL,
   REQUIREMENT,
   type Team,
+  type Advice,
 } from "@/lib/auction-data";
 
 
