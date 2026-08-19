@@ -14,7 +14,229 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_config: {
+        Row: {
+          key: string
+          value: string
+        }
+        Insert: {
+          key: string
+          value: string
+        }
+        Update: {
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      auction_state: {
+        Row: {
+          bid_increment: number
+          bidding_open: boolean
+          current_player_id: string | null
+          id: number
+          round_type: string
+          updated_at: string
+        }
+        Insert: {
+          bid_increment?: number
+          bidding_open?: boolean
+          current_player_id?: string | null
+          id?: number
+          round_type?: string
+          updated_at?: string
+        }
+        Update: {
+          bid_increment?: number
+          bidding_open?: boolean
+          current_player_id?: string | null
+          id?: number
+          round_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auction_state_current_player_id_fkey"
+            columns: ["current_player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bids: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          player_id: string
+          team_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          player_id: string
+          team_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          player_id?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bids_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          base_price: number
+          category: Database["public"]["Enums"]["player_category"]
+          created_at: string
+          id: string
+          name: string
+          original_base_price: number
+          sold_price: number | null
+          sold_to_team_id: string | null
+          status: Database["public"]["Enums"]["player_status"]
+          tier_id: string | null
+        }
+        Insert: {
+          base_price?: number
+          category?: Database["public"]["Enums"]["player_category"]
+          created_at?: string
+          id?: string
+          name: string
+          original_base_price?: number
+          sold_price?: number | null
+          sold_to_team_id?: string | null
+          status?: Database["public"]["Enums"]["player_status"]
+          tier_id?: string | null
+        }
+        Update: {
+          base_price?: number
+          category?: Database["public"]["Enums"]["player_category"]
+          created_at?: string
+          id?: string
+          name?: string
+          original_base_price?: number
+          sold_price?: number | null
+          sold_to_team_id?: string | null
+          status?: Database["public"]["Enums"]["player_status"]
+          tier_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_sold_to_team_id_fkey"
+            columns: ["sold_to_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "players_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_secrets: {
+        Row: {
+          pin: string
+          team_id: string
+        }
+        Insert: {
+          pin: string
+          team_id: string
+        }
+        Update: {
+          pin?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_secrets_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: true
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          captain_name: string
+          color: string
+          created_at: string
+          id: string
+          max_roster_size: number
+          name: string
+          remaining_budget: number
+          starting_budget: number
+        }
+        Insert: {
+          captain_name?: string
+          color?: string
+          created_at?: string
+          id?: string
+          max_roster_size?: number
+          name: string
+          remaining_budget?: number
+          starting_budget?: number
+        }
+        Update: {
+          captain_name?: string
+          color?: string
+          created_at?: string
+          id?: string
+          max_roster_size?: number
+          name?: string
+          remaining_budget?: number
+          starting_budget?: number
+        }
+        Relationships: []
+      }
+      tiers: {
+        Row: {
+          base_price: number
+          created_at: string
+          id: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          base_price?: number
+          created_at?: string
+          id?: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          base_price?: number
+          created_at?: string
+          id?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +245,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      player_category: "male" | "female" | "kid"
+      player_status:
+        | "available"
+        | "on_auction"
+        | "sold"
+        | "unsold"
+        | "in_unsold_pool"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +378,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      player_category: ["male", "female", "kid"],
+      player_status: [
+        "available",
+        "on_auction",
+        "sold",
+        "unsold",
+        "in_unsold_pool",
+      ],
+    },
   },
 } as const
