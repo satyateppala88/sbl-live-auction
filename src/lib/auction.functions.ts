@@ -313,6 +313,6 @@ export const uploadPhoto = createServerFn({ method: "POST" })
       kind: data.kind,
       id: data.id,
       base64: data.base64,
-      contentType: data.contentType,
+      ...(data.contentType ? { contentType: data.contentType } : {}),
     });
   });
