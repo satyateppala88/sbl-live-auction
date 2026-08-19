@@ -70,8 +70,8 @@ function Index() {
           </h1>
 
           <p className="animate-rise-in stagger-2 mx-auto mt-4 max-w-md text-sm text-muted-foreground lg:mx-0">
-            SMR Badminton League's player auction — every bid, every sold stamp, every squad
-            filling up live, from any device.
+            Ten teams, one arena. Every bid, every sold stamp, every squad coming
+            together — live, on any device.
           </p>
 
           <div className="animate-rise-in stagger-2 mx-auto mt-7 grid max-w-md grid-cols-3 gap-3 lg:mx-0">

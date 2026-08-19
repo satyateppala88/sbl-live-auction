@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Gavel, ArrowLeft, LogOut } from "lucide-react";
+import { Loader2, Gavel, ArrowLeft, LogOut, Info, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { captainLogin, placeBid } from "@/lib/auction.functions";
@@ -22,9 +22,11 @@ import {
   maxBidFor,
   topBid,
   usePresence,
+  biddingAdvice,
   CATEGORY_LABEL,
   REQUIREMENT,
   type Team,
+  type Advice,
 } from "@/lib/auction-data";
 
 
@@ -198,6 +200,17 @@ function BiddingRoom({
   else if (nextAmount > Number(team.remaining_budget)) disabledReason = "Over your budget";
   else if (nextAmount > cap) disabledReason = `Reserve rule — your max bid is ${cap} pts`;
 
+  const advice = biddingAdvice({
+    team,
+    players,
+    currentPlayer: player,
+    filled,
+    cap,
+    nextAmount,
+    leadingIsMe: leading?.team_id === team.id,
+  });
+
+
   async function bid() {
     setBusy(true);
     try {
@@ -213,10 +226,10 @@ function BiddingRoom({
   const moment = useAuctionMoment(players, teams);
 
   return (
-    <main className="arena-bg court-lines min-h-screen px-4 pb-32 pt-6">
+    <main className="arena-bg court-lines min-h-screen px-4 pb-32 pt-6 lg:h-[100dvh] lg:overflow-hidden lg:pb-28">
       <div className="court-lines-layer" aria-hidden />
       <AuctionMomentOverlay moment={moment} />
-      <div className="mx-auto max-w-md">
+      <div className="mx-auto max-w-md lg:max-w-6xl">
         <header className="flex items-center gap-3">
           <TeamCrest team={team} size={48} />
           <div className="flex-1">
@@ -235,8 +248,9 @@ function BiddingRoom({
           <Stat label="Max bid" value={Math.max(0, cap)} />
         </div>
 
+        <div className="mt-5 lg:grid lg:grid-cols-[1.15fr_1fr] lg:gap-5 lg:items-start">
         <section
-          className={`mt-5 rounded-2xl border bg-card/90 p-5 text-center backdrop-blur ${
+          className={`rounded-2xl border bg-card/90 p-5 text-center backdrop-blur ${
             player && state?.bidding_open ? "smash-card border-accent/40" : "glow-card border-border"
           }`}
         >
@@ -282,9 +296,10 @@ function BiddingRoom({
         </section>
 
 
-        <section className="mt-5">
+        <div className="mt-5 space-y-5 lg:mt-0">
+        <section>
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Your squad
+            Your squad · build it together
           </h3>
           <div className="mt-2 flex flex-wrap gap-2">
             {(["male", "female", "kid"] as const).map((c) => (
@@ -305,7 +320,7 @@ function BiddingRoom({
           </div>
         </section>
 
-        <section className="mt-6">
+        <section>
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Other teams
           </h3>
@@ -328,10 +343,13 @@ function BiddingRoom({
               ))}
           </div>
         </section>
+        </div>
+        </div>
       </div>
 
       <div className="fixed inset-x-0 bottom-0 border-t border-border bg-background/95 p-4 backdrop-blur">
         <div className="mx-auto max-w-md">
+          {player && <BidAdvisor advice={advice} />}
           <Button
             size="lg"
             className="h-16 w-full text-lg font-black uppercase"
@@ -353,6 +371,39 @@ function BiddingRoom({
       </div>
       <ChatPopup banned={banned} />
     </main>
+  );
+}
+
+function BidAdvisor({ advice }: { advice: Advice[] }) {
+  if (advice.length === 0) return null;
+  const icon = {
+    info: <Info className="h-3.5 w-3.5 text-muted-foreground" />,
+    good: <CheckCircle2 className="h-3.5 w-3.5 text-success" />,
+    warn: <AlertTriangle className="h-3.5 w-3.5 text-smash" />,
+  };
+  return (
+    <div className="mb-2 rounded-xl border border-border bg-card/70 px-3 py-2">
+      <p className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gold-solid">
+        <Gavel className="h-3 w-3" /> Bidding advisor
+      </p>
+      <ul className="grid gap-1">
+        {advice.slice(0, 4).map((a, i) => (
+          <li
+            key={i}
+            className={`flex items-start gap-1.5 text-xs ${
+              a.tone === "warn"
+                ? "text-smash"
+                : a.tone === "good"
+                  ? "text-success"
+                  : "text-foreground/90"
+            }`}
+          >
+            <span className="mt-px shrink-0">{icon[a.tone]}</span>
+            {a.text}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
