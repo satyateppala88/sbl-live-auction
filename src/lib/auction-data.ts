@@ -40,7 +40,28 @@ export type AuctionState = {
   bidding_open: boolean;
   bid_increment: number;
   round_type: string;
+  block_started_at: string | null;
+  block_seconds: number;
 };
+
+export type ChatMessage = {
+  id: string;
+  display_name: string;
+  message: string;
+  device_id: string;
+  created_at: string;
+};
+
+export type AuctionLogEvent = {
+  id: string;
+  event_type: "sold" | "unsold" | "relisted" | "lottery" | "reset" | string;
+  player_id: string | null;
+  team_id: string | null;
+  amount: number | null;
+  note: string | null;
+  created_at: string;
+};
+
 
 export const CATEGORY_LABEL: Record<Cat, string> = {
   male: "Male >16",
