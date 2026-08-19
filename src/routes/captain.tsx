@@ -10,6 +10,7 @@ import { RosterSlots } from "@/components/RosterSlots";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
 import { CountUp } from "@/components/CountUp";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
+import { CountdownTimer } from "@/components/CountdownTimer";
 import { TeamCrest } from "@/components/TeamCrest";
 import {
   useAuctionData,

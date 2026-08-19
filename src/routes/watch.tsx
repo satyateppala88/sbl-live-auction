@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PlayerAvatar } from "@/components/PlayerAvatar";
+import { HoloCard } from "@/components/HoloCard";
 import { RosterSlots } from "@/components/RosterSlots";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
 import { CountUp } from "@/components/CountUp";
 import { TeamCrest } from "@/components/TeamCrest";
+import { CountdownTimer } from "@/components/CountdownTimer";
+import { ChatPanel } from "@/components/ChatPanel";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import { useAuctionData, topBid, CATEGORY_LABEL } from "@/lib/auction-data";
 
@@ -66,15 +68,18 @@ function WatchPage() {
               key={player.id}
               className="animate-block-in grid gap-5 sm:grid-cols-[auto_1fr] sm:items-center"
             >
-              <PlayerAvatar
+              <HoloCard
                 name={player.name}
                 photoUrl={player.photo_url}
                 className="h-40 w-40 text-5xl sm:h-48 sm:w-48"
               />
               <div>
-                <p className="text-smash text-xs font-bold uppercase tracking-widest">
-                  {state?.round_type === "unsold" ? "Second round" : "On the block"}
-                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-smash text-xs font-bold uppercase tracking-widest">
+                    {state?.round_type === "unsold" ? "Second round" : "On the block"}
+                  </p>
+                  <CountdownTimer state={state} size="sm" />
+                </div>
                 <h2 className="font-display text-5xl uppercase leading-none sm:text-7xl">
                   {player.name}
                 </h2>
@@ -110,31 +115,34 @@ function WatchPage() {
 
         <div className="court-divider mt-8" aria-hidden />
 
-        <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {teams.map((t) => (
-            <div
-              key={t.id}
-              className="lift-card rounded-2xl border border-border bg-card/85 p-4 backdrop-blur hover:[transform:translateY(-2px)]"
-            >
-              <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
-                <TeamCrest team={t} size={48} />
-                <span className="font-display min-w-0 truncate text-xl uppercase">{t.name}</span>
-                <span className="flex items-baseline gap-1">
-                  <span className="text-gold font-display text-2xl tabular-nums">
-                    <CountUp value={Number(t.remaining_budget)} />
+        <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_320px]">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {teams.map((t) => (
+              <div
+                key={t.id}
+                className="lift-card rounded-2xl border border-border bg-card/85 p-4 backdrop-blur hover:[transform:translateY(-2px)]"
+              >
+                <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
+                  <TeamCrest team={t} size={48} />
+                  <span className="font-display min-w-0 truncate text-xl uppercase">{t.name}</span>
+                  <span className="flex items-baseline gap-1">
+                    <span className="text-gold font-display text-2xl tabular-nums">
+                      <CountUp value={Number(t.remaining_budget)} />
+                    </span>
+                    <span className="text-xs text-muted-foreground">pts left</span>
                   </span>
-                  <span className="text-xs text-muted-foreground">pts left</span>
-                </span>
-              </div>
+                </div>
 
-              <div className="mt-4">
-                <RosterSlots team={t} players={players} size="sm" />
+                <div className="mt-4">
+                  <RosterSlots team={t} players={players} size="sm" />
+                </div>
               </div>
-            </div>
-          ))}
-          {teams.length === 0 && (
-            <p className="text-sm text-muted-foreground">No teams registered yet.</p>
-          )}
+            ))}
+            {teams.length === 0 && (
+              <p className="text-sm text-muted-foreground">No teams registered yet.</p>
+            )}
+          </div>
+          <ChatPanel className="lg:sticky lg:top-4 lg:self-start" />
         </section>
       </div>
     </main>
