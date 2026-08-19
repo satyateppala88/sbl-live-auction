@@ -65,10 +65,12 @@ export function RosterBoard({
                         {Number(p.base_price)}
                       </p>
                       <span
-                        className={`mt-1 inline-block max-w-full truncate rounded-full px-2 py-0.5 text-[10px] ${meta.className}`}
+                        className={`mt-1 inline-flex max-w-full items-center gap-1 rounded-full px-2 py-0.5 text-[10px] ${meta.className}`}
                       >
-                        {meta.text}
+                        {"team" in meta && meta.team && <TeamCrest team={meta.team} size={16} />}
+                        <span className="truncate">{meta.text}</span>
                       </span>
+
                     </div>
                   </div>
                 );
