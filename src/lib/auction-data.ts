@@ -366,3 +366,75 @@ export function useBannedDevices() {
 
   return banned;
 }
+
+// ---------- captain bidding advisor ----------
+
+export type AdviceTone = "info" | "good" | "warn";
+export type Advice = { tone: AdviceTone; text: string };
+
+/** Contextual guidance shown to a captain while a player is on the block. */
+export function biddingAdvice(opts: {
+  team: Team;
+  players: Player[];
+  currentPlayer: Player | null;
+  filled: number;
+  cap: number; // max legal bid right now (reserve rule applied)
+  nextAmount: number; // what pressing Bid would cost
+  leadingIsMe: boolean;
+}): Advice[] {
+  const { team, players, currentPlayer, filled, cap, nextAmount, leadingIsMe } = opts;
+  const out: Advice[] = [];
+  const budget = Number(team.remaining_budget);
+  const slotsLeft = Math.max(0, team.max_roster_size - filled);
+  const counts = categoryCounts(rosterOf(players, team.id));
+
+  const needs = (["male", "female", "kid"] as const)
+    .map((c) => ({ c, gap: Math.max(0, REQUIREMENT[c] - counts[c]) }))
+    .filter((n) => n.gap > 0);
+  const mandatoryLeft = needs.reduce((s, n) => s + n.gap, 0);
+
+  out.push({
+    tone: "info",
+    text: `${budget} pts left · ${slotsLeft} slot${slotsLeft === 1 ? "" : "s"} to fill`,
+  });
+
+  if (currentPlayer) {
+    const fillsNeed = REQUIREMENT[currentPlayer.category] - counts[currentPlayer.category] > 0;
+    if (fillsNeed) {
+      out.push({
+        tone: "good",
+        text: `Fills a required ${CATEGORY_LABEL[currentPlayer.category]} slot`,
+      });
+    } else {
+      out.push({
+        tone: "info",
+        text: `Optional — your ${CATEGORY_LABEL[currentPlayer.category]} quota is already met`,
+      });
+    }
+  }
+
+  if (needs.length) {
+    const label = needs.map((n) => `${n.gap} ${CATEGORY_LABEL[n.c].split(" ")[0]}`).join(", ");
+    out.push({ tone: "info", text: `Still need: ${label}` });
+  }
+
+  if (slotsLeft > 0 && !leadingIsMe) {
+    out.push({ tone: "info", text: `Your max legal bid now: ${Math.max(0, cap)} pts` });
+  }
+
+  if (currentPlayer && !leadingIsMe && nextAmount > 0) {
+    const fillsNeed = REQUIREMENT[currentPlayer.category] - counts[currentPlayer.category] > 0;
+    const mandatoryAfter = Math.max(0, fillsNeed ? mandatoryLeft - 1 : mandatoryLeft);
+    const budgetAfter = budget - nextAmount;
+    if (budgetAfter < mandatoryAfter) {
+      out.push({
+        tone: "warn",
+        text: `Careful — bidding ${nextAmount} leaves ${budgetAfter} pts but you still need ~${mandatoryAfter} for required slots`,
+      });
+    } else if (fillsNeed && nextAmount <= Math.max(2, budget * 0.15)) {
+      out.push({ tone: "good", text: "Good value — comfortably within budget" });
+    }
+  }
+
+  return out;
+}

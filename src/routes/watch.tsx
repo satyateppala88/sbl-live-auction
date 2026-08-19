@@ -72,7 +72,7 @@ function WatchPage() {
   const amount = leading ? Number(leading.amount) : Number(player?.base_price ?? 0);
 
   return (
-    <main className="arena-bg court-lines flex h-[100dvh] flex-col overflow-hidden px-3 py-3 lg:px-5">
+    <main className="arena-bg court-lines flex min-h-[100dvh] flex-col px-3 py-3 lg:h-[100dvh] lg:overflow-hidden lg:px-5">
       <div className="court-lines-layer" aria-hidden />
       <AuctionMomentOverlay moment={moment} />
 
@@ -153,7 +153,7 @@ function WatchPage() {
         </section>
 
         {/* ---------- teams board ---------- */}
-        <section className="grid min-h-0 grid-cols-1 gap-2 overflow-hidden sm:grid-cols-2 sm:grid-rows-5">
+        <section className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:min-h-0 lg:auto-rows-min lg:content-start lg:overflow-hidden">
           {teams.map((t) => {
             const c = categoryCounts(rosterOf(players, t.id));
             return (
