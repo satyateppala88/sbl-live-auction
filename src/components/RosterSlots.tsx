@@ -38,11 +38,11 @@ export function RosterSlots({
       </div>
 
       {roster.map((p) => (
-        <div key={p.id} className="flex flex-col items-center gap-1">
+        <div key={p.id} className="animate-slot-in flex flex-col items-center gap-1">
           <PlayerAvatar name={p.name} photoUrl={p.photo_url} className={box} />
           <span className="max-w-[5rem] truncate text-[11px]">
             {p.name}
-            <span className="ml-1 font-mono text-primary">{Number(p.sold_price)}</span>
+            <span className="text-gold-solid ml-1 font-mono">{Number(p.sold_price)}</span>
           </span>
         </div>
       ))}
@@ -50,7 +50,7 @@ export function RosterSlots({
       {Array.from({ length: emptyCount }).map((_, i) => (
         <div key={`empty-${i}`} className="flex flex-col items-center gap-1">
           <div
-            className={`${box} flex items-center justify-center rounded-xl border-2 border-dashed border-border/70 text-muted-foreground/50`}
+            className={`${box} flex items-center justify-center rounded-xl border-2 border-dashed border-border/70 text-muted-foreground/50 transition-colors`}
           >
             +
           </div>
