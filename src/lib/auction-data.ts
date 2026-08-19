@@ -140,3 +140,95 @@ export function topBid(bids: Bid[], playerId: string | null | undefined) {
     .sort((a, b) => Number(b.amount) - Number(a.amount));
   return forPlayer[0] ?? null;
 }
+
+/** Seconds remaining on the per-player countdown, floored at 0. Null when no timer is running. */
+export function secondsLeft(state: AuctionState | null): number | null {
+  if (!state || !state.block_started_at || !state.bidding_open) return null;
+  const startedMs = new Date(state.block_started_at).getTime();
+  const elapsed = (Date.now() - startedMs) / 1000;
+  return Math.max(0, Math.round(state.block_seconds - elapsed));
+}
+
+const CHAT_DEVICE_KEY = "sbl_chat_device_id";
+export function getChatDeviceId() {
+  if (typeof window === "undefined") return "server";
+  let id = window.localStorage.getItem(CHAT_DEVICE_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    window.localStorage.setItem(CHAT_DEVICE_KEY, id);
+  }
+  return id;
+}
+
+const CHAT_NAME_KEY = "sbl_chat_display_name";
+export function getChatDisplayName() {
+  if (typeof window === "undefined") return "";
+  return window.localStorage.getItem(CHAT_NAME_KEY) ?? "";
+}
+export function setChatDisplayName(name: string) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(CHAT_NAME_KEY, name);
+}
+
+/** Dedicated realtime hook for chat -- kept separate from useAuctionData so a burst of
+ * chat messages doesn't trigger a full refetch of teams/players/bids/state. */
+export function useChatMessages(limit = 100) {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    const { data } = await supabase
+      .from("chat_messages")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    setMessages(((data as ChatMessage[]) ?? []).slice().reverse());
+    setLoading(false);
+  }, [limit]);
+
+  useEffect(() => {
+    void refresh();
+    const channel = supabase
+      .channel("sbl-chat")
+      .on("postgres_changes", { event: "*", schema: "public", table: "chat_messages" }, () =>
+        void refresh(),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [refresh]);
+
+  return { messages, loading, refresh };
+}
+
+/** Read-only hook for the dispute-proof audit log (sold/unsold/relisted/lottery/reset events). */
+export function useAuctionLog() {
+  const [events, setEvents] = useState<AuctionLogEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    const { data } = await supabase
+      .from("auction_log")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    setEvents((data as AuctionLogEvent[]) ?? []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+    const channel = supabase
+      .channel("sbl-auction-log")
+      .on("postgres_changes", { event: "*", schema: "public", table: "auction_log" }, () =>
+        void refresh(),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [refresh]);
+
+  return { events, loading, refresh };
+}

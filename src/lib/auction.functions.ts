@@ -316,3 +316,17 @@ export const uploadPhoto = createServerFn({ method: "POST" })
       ...(data.contentType ? { contentType: data.contentType } : {}),
     });
   });
+
+export const sendChat = createServerFn({ method: "POST" })
+  .inputValidator((d: { displayName: string; message: string; deviceId: string }) => d)
+  .handler(async ({ data }) => {
+    const { sendChatServer } = await import("./auction.server");
+    return sendChatServer(data.displayName, data.message, data.deviceId);
+  });
+
+export const deleteChat = createServerFn({ method: "POST" })
+  .inputValidator((d: { passcode: string; id: string }) => d)
+  .handler(async ({ data }) => {
+    const { deleteChatServer } = await import("./auction.server");
+    return deleteChatServer(data.passcode, data.id);
+  });
