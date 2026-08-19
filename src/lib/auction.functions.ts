@@ -370,3 +370,19 @@ export const deleteChat = createServerFn({ method: "POST" })
     const { deleteChatServer } = await import("./auction.server");
     return deleteChatServer(data.passcode, data.id);
   });
+
+export const kickDevice = createServerFn({ method: "POST" })
+  .inputValidator(
+    (d: { passcode: string; deviceId: string; displayName?: string; reason?: string }) => d,
+  )
+  .handler(async ({ data }) => {
+    const { kickDeviceServer } = await import("./auction.server");
+    return kickDeviceServer(data.passcode, data.deviceId, data.displayName, data.reason);
+  });
+
+export const unbanDevice = createServerFn({ method: "POST" })
+  .inputValidator((d: { passcode: string; deviceId: string }) => d)
+  .handler(async ({ data }) => {
+    const { unbanDeviceServer } = await import("./auction.server");
+    return unbanDeviceServer(data.passcode, data.deviceId);
+  });

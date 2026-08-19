@@ -249,3 +249,120 @@ export function useAuctionLog() {
 
   return { events, loading, refresh };
 }
+
+// ---------- live presence (viewer count) + kick/ban ----------
+
+export type Viewer = {
+  device_id: string;
+  name: string;
+  role: "watcher" | "captain" | "admin";
+  online_at: string;
+};
+
+/**
+ * Tracks who's currently on the platform via Supabase Realtime presence and returns
+ * the live viewer list + count (Hotstar-style). Re-tracks when name/role change.
+ * If this device has been banned, it stops tracking (drops out of the count) and
+ * `banned` flips true so chat UIs can lock themselves.
+ */
+export function usePresence(role: Viewer["role"], name: string) {
+  const [viewers, setViewers] = useState<Viewer[]>([]);
+  const [banned, setBanned] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const deviceId = getChatDeviceId();
+    let cancelled = false;
+
+    // watch the ban list for this device
+    const banChannel = supabase
+      .channel("sbl-bans")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "banned_devices" },
+        async () => {
+          const { data } = await supabase
+            .from("banned_devices")
+            .select("device_id")
+            .eq("device_id", deviceId)
+            .maybeSingle();
+          if (!cancelled) setBanned(!!data);
+        },
+      )
+      .subscribe();
+
+    void supabase
+      .from("banned_devices")
+      .select("device_id")
+      .eq("device_id", deviceId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setBanned(!!data);
+      });
+
+    const channel = supabase.channel("sbl-presence", {
+      config: { presence: { key: deviceId } },
+    });
+
+    const sync = () => {
+      const state = channel.presenceState() as unknown as Record<string, Viewer[]>;
+      const list = Object.values(state)
+        .map((metas) => metas[0])
+        .filter(Boolean) as Viewer[];
+      if (!cancelled) setViewers(list);
+    };
+
+    channel.on("presence", { event: "sync" }, sync).subscribe(async (status) => {
+      if (status === "SUBSCRIBED") {
+        await channel.track({
+          device_id: deviceId,
+          name: name || "Guest",
+          role,
+          online_at: new Date().toISOString(),
+        });
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      void channel.untrack();
+      void supabase.removeChannel(channel);
+      void supabase.removeChannel(banChannel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [role, name]);
+
+  // if banned, actively leave presence so the count reflects it
+  useEffect(() => {
+    if (!banned) return;
+    // nothing else to do -- the cleanup above untracks on unmount / dep change
+  }, [banned]);
+
+  const count = viewers.length;
+  return { viewers, count, banned };
+}
+
+/** Realtime set of currently-banned device ids (admin-facing + self-check fallback). */
+export function useBannedDevices() {
+  const [banned, setBanned] = useState<Set<string>>(new Set());
+
+  const refresh = useCallback(async () => {
+    const { data } = await supabase.from("banned_devices").select("device_id");
+    setBanned(new Set((data ?? []).map((r) => r.device_id as string)));
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+    const channel = supabase
+      .channel("sbl-bans-list")
+      .on("postgres_changes", { event: "*", schema: "public", table: "banned_devices" }, () =>
+        void refresh(),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [refresh]);
+
+  return banned;
+}

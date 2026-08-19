@@ -224,3 +224,28 @@ export async function deleteChatServer(passcode: string, id: string) {
   if (error) throw new Error(error.message);
   return { ok: true };
 }
+
+export async function kickDeviceServer(
+  passcode: string,
+  deviceId: string,
+  displayName?: string,
+  reason?: string,
+) {
+  await assertAdmin(passcode);
+  const db = supabaseAdmin;
+  const { error } = await db
+    .from("banned_devices")
+    .upsert({ device_id: deviceId, display_name: displayName ?? null, reason: reason ?? null });
+  if (error) throw new Error(error.message);
+  // scrub their existing messages so nothing abusive lingers
+  await db.from("chat_messages").delete().eq("device_id", deviceId);
+  return { ok: true };
+}
+
+export async function unbanDeviceServer(passcode: string, deviceId: string) {
+  await assertAdmin(passcode);
+  const db = supabaseAdmin;
+  const { error } = await db.from("banned_devices").delete().eq("device_id", deviceId);
+  if (error) throw new Error(error.message);
+  return { ok: true };
+}
