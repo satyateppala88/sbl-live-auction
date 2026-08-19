@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Shuffle, Play, Pause, RotateCcw } from "lucide-react";
+import { ArrowLeft, Loader2, Shuffle, Play, Pause, RotateCcw, Gavel } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +34,7 @@ import { RosterBoard } from "@/components/RosterBoard";
 import { TeamCrest } from "@/components/TeamCrest";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { ChatPanel } from "@/components/ChatPanel";
+import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
@@ -41,6 +42,7 @@ import {
   rosterOf,
   categoryCounts,
   topBid,
+  sortForAuction,
   CATEGORY_LABEL,
   REQUIREMENT,
   type Cat,
