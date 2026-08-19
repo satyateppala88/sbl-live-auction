@@ -337,6 +337,7 @@ function AdminConsole({
                 </div>
               </div>
               <Dashboard teams={teams} players={players} />
+              <ChatPanel adminPasscode={passcode} />
             </div>
           </TabsContent>
 
