@@ -137,7 +137,9 @@ function CaptainLogin({
 
               <span className="flex-1 min-w-0">
                 <span className="block truncate font-semibold">{t.name}</span>
-                <span className="block truncate text-xs text-muted-foreground">{t.captain_name}</span>
+                <span className="block truncate text-xs text-muted-foreground">
+                  {[t.captain_name, t.captain2_name].filter(Boolean).join(" & ")}
+                </span>
               </span>
             </button>
           ))}
@@ -234,7 +236,9 @@ function BiddingRoom({
           <TeamCrest team={team} size={48} />
           <div className="flex-1">
             <h1 className="font-display text-xl uppercase leading-tight">{team.name}</h1>
-            <p className="text-xs text-muted-foreground">{team.captain_name}</p>
+            <p className="text-xs text-muted-foreground">
+              {[team.captain_name, team.captain2_name].filter(Boolean).join(" & ")}
+            </p>
           </div>
           <ViewerCount count={count} />
           <Button variant="secondary" size="sm" onClick={onLogout}>

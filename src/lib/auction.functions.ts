@@ -32,6 +32,7 @@ export const saveTeam = createServerFn({ method: "POST" })
       id?: string;
       name: string;
       captain_name: string;
+      captain2_name: string;
       color: string;
       starting_budget: number;
       max_roster_size: number;
@@ -45,6 +46,7 @@ export const saveTeam = createServerFn({ method: "POST" })
     const base = {
       name: data.name,
       captain_name: data.captain_name,
+      captain2_name: data.captain2_name,
       color: data.color,
       starting_budget: data.starting_budget,
       max_roster_size: data.max_roster_size,
@@ -340,7 +342,7 @@ export const uploadPhoto = createServerFn({ method: "POST" })
   .inputValidator(
     (d: {
       passcode: string;
-      kind: "player" | "team";
+      kind: "player" | "team" | "team2";
       id: string;
       base64: string;
       contentType?: string;

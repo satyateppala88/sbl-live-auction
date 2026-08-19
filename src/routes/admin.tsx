@@ -48,6 +48,7 @@ import { CountdownTimer } from "@/components/CountdownTimer";
 import { ChatPopup } from "@/components/ChatPopup";
 import { ViewerCount } from "@/components/ViewerCount";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
+import { HoloCard } from "@/components/HoloCard";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
@@ -254,12 +255,23 @@ function AdminConsole({
                       <RotateCcw className="mr-1 h-3 w-3" /> Reset timer
                     </Button>
                   </div>
-                  <h2 className="font-display text-5xl uppercase leading-none">{player.name}</h2>
-                  <p className="text-sm text-muted-foreground">
-                    {CATEGORY_LABEL[player.category]} ·{" "}
-                    {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"} · base{" "}
-                    {Number(player.base_price)}
-                  </p>
+                  <div className="mt-2 flex items-center gap-4">
+                    <HoloCard
+                      name={player.name}
+                      photoUrl={player.photo_url}
+                      className="h-24 w-24 shrink-0 text-2xl sm:h-28 sm:w-28"
+                    />
+                    <div className="min-w-0">
+                      <h2 className="font-display truncate text-5xl uppercase leading-none">
+                        {player.name}
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {CATEGORY_LABEL[player.category]} ·{" "}
+                        {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"} · base{" "}
+                        {Number(player.base_price)}
+                      </p>
+                    </div>
+                  </div>
                   <p
                     key={leading?.id ?? "none"}
                     className="text-gold font-display animate-bid-pop mt-4 origin-left text-7xl tabular-nums"
@@ -528,6 +540,7 @@ function TeamsTab({
   const empty = {
     name: "",
     captain_name: "",
+    captain2_name: "",
     color: "#e11d48",
     starting_budget: 100,
     max_roster_size: 5,
@@ -553,12 +566,20 @@ function TeamsTab({
           <Field label="Team name">
             <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </Field>
-          <Field label="Captain name">
-            <Input
-              value={form.captain_name}
-              onChange={(e) => setForm({ ...form, captain_name: e.target.value })}
-            />
-          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Captain 1 (male)">
+              <Input
+                value={form.captain_name}
+                onChange={(e) => setForm({ ...form, captain_name: e.target.value })}
+              />
+            </Field>
+            <Field label="Captain 2 (female)">
+              <Input
+                value={form.captain2_name}
+                onChange={(e) => setForm({ ...form, captain2_name: e.target.value })}
+              />
+            </Field>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Starting budget">
               <Input
@@ -612,10 +633,18 @@ function TeamsTab({
                 photoUrl={t.captain_photo_url}
                 passcode={passcode}
               />
+              <SinglePhotoButton
+                kind="team2"
+                id={t.id}
+                name={t.captain2_name || t.name}
+                photoUrl={t.captain2_photo_url}
+                passcode={passcode}
+              />
               <div className="flex-1">
                 <p className="font-semibold">{t.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {t.captain_name} · {rosterOf(players, t.id).length}/{t.max_roster_size} ·{" "}
+                  {[t.captain_name, t.captain2_name].filter(Boolean).join(" & ") || "No captains"} ·{" "}
+                  {rosterOf(players, t.id).length}/{t.max_roster_size} ·{" "}
                   {Number(t.remaining_budget)}/{Number(t.starting_budget)} pts
                 </p>
               </div>
@@ -627,6 +656,7 @@ function TeamsTab({
                     id: t.id,
                     name: t.name,
                     captain_name: t.captain_name,
+                    captain2_name: t.captain2_name,
                     color: t.color,
                     starting_budget: Number(t.starting_budget),
                     max_roster_size: t.max_roster_size,

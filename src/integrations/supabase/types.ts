@@ -283,6 +283,8 @@ export type Database = {
         Row: {
           captain_name: string
           captain_photo_url: string | null
+          captain2_name: string
+          captain2_photo_url: string | null
           color: string
           created_at: string
           id: string
@@ -295,6 +297,8 @@ export type Database = {
         Insert: {
           captain_name?: string
           captain_photo_url?: string | null
+          captain2_name?: string
+          captain2_photo_url?: string | null
           color?: string
           created_at?: string
           id?: string
@@ -307,6 +311,8 @@ export type Database = {
         Update: {
           captain_name?: string
           captain_photo_url?: string | null
+          captain2_name?: string
+          captain2_photo_url?: string | null
           color?: string
           created_at?: string
           id?: string
