@@ -12,6 +12,7 @@ export type Team = {
   remaining_budget: number;
   max_roster_size: number;
   captain_photo_url: string | null;
+  logo_url: string | null;
 };
 export type Tier = { id: string; label: string; base_price: number; sort_order: number };
 export type Player = {
