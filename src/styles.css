@@ -468,7 +468,127 @@
 
 
 
+/* ---------- galaxy / stars motif (SMR Vinay Galaxy branding) ---------- */
+
+@keyframes star-drift {
+  0% {
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      340px 340px,
+      340px 340px,
+      340px 340px,
+      340px 340px,
+      340px 340px,
+      340px 340px,
+      340px 340px,
+      340px 340px;
+  }
+}
+
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  18% {
+    transform: translate(-320px, 220px);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-320px, 220px);
+    opacity: 0;
+  }
+}
+
+@utility star-field {
+  position: relative;
+  isolation: isolate;
+}
+
+@utility star-field-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 22%, oklch(0.97 0.012 95 / 0.95), transparent),
+    radial-gradient(1.2px 1.2px at 68% 12%, oklch(0.97 0.012 95 / 0.75), transparent),
+    radial-gradient(2px 2px at 85% 38%, oklch(0.83 0.16 85 / 0.9), transparent),
+    radial-gradient(1.2px 1.2px at 30% 55%, oklch(0.97 0.012 95 / 0.6), transparent),
+    radial-gradient(1.6px 1.6px at 92% 70%, oklch(0.97 0.012 95 / 0.8), transparent),
+    radial-gradient(1.2px 1.2px at 48% 82%, oklch(0.97 0.012 95 / 0.55), transparent),
+    radial-gradient(1.6px 1.6px at 6% 78%, oklch(0.83 0.16 85 / 0.7), transparent),
+    radial-gradient(1.2px 1.2px at 58% 32%, oklch(0.97 0.012 95 / 0.6), transparent);
+  background-size: 340px 340px;
+  animation:
+    star-drift 140s linear infinite,
+    star-twinkle 5s ease-in-out infinite;
+}
+
+@utility shooting-star {
+  position: absolute;
+  z-index: -1;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--shuttle);
+  box-shadow: 0 0 6px 1px oklch(0.97 0.015 95 / 0.9);
+  pointer-events: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 130px;
+    height: 1.5px;
+    transform: translateY(-50%);
+    background: linear-gradient(to left, oklch(0.97 0.015 95 / 0.85), transparent);
+  }
+}
+
+@utility animate-shooting-star {
+  animation: shooting-star 7s ease-in infinite;
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(var(--orbit-r, 180px)) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(var(--orbit-r, 180px)) rotate(-360deg);
+  }
+}
+
+@utility animate-orbit {
+  animation: orbit var(--orbit-duration, 18s) linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

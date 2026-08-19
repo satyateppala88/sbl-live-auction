@@ -43,7 +43,11 @@ export function RosterBoard({
   return (
     <div className="grid gap-6">
       {(["male", "female", "kid"] as const).map((cat) => {
-        const group = players.filter((p) => p.category === cat);
+        const group = players
+          .filter((p) => p.category === cat)
+          .slice()
+          .sort((a, b) => tierRank(a, tiers) - tierRank(b, tiers));
+
         return (
           <section key={cat}>
             <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
