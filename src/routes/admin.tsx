@@ -168,7 +168,7 @@ function AdminConsole({
 
   return (
     <main className="arena-bg min-h-screen px-4 py-6">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <header className="flex flex-wrap items-center gap-3">
           <Link to="/" className="text-sm text-muted-foreground">
             <ArrowLeft className="h-4 w-4" />
@@ -315,31 +315,36 @@ function AdminConsole({
                 <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
                   Next up (available)
                 </h3>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  Sorted in draw order: Male → Female → Kid, Icon → Challenger → Game Changer
+                </p>
                 <div className="mt-2 max-h-80 space-y-1.5 overflow-auto">
-                  {players
-                    .filter((p) => p.status === "available")
-                    .map((p) => (
-                      <div
-                        key={p.id}
-                        className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm"
+                  {sortForAuction(
+                    players.filter((p) => p.status === "available"),
+                    tiers,
+                  ).map((p) => (
+                    <div
+                      key={p.id}
+                      className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm"
+                    >
+                      <span className="flex-1">{p.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {CATEGORY_LABEL[p.category]} ·{" "}
+                        {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"}
+                      </span>
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          void run(
+                            () => setOnBlock({ data: { passcode, playerId: p.id } }),
+                            `${p.name} is on the block`,
+                          )
+                        }
                       >
-                        <span className="flex-1">{p.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {CATEGORY_LABEL[p.category]}
-                        </span>
-                        <Button
-                          size="sm"
-                          onClick={() =>
-                            void run(
-                              () => setOnBlock({ data: { passcode, playerId: p.id } }),
-                              `${p.name} is on the block`,
-                            )
-                          }
-                        >
-                          Block
-                        </Button>
-                      </div>
-                    ))}
+                        Block
+                      </Button>
+                    </div>
+                  ))}
                   {players.filter((p) => p.status === "available").length === 0 && (
                     <p className="text-sm text-muted-foreground">No available players.</p>
                   )}
