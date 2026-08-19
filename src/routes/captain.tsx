@@ -236,9 +236,12 @@ function BiddingRoom({
         >
           {player ? (
             <div key={player.id} className="animate-block-in">
-              <p className="text-smash text-xs font-bold uppercase tracking-widest">
-                {state?.round_type === "unsold" ? "Second round" : "On the block"}
-              </p>
+              <div className="flex items-center justify-center gap-2">
+                <p className="text-smash text-xs font-bold uppercase tracking-widest">
+                  {state?.round_type === "unsold" ? "Second round" : "On the block"}
+                </p>
+                <CountdownTimer state={state} size="sm" />
+              </div>
               <PlayerAvatar
                 name={player.name}
                 photoUrl={player.photo_url}
