@@ -410,3 +410,14 @@ export const setTarget = createServerFn({ method: "POST" })
     const { setTargetServer } = await import("./auction.server");
     return setTargetServer(data.teamId, data.pin, data.playerId, data.minPrice, data.maxPrice);
   });
+
+export const setStreamUrl = createServerFn({ method: "POST" })
+  .inputValidator((d: { passcode: string; url: string | null }) => d)
+  .handler(async ({ data }) => {
+    const { assertAdmin } = await import("./auction.server");
+    await assertAdmin(data.passcode);
+    const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+    const url = data.url && data.url.trim() ? data.url.trim() : null;
+    await db.from("auction_state").update({ live_stream_url: url }).eq("id", 1);
+    return { ok: true };
+  });

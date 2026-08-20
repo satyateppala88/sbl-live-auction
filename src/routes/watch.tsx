@@ -6,6 +6,7 @@ import { CountdownTimer } from "@/components/CountdownTimer";
 import { ChatPopup } from "@/components/ChatPopup";
 import { ViewerCount } from "@/components/ViewerCount";
 import { StarEmblem } from "@/components/StarEmblem";
+import { LiveFeed } from "@/components/LiveFeed";
 import { RulesButton } from "@/components/RulesDialog";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import {
@@ -99,9 +100,11 @@ function WatchPage() {
       </header>
 
       <div className="mt-3 grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        {/* ---------- on the block ---------- */}
+        {/* ---------- live feed (optional) + on the block ---------- */}
+        <div className="flex min-h-0 flex-col gap-3">
+        {state?.live_stream_url && <LiveFeed url={state.live_stream_url} />}
         <section
-          className={`flex min-h-0 flex-col rounded-2xl border bg-card/90 p-4 backdrop-blur lg:p-5 ${
+          className={`flex min-h-0 flex-1 flex-col rounded-2xl border bg-card/90 p-4 backdrop-blur lg:p-5 ${
             player && state?.bidding_open ? "smash-card border-accent/40" : "glow-card border-border"
           }`}
         >
@@ -156,6 +159,7 @@ function WatchPage() {
             </div>
           )}
         </section>
+        </div>
 
         {/* ---------- teams board ---------- */}
         <section className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:min-h-0 lg:auto-rows-min lg:content-start lg:overflow-hidden">
