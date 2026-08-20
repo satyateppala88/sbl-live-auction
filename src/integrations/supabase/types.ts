@@ -175,6 +175,48 @@ export type Database = {
           },
         ]
       }
+      captain_targets: {
+        Row: {
+          max_price: number | null
+          min_price: number | null
+          note: string | null
+          player_id: string
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          max_price?: number | null
+          min_price?: number | null
+          note?: string | null
+          player_id: string
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          max_price?: number | null
+          min_price?: number | null
+          note?: string | null
+          player_id?: string
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "captain_targets_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "captain_targets_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           created_at: string

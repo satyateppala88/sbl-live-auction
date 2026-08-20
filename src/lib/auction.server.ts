@@ -259,3 +259,46 @@ export async function unbanDeviceServer(passcode: string, deviceId: string) {
   if (error) throw new Error(error.message);
   return { ok: true };
 }
+
+// ---------- captain pre-auction targets (private per team) ----------
+
+export async function getTargetsServer(teamId: string, pin: string) {
+  await assertCaptain(teamId, pin);
+  const db = supabaseAdmin;
+  const { data, error } = await db
+    .from("captain_targets")
+    .select("player_id, min_price, max_price, note")
+    .eq("team_id", teamId);
+  if (error) throw new Error(error.message);
+  return { targets: data ?? [] };
+}
+
+export async function setTargetServer(
+  teamId: string,
+  pin: string,
+  playerId: string,
+  minPrice: number | null,
+  maxPrice: number | null,
+) {
+  await assertCaptain(teamId, pin);
+  const db = supabaseAdmin;
+  // both blank -> clear the row entirely
+  if (minPrice === null && maxPrice === null) {
+    const { error } = await db
+      .from("captain_targets")
+      .delete()
+      .eq("team_id", teamId)
+      .eq("player_id", playerId);
+    if (error) throw new Error(error.message);
+    return { ok: true, cleared: true };
+  }
+  const { error } = await db.from("captain_targets").upsert({
+    team_id: teamId,
+    player_id: playerId,
+    min_price: minPrice,
+    max_price: maxPrice,
+    updated_at: new Date().toISOString(),
+  });
+  if (error) throw new Error(error.message);
+  return { ok: true };
+}
