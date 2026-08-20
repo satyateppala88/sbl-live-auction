@@ -246,6 +246,10 @@ function BiddingRoom({
           </Button>
         </header>
 
+        <p className="text-gold-solid mt-3 text-center text-[11px] font-bold uppercase tracking-[0.3em] lg:text-left">
+          Play as One · Rise as One
+        </p>
+
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           <Stat label="Budget" value={Number(team.remaining_budget)} gold />
           <Stat label="Roster" value={filled} suffix={`/${team.max_roster_size}`} />
@@ -328,7 +332,7 @@ function BiddingRoom({
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Other teams
           </h3>
-          <div className="mt-2 grid gap-1.5">
+          <div className="mt-2 grid max-h-72 gap-1.5 overflow-y-auto pr-1">
             {teams
               .filter((t) => t.id !== team.id)
               .map((t) => (

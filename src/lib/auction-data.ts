@@ -393,7 +393,24 @@ export function biddingAdvice(opts: {
   const needs = (["male", "female", "kid"] as const)
     .map((c) => ({ c, gap: Math.max(0, REQUIREMENT[c] - counts[c]) }))
     .filter((n) => n.gap > 0);
-  const mandatoryLeft = needs.reduce((s, n) => s + n.gap, 0);
+
+  // cheapest still-available players per category (excludes the one on the block),
+  // so the reserve reflects real base prices -- e.g. if the only males left are Icons,
+  // you must keep more back for them.
+  const cheapestAvailable = (cat: Cat) =>
+    players
+      .filter((p) => p.status === "available" && p.category === cat && p.id !== currentPlayer?.id)
+      .map((p) => Number(p.base_price))
+      .sort((a, b) => a - b);
+  const reserveForNeeds = (list: { c: Cat; gap: number }[]) => {
+    let total = 0;
+    for (const n of list) {
+      const prices = cheapestAvailable(n.c);
+      for (let i = 0; i < n.gap; i++) total += prices[i] ?? 1;
+    }
+    return total;
+  };
+  const reserveNow = reserveForNeeds(needs);
 
   out.push({
     tone: "info",
@@ -417,7 +434,10 @@ export function biddingAdvice(opts: {
 
   if (needs.length) {
     const label = needs.map((n) => `${n.gap} ${CATEGORY_LABEL[n.c].split(" ")[0]}`).join(", ");
-    out.push({ tone: "info", text: `Still need: ${label}` });
+    out.push({
+      tone: "info",
+      text: `Still need: ${label} — keep ~${reserveNow} pts back for them`,
+    });
   }
 
   if (slotsLeft > 0 && !leadingIsMe) {
@@ -426,15 +446,19 @@ export function biddingAdvice(opts: {
 
   if (currentPlayer && !leadingIsMe && nextAmount > 0) {
     const fillsNeed = REQUIREMENT[currentPlayer.category] - counts[currentPlayer.category] > 0;
-    const mandatoryAfter = Math.max(0, fillsNeed ? mandatoryLeft - 1 : mandatoryLeft);
+    // required slots still open AFTER buying this player, and what they'll cost at base
+    const needsAfter = needs
+      .map((n) => (n.c === currentPlayer.category && fillsNeed ? { c: n.c, gap: n.gap - 1 } : n))
+      .filter((n) => n.gap > 0);
+    const reserveAfter = reserveForNeeds(needsAfter);
     const budgetAfter = budget - nextAmount;
-    if (budgetAfter < mandatoryAfter) {
+    if (budgetAfter < reserveAfter) {
       out.push({
         tone: "warn",
-        text: `Careful — bidding ${nextAmount} leaves ${budgetAfter} pts but you still need ~${mandatoryAfter} for required slots`,
+        text: `Careful — bidding ${nextAmount} leaves ${budgetAfter} pts, but your remaining required players cost ~${reserveAfter} at base. You'd fall short.`,
       });
-    } else if (fillsNeed && nextAmount <= Math.max(2, budget * 0.15)) {
-      out.push({ tone: "good", text: "Good value — comfortably within budget" });
+    } else if (fillsNeed && nextAmount <= Math.max(2, Number(currentPlayer.base_price) * 1.5)) {
+      out.push({ tone: "good", text: "Good value — fills a need without straining your reserve" });
     }
   }
 
