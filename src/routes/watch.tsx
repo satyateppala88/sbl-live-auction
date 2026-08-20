@@ -42,26 +42,6 @@ export const Route = createFileRoute("/watch")({
   component: WatchPage,
 });
 
-function RosterPips({ team, players }: { team: Team; players: Player[] }) {
-  const roster = rosterOf(players, team.id);
-  const filled = roster.length;
-  const empty = Math.max(0, team.max_roster_size - filled);
-  return (
-    <div className="flex items-center gap-1">
-      <span
-        className="h-2.5 w-2.5 rounded-full ring-1 ring-white/20"
-        style={{ backgroundColor: team.color }}
-        title="Captain"
-      />
-      {Array.from({ length: filled }).map((_, i) => (
-        <span key={`f${i}`} className="bg-gold-solid h-2.5 w-2.5 rounded-full" />
-      ))}
-      {Array.from({ length: empty }).map((_, i) => (
-        <span key={`e${i}`} className="h-2.5 w-2.5 rounded-full border border-border" />
-      ))}
-    </div>
-  );
-}
 
 function WatchPage() {
   const { teams, players, tiers, bids, state, loading } = useAuctionData();
