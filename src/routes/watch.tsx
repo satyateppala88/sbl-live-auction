@@ -6,6 +6,7 @@ import { CountdownTimer } from "@/components/CountdownTimer";
 import { ChatPopup } from "@/components/ChatPopup";
 import { ViewerCount } from "@/components/ViewerCount";
 import { StarEmblem } from "@/components/StarEmblem";
+import { RulesButton } from "@/components/RulesDialog";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import {
   useAuctionData,
