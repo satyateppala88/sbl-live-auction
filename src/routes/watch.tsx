@@ -3,10 +3,11 @@ import { HoloCard } from "@/components/HoloCard";
 import { CountUp } from "@/components/CountUp";
 import { TeamCrest } from "@/components/TeamCrest";
 import { CountdownTimer } from "@/components/CountdownTimer";
-import { ChatPopup } from "@/components/ChatPopup";
+import { ChatRoom } from "@/components/ChatRoom";
 import { ViewerCount } from "@/components/ViewerCount";
 import { StarEmblem } from "@/components/StarEmblem";
 import { LiveFeed } from "@/components/LiveFeed";
+import { Tv } from "lucide-react";
 import { RulesButton } from "@/components/RulesDialog";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import {
@@ -99,12 +100,10 @@ function WatchPage() {
         </div>
       </header>
 
-      <div className="mt-3 grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        {/* ---------- live feed (optional) + on the block ---------- */}
-        <div className="flex min-h-0 flex-col gap-3">
-        {state?.live_stream_url && <LiveFeed url={state.live_stream_url} />}
+      <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-2 lg:grid-rows-2">
+        {/* top-left: player info */}
         <section
-          className={`flex min-h-0 flex-1 flex-col rounded-2xl border bg-card/90 p-4 backdrop-blur lg:p-5 ${
+          className={`flex min-h-[15rem] flex-col rounded-2xl border bg-card/90 p-4 backdrop-blur lg:min-h-0 ${
             player && state?.bidding_open ? "smash-card border-accent/40" : "glow-card border-border"
           }`}
         >
@@ -121,34 +120,30 @@ function WatchPage() {
                 <HoloCard
                   name={player.name}
                   photoUrl={player.photo_url}
-                  className="h-24 w-24 shrink-0 text-3xl sm:h-32 sm:w-32"
+                  className="h-20 w-20 shrink-0 text-2xl sm:h-24 sm:w-24"
                 />
                 <div className="min-w-0">
-                  <h2 className="font-display truncate text-4xl uppercase leading-none sm:text-5xl">
+                  <h2 className="font-display truncate text-3xl uppercase leading-none sm:text-4xl">
                     {player.name}
                   </h2>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {CATEGORY_LABEL[player.category]} ·{" "}
                     {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    base {Number(player.base_price)} pts
-                  </p>
+                  <p className="text-xs text-muted-foreground">base {Number(player.base_price)} pts</p>
                 </div>
               </div>
 
               <div key={leading?.id ?? "none"} className="animate-bid-pop mt-auto origin-left">
-                <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Current bid
-                </p>
-                <p className="text-gold font-display text-7xl leading-none tabular-nums sm:text-8xl">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground">Current bid</p>
+                <p className="text-gold font-display text-5xl leading-none tabular-nums sm:text-6xl">
                   <CountUp value={amount} />
                 </p>
                 <p
-                  className="mt-1 flex items-center gap-2 text-lg font-bold"
+                  className="mt-1 flex items-center gap-2 text-base font-bold"
                   style={leadingTeam ? { color: leadingTeam.color } : undefined}
                 >
-                  {leadingTeam && <TeamCrest team={leadingTeam} size={22} />}
+                  {leadingTeam && <TeamCrest team={leadingTeam} size={20} />}
                   {leadingTeam ? `${leadingTeam.name} leading` : "No bids yet"}
                 </p>
               </div>
@@ -159,45 +154,60 @@ function WatchPage() {
             </div>
           )}
         </section>
-        </div>
 
-        {/* ---------- teams board ---------- */}
-        <section className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:min-h-0 lg:auto-rows-min lg:content-start lg:overflow-hidden">
-          {teams.map((t) => {
-            const c = categoryCounts(rosterOf(players, t.id));
-            return (
-              <div
-                key={t.id}
-                className="lift-card flex items-center gap-2.5 rounded-xl border border-border bg-card/85 px-3 py-2 backdrop-blur"
-              >
-                <TeamCrest team={t} size={38} />
-                <div className="min-w-0 flex-1">
-                  <span className="font-display block truncate text-sm uppercase leading-tight">
-                    {t.name}
-                  </span>
-                  <div className="mt-1 flex items-center gap-2">
-                    <RosterPips team={t} players={players} />
-                    <span className="text-[10px] text-muted-foreground">
-                      {c.male}M {c.female}F {c.kid}K
-                    </span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-gold font-display block text-xl leading-none tabular-nums">
-                    <CountUp value={Number(t.remaining_budget)} />
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">pts left</span>
-                </div>
-              </div>
-            );
-          })}
-          {teams.length === 0 && (
-            <p className="text-sm text-muted-foreground">No teams registered yet.</p>
+        {/* top-right: live stream */}
+        <section className="flex min-h-[15rem] items-center justify-center overflow-hidden rounded-2xl border border-border bg-black/50 lg:min-h-0">
+          {state?.live_stream_url ? (
+            <LiveFeed url={state.live_stream_url} />
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-center text-muted-foreground">
+              <Tv className="h-8 w-8 opacity-50" />
+              <p className="text-sm">Live camera</p>
+              <p className="text-xs">The organizer's room feed will appear here once it's on air.</p>
+            </div>
           )}
         </section>
-      </div>
 
-      <ChatPopup banned={banned} />
+        {/* bottom-left: chat room */}
+        <ChatRoom banned={banned} className="min-h-[18rem] lg:min-h-0" />
+
+        {/* bottom-right: team details */}
+        <section className="min-h-[15rem] overflow-y-auto rounded-2xl border border-border bg-card/40 p-2 lg:min-h-0">
+          <div className="grid gap-2">
+            {teams.map((t) => {
+              const c = categoryCounts(rosterOf(players, t.id));
+              return (
+                <div
+                  key={t.id}
+                  className="lift-card flex items-center gap-2.5 rounded-xl border border-border bg-card/85 px-3 py-2 backdrop-blur"
+                >
+                  <TeamCrest team={t} size={36} />
+                  <div className="min-w-0 flex-1">
+                    <span className="font-display block truncate text-sm uppercase leading-tight">
+                      {t.name}
+                    </span>
+                    <div className="mt-1 flex items-center gap-2">
+                      <RosterPips team={t} players={players} />
+                      <span className="text-[10px] text-muted-foreground">
+                        {c.male}M {c.female}F {c.kid}K
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-gold font-display block text-lg leading-none tabular-nums">
+                      <CountUp value={Number(t.remaining_budget)} />
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">pts left</span>
+                  </div>
+                </div>
+              );
+            })}
+            {teams.length === 0 && (
+              <p className="text-sm text-muted-foreground">No teams registered yet.</p>
+            )}
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
