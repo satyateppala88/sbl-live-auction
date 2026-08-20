@@ -388,3 +388,25 @@ export const unbanDevice = createServerFn({ method: "POST" })
     const { unbanDeviceServer } = await import("./auction.server");
     return unbanDeviceServer(data.passcode, data.deviceId);
   });
+
+export const getTargets = createServerFn({ method: "POST" })
+  .inputValidator((d: { teamId: string; pin: string }) => d)
+  .handler(async ({ data }) => {
+    const { getTargetsServer } = await import("./auction.server");
+    return getTargetsServer(data.teamId, data.pin);
+  });
+
+export const setTarget = createServerFn({ method: "POST" })
+  .inputValidator(
+    (d: {
+      teamId: string;
+      pin: string;
+      playerId: string;
+      minPrice: number | null;
+      maxPrice: number | null;
+    }) => d,
+  )
+  .handler(async ({ data }) => {
+    const { setTargetServer } = await import("./auction.server");
+    return setTargetServer(data.teamId, data.pin, data.playerId, data.minPrice, data.maxPrice);
+  });
