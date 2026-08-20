@@ -4,6 +4,7 @@ import { useAuctionData } from "@/lib/auction-data";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { StarEmblem } from "@/components/StarEmblem";
+import { RulesButton } from "@/components/RulesDialog";
 import { CountUp } from "@/components/CountUp";
 
 export const Route = createFileRoute("/")({
