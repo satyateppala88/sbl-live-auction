@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Loader2, Gavel, ArrowLeft, LogOut, Info, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { TeamCrest } from "@/components/TeamCrest";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { ChatPopup } from "@/components/ChatPopup";
 import { ViewerCount } from "@/components/ViewerCount";
+import { RulesButton } from "@/components/RulesDialog";
 import {
   useAuctionData,
   rosterOf,
@@ -226,6 +227,30 @@ function BiddingRoom({
   }
 
   const moment = useAuctionMoment(players, teams);
+
+  const wonIds = useRef<Set<string> | null>(null);
+  useEffect(() => {
+    const mine = new Set(
+      players.filter((p) => p.status === "sold" && p.sold_to_team_id === team.id).map((p) => p.id),
+    );
+    const before = wonIds.current;
+    wonIds.current = mine;
+    if (!before) return;
+    for (const id of mine) {
+      if (before.has(id)) continue;
+      const p = players.find((x) => x.id === id);
+      if (p) {
+        toast.success(
+          `🎉 You won ${p.name} for ${Number(p.sold_price)} pts! ${Number(
+            team.remaining_budget,
+          )} pts left — squad's shaping up. Great pick!`,
+          { duration: 6000 },
+        );
+      }
+    }
+  }, [players, team.id, team.remaining_budget]);
+
+
 
   return (
     <main className="arena-bg court-lines min-h-screen px-4 pb-32 pt-6 lg:h-[100dvh] lg:overflow-hidden lg:pb-28">

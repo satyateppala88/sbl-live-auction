@@ -6,6 +6,7 @@ import { CountdownTimer } from "@/components/CountdownTimer";
 import { ChatPopup } from "@/components/ChatPopup";
 import { ViewerCount } from "@/components/ViewerCount";
 import { StarEmblem } from "@/components/StarEmblem";
+import { RulesButton } from "@/components/RulesDialog";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import {
   useAuctionData,
@@ -88,7 +89,8 @@ function WatchPage() {
         <span className="text-gold-solid hidden text-[11px] font-bold uppercase tracking-[0.28em] lg:block">
           One Community · One Court · One Roar
         </span>
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <RulesButton />
           <ViewerCount count={count} />
           <Link to="/" className="text-xs text-muted-foreground underline">
             Home

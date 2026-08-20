@@ -4,6 +4,7 @@ import { useAuctionData } from "@/lib/auction-data";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { StarEmblem } from "@/components/StarEmblem";
+import { RulesButton } from "@/components/RulesDialog";
 import { CountUp } from "@/components/CountUp";
 
 export const Route = createFileRoute("/")({
@@ -34,6 +35,9 @@ function Index() {
   return (
     <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-10 lg:flex lg:min-h-screen lg:items-center lg:py-0">
       <div className="star-field-layer" aria-hidden />
+      <div className="absolute right-4 top-4 z-10">
+        <RulesButton />
+      </div>
       <span
         className="shooting-star animate-shooting-star"
         style={{ top: "12%", left: "78%" }}

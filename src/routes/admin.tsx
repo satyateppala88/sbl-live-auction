@@ -47,6 +47,7 @@ import { TeamCrest } from "@/components/TeamCrest";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { ChatPopup } from "@/components/ChatPopup";
 import { ViewerCount } from "@/components/ViewerCount";
+import { RulesButton } from "@/components/RulesDialog";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { HoloCard } from "@/components/HoloCard";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
@@ -217,6 +218,7 @@ function AdminConsole({
                  )
                }
              />
+            <RulesButton />
             <ViewerCount count={count} />
             <Button variant="secondary" size="sm" onClick={onSignOut}>
               <LogOut className="mr-1 h-4 w-4" /> Sign out
