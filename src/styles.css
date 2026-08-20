@@ -677,6 +677,71 @@
   animation: speed-drift 3.2s linear infinite;
 }
 
+/* ---------- holographic face medallion ---------- */
+
+@keyframes holo-float3d {
+  0%,
+  100% {
+    transform: rotateX(7deg) rotateY(-12deg);
+  }
+  50% {
+    transform: rotateX(-5deg) rotateY(13deg);
+  }
+}
+
+@utility holo-medallion {
+  position: relative;
+  transform-style: preserve-3d;
+  animation: holo-float3d 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ---------- sold-moment confetti ---------- */
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-12vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(112vh) rotate(680deg);
+    opacity: 0.9;
+  }
+}
+
+@utility confetti-piece {
+  position: absolute;
+  top: 0;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes congrats-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.9);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  88% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+@utility animate-congrats {
+  animation: congrats-pop 2.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+
 @media (prefers-reduced-motion: reduce) {
 
   *,
