@@ -630,7 +630,7 @@ function TeamsTab({
         </div>
       </div>
 
-      <div className="grid gap-2 xl:grid-cols-2">
+      <div className="grid gap-2">
         {teams.map((t) => (
           <div key={t.id} className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-2">
@@ -860,7 +860,7 @@ function PlayersTab({
         </div>
       </div>
 
-      <div className="grid max-h-[70vh] gap-1.5 overflow-auto xl:grid-cols-2">
+      <div className="grid max-h-[70vh] gap-1.5 overflow-auto">
         {players.map((p) => (
           <div
             key={p.id}
