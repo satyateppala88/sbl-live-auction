@@ -410,21 +410,20 @@ function BiddingRoom({
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Other teams
           </h3>
-          <div className="mt-2 grid max-h-72 gap-1.5 overflow-y-auto pr-1">
+          <div className="mt-2 grid grid-cols-2 gap-1.5">
             {teams
               .filter((t) => t.id !== team.id)
               .map((t) => (
                 <div
                   key={t.id}
-                  className="flex items-center gap-2 rounded-lg border border-border bg-card/70 px-3 py-2 text-sm"
+                  className="flex items-center gap-1.5 rounded-lg border border-border bg-card/70 px-2 py-1.5 text-sm"
                 >
-                  <TeamCrest team={t} size={24} />
-                  <span className="min-w-0 flex-1 truncate">{t.name}</span>
-
-                  <span className="text-muted-foreground">
+                  <TeamCrest team={t} size={22} />
+                  <span className="min-w-0 flex-1 truncate text-xs">{t.name}</span>
+                  <span className="text-[10px] text-muted-foreground">
                     {rosterOf(players, t.id).length}/{t.max_roster_size}
                   </span>
-                  <span className="font-mono text-primary">{Number(t.remaining_budget)}</span>
+                  <span className="font-mono text-xs text-primary">{Number(t.remaining_budget)}</span>
                 </div>
               ))}
           </div>
