@@ -18,8 +18,6 @@ import {
   categoryCounts,
   getChatDisplayName,
   CATEGORY_LABEL,
-  type Player,
-  type Team,
 } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/watch")({
@@ -44,26 +42,6 @@ export const Route = createFileRoute("/watch")({
   component: WatchPage,
 });
 
-function RosterPips({ team, players }: { team: Team; players: Player[] }) {
-  const roster = rosterOf(players, team.id);
-  const filled = roster.length;
-  const empty = Math.max(0, team.max_roster_size - filled);
-  return (
-    <div className="flex items-center gap-1">
-      <span
-        className="h-2.5 w-2.5 rounded-full ring-1 ring-white/20"
-        style={{ backgroundColor: team.color }}
-        title="Captain"
-      />
-      {Array.from({ length: filled }).map((_, i) => (
-        <span key={`f${i}`} className="bg-gold-solid h-2.5 w-2.5 rounded-full" />
-      ))}
-      {Array.from({ length: empty }).map((_, i) => (
-        <span key={`e${i}`} className="h-2.5 w-2.5 rounded-full border border-border" />
-      ))}
-    </div>
-  );
-}
 
 function WatchPage() {
   const { teams, players, tiers, bids, state, loading } = useAuctionData();
@@ -171,39 +149,40 @@ function WatchPage() {
         {/* bottom-left: chat room */}
         <ChatRoom banned={banned} className="min-h-[18rem] lg:min-h-0" />
 
-        {/* bottom-right: team details */}
-        <section className="min-h-[15rem] overflow-y-auto rounded-2xl border border-border bg-card/40 p-2 lg:min-h-0">
-          <div className="grid gap-2">
+        {/* bottom-right: team details -- all teams fit, no scroll */}
+        <section className="flex min-h-[15rem] flex-col overflow-hidden rounded-2xl border border-border bg-card/40 p-2 lg:min-h-0">
+          <div className="mb-1.5 flex shrink-0 items-center gap-2 px-1">
+            <span className="font-display text-xs uppercase tracking-wide text-muted-foreground">
+              Teams & budgets
+            </span>
+            <span className="ml-auto text-[10px] text-muted-foreground">{teams.length} squads</span>
+          </div>
+          <div className="grid min-h-0 flex-1 grid-cols-2 gap-1.5 lg:auto-rows-fr">
             {teams.map((t) => {
-              const c = categoryCounts(rosterOf(players, t.id));
+              const roster = rosterOf(players, t.id);
+              const c = categoryCounts(roster);
               return (
                 <div
                   key={t.id}
-                  className="lift-card flex items-center gap-2.5 rounded-xl border border-border bg-card/85 px-3 py-2 backdrop-blur"
+                  className="flex items-center gap-1.5 rounded-lg border border-border bg-card/85 px-2 py-1"
                 >
-                  <TeamCrest team={t} size={36} />
+                  <TeamCrest team={t} size={26} />
                   <div className="min-w-0 flex-1">
-                    <span className="font-display block truncate text-sm uppercase leading-tight">
+                    <span className="font-display block truncate text-[11px] uppercase leading-tight">
                       {t.name}
                     </span>
-                    <div className="mt-1 flex items-center gap-2">
-                      <RosterPips team={t} players={players} />
-                      <span className="text-[10px] text-muted-foreground">
-                        {c.male}M {c.female}F {c.kid}K
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-gold font-display block text-lg leading-none tabular-nums">
-                      <CountUp value={Number(t.remaining_budget)} />
+                    <span className="block text-[9px] leading-tight text-muted-foreground">
+                      {roster.length}/{t.max_roster_size} · {c.male}M {c.female}F {c.kid}K
                     </span>
-                    <span className="text-[10px] text-muted-foreground">pts left</span>
                   </div>
+                  <span className="text-gold font-display shrink-0 text-sm tabular-nums leading-none">
+                    <CountUp value={Number(t.remaining_budget)} />
+                  </span>
                 </div>
               );
             })}
             {teams.length === 0 && (
-              <p className="text-sm text-muted-foreground">No teams registered yet.</p>
+              <p className="col-span-2 text-sm text-muted-foreground">No teams registered yet.</p>
             )}
           </div>
         </section>
