@@ -82,6 +82,7 @@ export type Database = {
           block_started_at: string | null
           current_player_id: string | null
           id: number
+          live_stream_url: string | null
           round_type: string
           updated_at: string
         }
@@ -92,6 +93,7 @@ export type Database = {
           block_started_at?: string | null
           current_player_id?: string | null
           id?: number
+          live_stream_url?: string | null
           round_type?: string
           updated_at?: string
         }
@@ -102,6 +104,7 @@ export type Database = {
           block_started_at?: string | null
           current_player_id?: string | null
           id?: number
+          live_stream_url?: string | null
           round_type?: string
           updated_at?: string
         }

@@ -44,6 +44,7 @@ export type AuctionState = {
   round_type: string;
   block_started_at: string | null;
   block_seconds: number;
+  live_stream_url: string | null;
 };
 
 export type ChatMessage = {

@@ -12,6 +12,7 @@ import {
   LogOut,
   Users,
   UserX,
+  Tv,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,7 @@ import {
   resetAuction,
   resetTimer,
   kickDevice,
+  setStreamUrl,
 } from "@/lib/auction.functions";
 import { RosterBoard } from "@/components/RosterBoard";
 import { TeamCrest } from "@/components/TeamCrest";
@@ -357,6 +359,7 @@ function AdminConsole({
             </div>
 
             <div className="grid gap-4">
+              <StreamControl passcode={passcode} current={state?.live_stream_url ?? null} run={run} />
               <div className="rounded-2xl border border-border bg-card p-4">
                 <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
                   Next up (available)
@@ -1279,6 +1282,70 @@ function ViewersPanel({
           <p className="text-sm text-muted-foreground">No one online right now.</p>
         )}
       </div>
+    </div>
+  );
+}
+
+function StreamControl({
+  passcode,
+  current,
+  run,
+}: {
+  passcode: string;
+  current: string | null;
+  run: (fn: () => Promise<unknown>, msg?: string) => Promise<void>;
+}) {
+  const [url, setUrl] = useState(current ?? "");
+  useEffect(() => {
+    setUrl(current ?? "");
+  }, [current]);
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="flex items-center gap-2">
+        <Tv className="text-smash h-4 w-4" />
+        <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
+          Live camera feed
+        </h3>
+        {current && (
+          <span className="text-smash ml-auto flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
+            <span className="animate-energy-pulse h-1.5 w-1.5 rounded-full bg-smash" /> On air
+          </span>
+        )}
+      </div>
+      <p className="mt-0.5 text-[11px] text-muted-foreground">
+        Paste your YouTube Live link — it appears on the Watch page for everyone. Clear to stop.
+      </p>
+      <div className="mt-2 flex gap-2">
+        <Input
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="https://www.youtube.com/live/…"
+        />
+        <Button
+          size="sm"
+          onClick={() =>
+            void run(
+              () => setStreamUrl({ data: { passcode, url: url.trim() || null } }),
+              url.trim() ? "Live feed is on air" : "Live feed cleared",
+            )
+          }
+        >
+          Save
+        </Button>
+      </div>
+      {current && (
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-1.5 h-7 px-2 text-xs text-muted-foreground"
+          onClick={() => {
+            setUrl("");
+            void run(() => setStreamUrl({ data: { passcode, url: null } }), "Live feed cleared");
+          }}
+        >
+          Clear feed
+        </Button>
+      )}
     </div>
   );
 }
