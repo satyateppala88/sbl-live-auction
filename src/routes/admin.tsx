@@ -218,6 +218,7 @@ function AdminConsole({
                  )
                }
              />
+            <RulesButton />
             <ViewerCount count={count} />
             <Button variant="secondary" size="sm" onClick={onSignOut}>
               <LogOut className="mr-1 h-4 w-4" /> Sign out
