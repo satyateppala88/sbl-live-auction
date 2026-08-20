@@ -74,6 +74,12 @@ function Index() {
             League squads take shape as captains bid live for every player.
           </p>
 
+          <p className="animate-rise-in stagger-2 text-gold-solid mt-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.28em] lg:justify-start">
+            <StarEmblem className="text-star h-3 w-3" />
+            Chase the Shuttle · Reach the Stars
+            <StarEmblem className="text-star h-3 w-3" />
+          </p>
+
           <div className="animate-rise-in stagger-2 mx-auto mt-7 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
             <HeroStat icon={<Users className="h-4 w-4" />} value={teams.length} label="Teams" />
             <HeroStat

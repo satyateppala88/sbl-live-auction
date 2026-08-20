@@ -85,6 +85,9 @@ function WatchPage() {
           <span className="animate-energy-pulse h-1.5 w-1.5 rounded-full bg-smash" />
           Live
         </span>
+        <span className="text-gold-solid hidden text-[11px] font-bold uppercase tracking-[0.28em] lg:block">
+          One Community · One Court · One Roar
+        </span>
         <div className="ml-auto flex items-center gap-3">
           <ViewerCount count={count} />
           <Link to="/" className="text-xs text-muted-foreground underline">
