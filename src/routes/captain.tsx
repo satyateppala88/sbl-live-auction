@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Loader2, Gavel, ArrowLeft, LogOut, Info, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { captainLogin, placeBid } from "@/lib/auction.functions";
+import { captainLogin, placeBid, getTargets, setTarget } from "@/lib/auction.functions";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { RosterSlots } from "@/components/RosterSlots";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
@@ -16,6 +16,7 @@ import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { ChatPopup } from "@/components/ChatPopup";
 import { ViewerCount } from "@/components/ViewerCount";
 import { RulesButton } from "@/components/RulesDialog";
+import { TargetPlanner, type TargetMap } from "@/components/TargetPlanner";
 import {
   useAuctionData,
   rosterOf,
@@ -184,6 +185,35 @@ function BiddingRoom({
   const { players, bids, state, teams, tiers } = data;
   const { count, banned } = usePresence("captain", team.name);
   const [busy, setBusy] = useState(false);
+  const [targets, setTargets] = useState<TargetMap>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    void getTargets({ data: { teamId: team.id, pin } })
+      .then((r) => {
+        if (cancelled) return;
+        const m: TargetMap = {};
+        for (const t of r.targets) {
+          m[t.player_id] = {
+            min: t.min_price === null ? null : Number(t.min_price),
+            max: t.max_price === null ? null : Number(t.max_price),
+          };
+        }
+        setTargets(m);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [team.id, pin]);
+
+  const saveTarget = (playerId: string, min: number | null, max: number | null) => {
+    setTargets((prev) => ({ ...prev, [playerId]: { min, max } }));
+    void setTarget({
+      data: { teamId: team.id, pin, playerId, minPrice: min, maxPrice: max },
+    }).catch(() => {});
+  };
+
 
   const roster = rosterOf(players, team.id);
   const counts = categoryCounts(roster);
@@ -271,9 +301,12 @@ function BiddingRoom({
           </Button>
         </header>
 
-        <p className="text-gold-solid mt-3 text-center text-[11px] font-bold uppercase tracking-[0.3em] lg:text-left">
-          Play as One · Rise as One
-        </p>
+        <div className="mt-3 flex items-center justify-center gap-3 lg:justify-start">
+          <p className="text-gold-solid text-[11px] font-bold uppercase tracking-[0.3em]">
+            Play as One · Rise as One
+          </p>
+          <TargetPlanner players={players} tiers={tiers} targets={targets} onSave={saveTarget} />
+        </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           <Stat label="Budget" value={Number(team.remaining_budget)} gold />
@@ -320,8 +353,28 @@ function BiddingRoom({
                   {leadingTeam && <TeamCrest team={leadingTeam} size={22} />}
                   {leadingTeam ? `${leadingTeam.name} leading` : "No bids yet"}
                 </p>
-
               </div>
+              {(() => {
+                const mt = targets[player.id];
+                if (!mt || (mt.min === null && mt.max === null)) return null;
+                const currentBid = leading ? Number(leading.amount) : Number(player.base_price);
+                const over = mt.max !== null && currentBid > mt.max;
+                return (
+                  <div
+                    className={`mt-4 rounded-xl border px-3 py-2 text-left text-sm ${
+                      over ? "border-smash/50 text-smash" : "border-accent/40 text-accent"
+                    }`}
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-widest">
+                      Your plan
+                    </span>{" "}
+                    {mt.min ?? "—"}–{mt.max ?? "—"} pts ·{" "}
+                    {over
+                      ? `current ${currentBid} is ${currentBid - (mt.max ?? 0)} over your max`
+                      : "within your plan"}
+                  </div>
+                );
+              })()}
             </div>
           ) : (
             <p className="py-10 text-muted-foreground">Waiting for the organizer…</p>
