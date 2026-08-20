@@ -367,20 +367,22 @@ function AdminConsole({
                 <p className="mt-0.5 text-[11px] text-muted-foreground">
                   Sorted in draw order: Male → Female → Kid, Icon → Challenger → Game Changer
                 </p>
-                <div className="mt-2 max-h-80 space-y-1.5 overflow-auto">
+                <div className="mt-2 grid max-h-80 grid-cols-1 gap-1.5 overflow-auto sm:grid-cols-2">
                   {sortForAuction(
                     players.filter((p) => p.status === "available"),
                     tiers,
                   ).map((p) => (
                     <div
                       key={p.id}
-                      className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm"
+                      className="flex items-center gap-2 rounded-lg border border-border px-2 py-1.5 text-sm"
                     >
-                      <span className="flex-1">{p.name}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {CATEGORY_LABEL[p.category]} ·{" "}
-                        {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"}
-                      </span>
+                      <div className="min-w-0 flex-1">
+                        <span className="block truncate font-medium">{p.name}</span>
+                        <span className="block text-[10px] text-muted-foreground">
+                          {CATEGORY_LABEL[p.category]} ·{" "}
+                          {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"}
+                        </span>
+                      </div>
                       <Button
                         size="sm"
                         onClick={() =>
@@ -395,7 +397,9 @@ function AdminConsole({
                     </div>
                   ))}
                   {players.filter((p) => p.status === "available").length === 0 && (
-                    <p className="text-sm text-muted-foreground">No available players.</p>
+                    <p className="col-span-full text-sm text-muted-foreground">
+                      No available players.
+                    </p>
                   )}
                 </div>
               </div>
@@ -626,7 +630,7 @@ function TeamsTab({
         </div>
       </div>
 
-      <div className="grid gap-2">
+      <div className="grid gap-2 xl:grid-cols-2">
         {teams.map((t) => (
           <div key={t.id} className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-2">
@@ -856,7 +860,7 @@ function PlayersTab({
         </div>
       </div>
 
-      <div className="grid max-h-[70vh] gap-1.5 overflow-auto">
+      <div className="grid max-h-[70vh] gap-1.5 overflow-auto xl:grid-cols-2">
         {players.map((p) => (
           <div
             key={p.id}
@@ -1179,7 +1183,7 @@ function AnalyticsTab({ teams, players }: { teams: Team[]; players: Player[] }) 
 
       <div className="rounded-2xl border border-border bg-card p-4">
         <h3 className="text-xs uppercase tracking-widest text-muted-foreground">Spend by team</h3>
-        <div className="mt-3 space-y-2">
+        <div className="mt-3 grid gap-2 lg:grid-cols-2">
           {perTeam.map(({ team, roster, spend, counts, top }) => {
             const pct = totalSpend > 0 ? Math.round((spend / totalSpend) * 100) : 0;
             return (
