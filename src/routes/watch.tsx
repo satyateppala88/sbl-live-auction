@@ -51,6 +51,7 @@ function WatchPage() {
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
   const moment = useAuctionMoment(players, teams);
   const amount = leading ? Number(leading.amount) : Number(player?.base_price ?? 0);
+  const playerBids = player ? bids.filter((b) => b.player_id === player.id) : [];
 
   return (
     <main className="arena-bg court-lines flex min-h-[100dvh] flex-col px-3 py-3 lg:h-[100dvh] lg:overflow-hidden lg:px-5">
@@ -112,7 +113,50 @@ function WatchPage() {
                 </div>
               </div>
 
-              <div key={leading?.id ?? "none"} className="animate-bid-pop mt-auto origin-left">
+              {/* live bid history -- fills the space, fun for spectators */}
+              <div className="mt-3 flex min-h-0 flex-1 flex-col">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Bid history
+                </p>
+                <div className="mt-1 min-h-0 flex-1 space-y-1 overflow-y-auto pr-1">
+                  {playerBids.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">
+                      No bids yet — opens at {Number(player.base_price)} pts.
+                    </p>
+                  ) : (
+                    playerBids.map((b) => {
+                      const t = teams.find((x) => x.id === b.team_id);
+                      const isTop = leading?.id === b.id;
+                      return (
+                        <div
+                          key={b.id}
+                          className={`animate-slot-in flex items-center gap-2 rounded-lg border px-2 py-1 text-sm ${
+                            isTop
+                              ? "border-accent/50 bg-accent/10"
+                              : "border-border/60 bg-card/40"
+                          }`}
+                        >
+                          <span
+                            className="h-2 w-2 shrink-0 rounded-full"
+                            style={{ backgroundColor: t?.color }}
+                          />
+                          <span className="min-w-0 flex-1 truncate">{t?.name ?? "—"}</span>
+                          {isTop && (
+                            <span className="text-accent text-[9px] font-bold uppercase tracking-wide">
+                              leading
+                            </span>
+                          )}
+                          <span className="text-gold font-display tabular-nums">
+                            {Number(b.amount)}
+                          </span>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              <div key={leading?.id ?? "none"} className="animate-bid-pop mt-3 origin-left">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">Current bid</p>
                 <p className="text-gold font-display text-5xl leading-none tabular-nums sm:text-6xl">
                   <CountUp value={amount} />
