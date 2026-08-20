@@ -18,8 +18,6 @@ import {
   categoryCounts,
   getChatDisplayName,
   CATEGORY_LABEL,
-  type Player,
-  type Team,
 } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/watch")({
