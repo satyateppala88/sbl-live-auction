@@ -11,6 +11,8 @@ export type Team = {
   color: string;
   starting_budget: number;
   remaining_budget: number;
+  base_budget: number;
+  captain_tier_id: string | null;
   max_roster_size: number;
   captain_photo_url: string | null;
   captain2_photo_url: string | null;
