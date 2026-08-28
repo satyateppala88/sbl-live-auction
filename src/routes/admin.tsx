@@ -193,8 +193,8 @@ function AdminConsole({
   const softWarning = (() => {
     if (!player || !leadingTeam) return null;
     const counts = categoryCounts(rosterOf(players, leadingTeam.id));
-    if (counts[player.category] >= 2)
-      return `${leadingTeam.name} already has 2 ${CATEGORY_LABEL[player.category]} players`;
+    if (counts[player.category] >= REQUIREMENT[player.category])
+      return `${leadingTeam.name} already has ${REQUIREMENT[player.category]} ${CATEGORY_LABEL[player.category]} player(s) — cap reached`;
     return null;
   })();
 

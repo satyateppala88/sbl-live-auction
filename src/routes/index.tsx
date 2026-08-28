@@ -74,7 +74,7 @@ function Index() {
           </h1>
 
           <p className="animate-rise-in stagger-2 mx-auto mt-4 max-w-md text-sm text-muted-foreground lg:mx-0">
-            Ten teams. Two captains each. One block. Watch the SMR Badminton
+            Ten teams. One captain each. One block. Watch the SMR Badminton
             League squads take shape as captains bid live for every player.
           </p>
 

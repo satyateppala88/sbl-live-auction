@@ -72,7 +72,7 @@ export const CATEGORY_LABEL: Record<Cat, string> = {
   kid: "Kid 8-16",
 };
 
-export const REQUIREMENT: Record<Cat, number> = { male: 2, female: 2, kid: 1 };
+export const REQUIREMENT: Record<Cat, number> = { male: 2, female: 1, kid: 1 };
 
 export function useAuctionData() {
   const [teams, setTeams] = useState<Team[]>([]);
