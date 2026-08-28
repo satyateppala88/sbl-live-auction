@@ -326,8 +326,10 @@ export type Database = {
       }
       teams: {
         Row: {
+          base_budget: number
           captain_name: string
           captain_photo_url: string | null
+          captain_tier_id: string | null
           captain2_name: string
           captain2_photo_url: string | null
           color: string
@@ -340,8 +342,10 @@ export type Database = {
           starting_budget: number
         }
         Insert: {
+          base_budget?: number
           captain_name?: string
           captain_photo_url?: string | null
+          captain_tier_id?: string | null
           captain2_name?: string
           captain2_photo_url?: string | null
           color?: string
@@ -354,8 +358,10 @@ export type Database = {
           starting_budget?: number
         }
         Update: {
+          base_budget?: number
           captain_name?: string
           captain_photo_url?: string | null
+          captain_tier_id?: string | null
           captain2_name?: string
           captain2_photo_url?: string | null
           color?: string
@@ -367,7 +373,15 @@ export type Database = {
           remaining_budget?: number
           starting_budget?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "teams_captain_tier_id_fkey"
+            columns: ["captain_tier_id"]
+            isOneToOne: false
+            referencedRelation: "tiers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tiers: {
         Row: {
