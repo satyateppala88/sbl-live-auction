@@ -34,7 +34,8 @@ export const saveTeam = createServerFn({ method: "POST" })
       captain_name: string;
       captain2_name: string;
       color: string;
-      starting_budget: number;
+      base_budget: number;
+      captain_tier_id: string | null;
       max_roster_size: number;
       pin: string;
     }) => d,
@@ -43,22 +44,48 @@ export const saveTeam = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./auction.server");
     await assertAdmin(data.passcode);
     const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+
+    // The captain "costs" the team their tier's base price:
+    // effective (spendable) purse = base_budget - captain tier base.
+    let captainBase = 0;
+    if (data.captain_tier_id) {
+      const { data: tier } = await db
+        .from("tiers")
+        .select("base_price")
+        .eq("id", data.captain_tier_id)
+        .maybeSingle();
+      captainBase = tier ? Number(tier.base_price) : 0;
+    }
+    const effective = Math.max(0, Number(data.base_budget) - captainBase);
+
     const base = {
       name: data.name,
       captain_name: data.captain_name,
       captain2_name: data.captain2_name,
       color: data.color,
-      starting_budget: data.starting_budget,
+      base_budget: data.base_budget,
+      captain_tier_id: data.captain_tier_id,
+      starting_budget: effective,
       max_roster_size: data.max_roster_size,
     };
     let teamId = data.id;
     if (teamId) {
-      const { error } = await db.from("teams").update(base).eq("id", teamId);
+      // preserve any spend-to-date so changing the captain tier mid-event stays correct
+      const { data: cur } = await db
+        .from("teams")
+        .select("starting_budget, remaining_budget")
+        .eq("id", teamId)
+        .maybeSingle();
+      const spent = cur ? Number(cur.starting_budget) - Number(cur.remaining_budget) : 0;
+      const { error } = await db
+        .from("teams")
+        .update({ ...base, remaining_budget: Math.max(0, effective - spent) })
+        .eq("id", teamId);
       if (error) throw new Error(error.message);
     } else {
       const { data: row, error } = await db
         .from("teams")
-        .insert({ ...base, remaining_budget: data.starting_budget })
+        .insert({ ...base, remaining_budget: effective })
         .select("id")
         .single();
       if (error) throw new Error(error.message);
