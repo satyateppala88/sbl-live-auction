@@ -54,9 +54,8 @@ export function RulesButton({ className = "" }: { className?: string }) {
                 <Section title="The format">
                   <p>
                     Ten franchise teams build their squads by bidding live for registered players.
-                    Each team is led by two captains — one male and one female adult — who bid from
-                    their phones while the organizer runs the block. Every sale updates all screens
-                    in real time.
+                    Each team is led by one captain, who bids from their phone while the organizer
+                    runs the block. Every sale updates all screens in real time.
                   </p>
                 </Section>
 
@@ -64,9 +63,10 @@ export function RulesButton({ className = "" }: { className?: string }) {
                   <p>Each team starts with a fixed purse of points (default 100).</p>
                   <p>
                     A team must always keep at least <strong>1 point in reserve for every empty
-                    slot</strong> it still needs to fill. Example: with 3 of 5 players bought, you
-                    can bid at most your remaining budget minus 2. This is enforced automatically —
-                    you can never bid yourself into a corner where a mandatory slot can't be filled.
+                    slot</strong> it still needs to fill. Example: with 2 of 4 players bought, you
+                    can bid at most your remaining budget minus 1 (one point held back for your last
+                    slot). This is enforced automatically — you can never bid yourself into a corner
+                    where a mandatory slot can't be filled.
                   </p>
                 </Section>
 
@@ -81,15 +81,37 @@ export function RulesButton({ className = "" }: { className?: string }) {
                 </Section>
 
                 <Section title="Squad composition">
-                  <p>Every team must field a balanced squad. Mandatory minimums per team:</p>
+                  <p>
+                    Every team fields <strong>five players</strong>: the captain plus four bought at
+                    auction. The on-court squad is:
+                  </p>
                   <ul className="ml-4 list-disc space-y-0.5">
-                    <li>2 × Male (16+)</li>
-                    <li>2 × Female (16+)</li>
-                    <li>1 × Kid (8–16)</li>
+                    <li>3 × Male (16+) — includes the captain</li>
+                    <li>1 × Female (16+)</li>
+                    <li>1 × Child (8–15)</li>
                   </ul>
+                  <p>
+                    So at auction each team buys <strong>2 Male, 1 Female and 1 Child</strong> — the
+                    captain is your third male.
+                  </p>
                   <p className="text-muted-foreground">
                     Category caps are shown to the organizer as a soft warning; the organizer has
                     final say via the lottery tool.
+                  </p>
+                </Section>
+
+                <Section title="Game formats">
+                  <p>Every tie is decided across five matches:</p>
+                  <ul className="ml-4 list-disc space-y-0.5">
+                    <li>Men's Doubles</li>
+                    <li>Men's Doubles</li>
+                    <li>Mixed Doubles (Man + Woman)</li>
+                    <li>Man + Child</li>
+                    <li>Woman + Child</li>
+                  </ul>
+                  <p>
+                    <strong>No player may play more than two matches.</strong> With three men, one
+                    woman and one child, every player features in exactly two.
                   </p>
                 </Section>
 
