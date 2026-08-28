@@ -12,11 +12,10 @@ export function RosterSlots({
 }) {
   const roster = rosterOf(players, team.id);
   const captains = [
-    { name: team.captain_name, photo: team.captain_photo_url, badge: "Capt (M)" },
+    { name: team.captain_name, photo: team.captain_photo_url, badge: "Captain" },
     { name: team.captain2_name, photo: team.captain2_photo_url, badge: "Capt (F)" },
-  ];
-  const total = Math.max(team.max_roster_size, roster.length + captains.length);
-  const emptyCount = Math.max(0, total - captains.length - roster.length);
+  ].filter((c) => c.name);
+  const emptyCount = Math.max(0, team.max_roster_size - roster.length);
   const box = size === "sm" ? "h-14 w-14 text-sm" : "h-20 w-20 text-lg";
 
   return (
