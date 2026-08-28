@@ -66,6 +66,7 @@ import {
   type Cat,
   type Player,
   type Team,
+  type Tier,
   type Bid,
   type Viewer,
 } from "@/lib/auction-data";
@@ -409,7 +410,7 @@ function AdminConsole({
           </TabsContent>
 
           <TabsContent value="teams" className="mt-4">
-            <TeamsTab teams={teams} players={players} passcode={passcode} />
+            <TeamsTab teams={teams} players={players} tiers={tiers} passcode={passcode} />
           </TabsContent>
 
           <TabsContent value="players" className="mt-4">
@@ -540,10 +541,12 @@ function Dashboard({ teams, players }: { teams: Team[]; players: Player[] }) {
 function TeamsTab({
   teams,
   players,
+  tiers,
   passcode,
 }: {
   teams: Team[];
   players: Player[];
+  tiers: Tier[];
   passcode: string;
 }) {
   const empty = {
@@ -551,8 +554,9 @@ function TeamsTab({
     captain_name: "",
     captain2_name: "",
     color: "#e11d48",
-    starting_budget: 100,
-    max_roster_size: 5,
+    base_budget: 100,
+    captain_tier_id: null as string | null,
+    max_roster_size: 4,
     pin: "",
   };
   const [form, setForm] = useState<typeof empty & { id?: string }>(empty);
@@ -590,14 +594,14 @@ function TeamsTab({
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Starting budget">
+            <Field label="Base purse">
               <Input
                 type="number"
-                value={form.starting_budget}
-                onChange={(e) => setForm({ ...form, starting_budget: Number(e.target.value) })}
+                value={form.base_budget}
+                onChange={(e) => setForm({ ...form, base_budget: Number(e.target.value) })}
               />
             </Field>
-            <Field label="Max roster">
+            <Field label="Max roster (buys)">
               <Input
                 type="number"
                 value={form.max_roster_size}
@@ -605,6 +609,37 @@ function TeamsTab({
               />
             </Field>
           </div>
+          <Field label="Captain tier (sets the purse)">
+            <Select
+              value={form.captain_tier_id ?? "none"}
+              onValueChange={(v) => setForm({ ...form, captain_tier_id: v === "none" ? null : v })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="No captain tier" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No captain tier (full purse)</SelectItem>
+                {tiers.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>
+                    {t.label} · base {Number(t.base_price)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+          <p className="text-xs text-muted-foreground">
+            Spendable purse:{" "}
+            <span className="font-mono text-foreground">
+              {Math.max(
+                0,
+                form.base_budget -
+                  (form.captain_tier_id
+                    ? Number(tiers.find((t) => t.id === form.captain_tier_id)?.base_price ?? 0)
+                    : 0),
+              )}
+            </span>{" "}
+            pts — the captain plays as one of the three men.
+          </p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="PIN">
               <Input value={form.pin} onChange={(e) => setForm({ ...form, pin: e.target.value })} />
@@ -655,6 +690,14 @@ function TeamsTab({
                   {[t.captain_name, t.captain2_name].filter(Boolean).join(" & ") || "No captains"} ·{" "}
                   {rosterOf(players, t.id).length}/{t.max_roster_size} ·{" "}
                   {Number(t.remaining_budget)}/{Number(t.starting_budget)} pts
+                  {t.captain_tier_id && (
+                    <>
+                      {" · "}
+                      <span className="text-gold-solid">
+                        {tiers.find((x) => x.id === t.captain_tier_id)?.label} capt
+                      </span>
+                    </>
+                  )}
                 </p>
               </div>
               <Button
@@ -667,7 +710,8 @@ function TeamsTab({
                     captain_name: t.captain_name,
                     captain2_name: t.captain2_name,
                     color: t.color,
-                    starting_budget: Number(t.starting_budget),
+                    base_budget: Number(t.base_budget),
+                    captain_tier_id: t.captain_tier_id,
                     max_roster_size: t.max_roster_size,
                     pin: "",
                   })
