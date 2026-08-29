@@ -9,7 +9,7 @@ import { ChatRoom } from "@/components/ChatRoom";
 import { ViewerCount } from "@/components/ViewerCount";
 import { StarEmblem } from "@/components/StarEmblem";
 import { LiveFeed } from "@/components/LiveFeed";
-import { Tv } from "lucide-react";
+import { Tv, X } from "lucide-react";
 import { RulesButton } from "@/components/RulesDialog";
 import { EventCountdown } from "@/components/EventCountdown";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
