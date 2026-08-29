@@ -22,12 +22,19 @@ import {
 } from "@/components/BroadcastFX";
 import {
   useAuctionData,
+  useAuctionLog,
   usePresence,
   topBid,
   rosterOf,
   categoryCounts,
+  maxBidFor,
   getChatDisplayName,
   CATEGORY_LABEL,
+  REQUIREMENT,
+  type Team,
+  type Player,
+  type Tier,
+  type AuctionLogEvent,
 } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/watch")({
