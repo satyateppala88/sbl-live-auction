@@ -281,12 +281,12 @@ function RoleCard({
     <Tilt max={9} className={`animate-rise-in ${stagger}`}>
     <Link
       to={to}
-      className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[2rem] border border-border bg-card/80 p-6 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
+      className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[1.5rem] border border-border bg-card/80 p-4 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
     >
-      <ShuttleIcon className="pointer-events-none absolute -bottom-4 -right-4 h-20 w-20 rotate-12 text-foreground/[0.04] transition-transform duration-300 group-hover:rotate-45" />
+      <ShuttleIcon className="pointer-events-none absolute -bottom-4 -right-4 h-16 w-16 rotate-12 text-foreground/[0.04] transition-transform duration-300 group-hover:rotate-45" />
       <div className="relative flex items-center justify-between">
         <span
-          className={`flex h-14 w-14 items-center justify-center rounded-full transition-all duration-300 group-hover:-rotate-12 ${t.badge}`}
+          className={`flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 group-hover:-rotate-12 ${t.badge}`}
         >
           {icon}
         </span>
@@ -299,8 +299,8 @@ function RoleCard({
           <ArrowRight className="h-4 w-4 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" />
         )}
       </div>
-      <h2 className="font-display relative mt-4 text-2xl uppercase">{title}</h2>
-      <p className="relative mt-1 text-sm text-muted-foreground">{blurb}</p>
+      <h2 className="font-display relative mt-3 text-xl uppercase">{title}</h2>
+      <p className="relative mt-0.5 text-sm text-muted-foreground">{blurb}</p>
     </Link>
     </Tilt>
   );
