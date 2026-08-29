@@ -57,7 +57,7 @@ export function TargetPlanner({
       const need = Math.max(0, REQUIREMENT[c] - bought[c]);
       const tg = availOf(c)
         .filter((p) => targets[p.id]?.max != null)
-        .map((p) => Number(targets[p.id]!.max))
+        .map((p) => Number(targets[p.id]?.max ?? 0))
         .sort((a, b) => a - b);
       let spend = 0;
       let covered = 0;
