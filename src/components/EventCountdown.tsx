@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-/** The auction start moment, fixed: 4:00pm IST on 30 Aug 2026 = 10:30 UTC. */
-export const AUCTION_START_ISO = "2026-08-30T10:30:00.000Z";
+/** The auction start moment, fixed: 4:30pm IST on 30 Aug 2026 = 11:00 UTC. */
+export const AUCTION_START_ISO = "2026-08-30T11:00:00.000Z";
 
 const START_MS = new Date(AUCTION_START_ISO).getTime();
 
@@ -98,7 +98,7 @@ export function EventCountdown({
   return (
     <div className={cn("inline-flex flex-col items-center gap-1.5", className)}>
       <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-gold-solid">
-        Auction starts · 4:00 PM IST · 30 Aug
+        Auction starts · 4:30 PM IST · 30 Aug
       </p>
       <div className="flex items-end gap-2">
         {cells.map((c, i) => (
