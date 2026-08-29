@@ -8,6 +8,7 @@ import { RulesButton } from "@/components/RulesDialog";
 import { CountUp } from "@/components/CountUp";
 import { Tilt } from "@/components/Tilt";
 import { TeamCrest } from "@/components/TeamCrest";
+import { EventCountdown } from "@/components/EventCountdown";
 import type { Team } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/")({
@@ -87,6 +88,10 @@ function Index() {
             Chase the Shuttle · Reach the Stars
             <StarEmblem className="text-star h-3 w-3" />
           </p>
+
+          <div className="animate-rise-in stagger-2 mt-6 flex justify-center lg:justify-start">
+            <EventCountdown />
+          </div>
 
           <div className="animate-rise-in stagger-2 mx-auto mt-7 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
             <HeroStat icon={<Users className="h-4 w-4" />} value={teams.length} label="Teams" />

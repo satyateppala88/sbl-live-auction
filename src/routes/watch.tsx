@@ -9,6 +9,7 @@ import { StarEmblem } from "@/components/StarEmblem";
 import { LiveFeed } from "@/components/LiveFeed";
 import { Tv } from "lucide-react";
 import { RulesButton } from "@/components/RulesDialog";
+import { EventCountdown } from "@/components/EventCountdown";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import {
   RecordFlash,
@@ -86,6 +87,9 @@ function WatchPage() {
         <span className="text-gold-solid hidden text-[11px] font-bold uppercase tracking-[0.28em] lg:block">
           One Community · One Court · One Roar
         </span>
+        <div className="hidden md:block">
+          <EventCountdown compact />
+        </div>
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <RulesButton />
           <ViewerCount count={count} />
