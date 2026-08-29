@@ -105,30 +105,30 @@ function Index() {
 
           <div className="court-divider mx-auto mt-6 max-w-md lg:mx-0" aria-hidden />
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
             <RoleCard
               to="/captain"
-              icon={<Users className="h-6 w-6" />}
+              icon={<Users className="h-5 w-5" />}
               tone="primary"
               stagger="stagger-1"
-              title="I'm a Captain"
-              blurb="Pick your team, enter your PIN and bid live."
+              title="Captain"
+              blurb="Bid live from your phone."
             />
             <RoleCard
               to="/admin"
-              icon={<Gavel className="h-6 w-6" />}
+              icon={<Gavel className="h-5 w-5" />}
               tone="accent"
               stagger="stagger-2"
               title="Organizer"
-              blurb="Run the block, mark sold or unsold."
+              blurb="Run the auction block."
             />
             <RoleCard
               to="/watch"
-              icon={<Tv className="h-6 w-6" />}
+              icon={<Tv className="h-5 w-5" />}
               tone="gold"
               stagger="stagger-3"
-              title="Watch Live"
-              blurb="Spectator broadcast, no login needed."
+              title="Watch"
+              blurb="Live broadcast, no login."
               live
             />
           </div>
