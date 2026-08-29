@@ -57,6 +57,8 @@ function WatchPage() {
   const leading = topBid(bids, player?.id);
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
   const moment = useAuctionMoment(players, teams);
+  const record = useRecordBreaker(bids, teams);
+  const war = useBiddingWar(bids, player?.id);
   const amount = leading ? Number(leading.amount) : Number(player?.base_price ?? 0);
   const playerBids = player ? bids.filter((b) => b.player_id === player.id) : [];
 
@@ -64,6 +66,7 @@ function WatchPage() {
     <main className="arena-bg court-lines flex min-h-[100dvh] flex-col px-3 py-3 lg:h-[100dvh] lg:overflow-hidden lg:px-5">
       <div className="court-lines-layer" aria-hidden />
       <AuctionMomentOverlay moment={moment} />
+      <RecordFlash hit={record} />
 
       <header className="flex shrink-0 items-center gap-3">
         <StarEmblem className="text-star h-6 w-6" glow />
@@ -73,6 +76,12 @@ function WatchPage() {
         <span className="border-smash/60 text-smash flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-widest">
           <span className="animate-energy-pulse h-1.5 w-1.5 rounded-full bg-smash" />
           Live
+          {/* broadcast equalizer bars */}
+          <span className="ml-0.5 flex h-3 items-end gap-[2px]" aria-hidden>
+            <span className="animate-eq-bar bg-smash w-[2.5px] rounded-full" style={{ height: "100%" }} />
+            <span className="animate-eq-bar bg-smash w-[2.5px] rounded-full" style={{ height: "100%", animationDelay: "0.25s" }} />
+            <span className="animate-eq-bar bg-smash w-[2.5px] rounded-full" style={{ height: "100%", animationDelay: "0.5s" }} />
+          </span>
         </span>
         <span className="text-gold-solid hidden text-[11px] font-bold uppercase tracking-[0.28em] lg:block">
           One Community · One Court · One Roar
