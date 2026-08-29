@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { checkBanned } from "@/lib/auction.functions";
 
 export type Cat = "male" | "female" | "kid";
 
@@ -316,9 +317,9 @@ export function usePresence(role: Viewer["role"], name: string) {
 
     return () => {
       cancelled = true;
+      clearInterval(banPoll);
       void channel.untrack();
       void supabase.removeChannel(channel);
-      void supabase.removeChannel(banChannel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, name]);
