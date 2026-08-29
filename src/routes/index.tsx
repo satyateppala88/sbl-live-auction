@@ -37,12 +37,22 @@ function Index() {
   const sold = players.filter((p) => p.status === "sold").length;
 
   return (
-    <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-6 lg:flex lg:min-h-screen lg:items-center lg:py-0">
+    <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 pt-16 pb-6 lg:flex lg:min-h-screen lg:items-center lg:pt-16 lg:pb-0">
       <div className="star-field-layer" aria-hidden />
       <div className="grain-overlay" aria-hidden />
-      <div className="absolute right-4 top-4 z-10">
-        <RulesButton />
-      </div>
+      {/* top bar: brand left, countdown + rules right */}
+      <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-4 py-3">
+        <div className="hidden items-center gap-2 rounded-full border border-star/40 bg-card/60 px-3 py-1.5 backdrop-blur sm:flex">
+          <StarEmblem className="text-star h-3.5 w-3.5" glow />
+          <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-gold-solid">
+            SMR Vinay Galaxy
+          </p>
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          <EventCountdown compact className="animate-rise-in" />
+          <RulesButton />
+        </div>
+      </header>
       <span
         className="shooting-star animate-shooting-star"
         style={{ top: "12%", left: "78%" }}
@@ -61,14 +71,7 @@ function Index() {
       <div className="mx-auto grid w-full max-w-7xl gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
         {/* ---------- left: identity + CTAs ---------- */}
         <div className="text-center lg:text-left">
-          <div className="animate-shuttle-arc mx-auto flex w-fit items-center gap-2 rounded-full border border-star/40 bg-card/60 px-4 py-1.5 backdrop-blur lg:mx-0">
-            <StarEmblem className="text-star h-3.5 w-3.5" glow />
-            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-gold-solid">
-              SMR Vinay Galaxy
-            </p>
-          </div>
-
-          <p className="font-display animate-rise-in stagger-1 mt-3 text-xl italic text-muted-foreground sm:text-2xl">
+          <p className="font-display animate-rise-in stagger-1 mt-2 text-xl italic text-muted-foreground sm:text-2xl">
             "Where Stars Come to Live"
           </p>
 
