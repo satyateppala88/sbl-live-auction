@@ -34,7 +34,7 @@ export function TeamCrest({
       /* NOTE: no loading="lazy" -- on the client-rendered auction routes the lazy
          IntersectionObserver never resolves, so crest requests were never firing and
          the badges rendered blank. These SVGs are ~2KB, eager loading is correct. */
-      className={`shrink-0 rounded-full object-cover object-top ${className}`}
+      className={`animate-crest-pop shrink-0 rounded-full object-cover object-top ${className}`}
       style={{
         width: size,
         height: size,
