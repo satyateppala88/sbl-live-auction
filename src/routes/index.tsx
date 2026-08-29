@@ -134,15 +134,15 @@ function Index() {
         </div>
 
         {/* ---------- right: the "player planet" ---------- */}
-        <Tilt max={7} className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
+        <Tilt max={11} className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
           <div
             className="absolute inset-0 rounded-full"
             style={{ boxShadow: "var(--shadow-glow)" }}
           />
-          <div className="arena-bg court-lines absolute inset-4 overflow-hidden rounded-full border border-gold-solid/25">
+          <div className="arena-bg court-lines absolute inset-4 overflow-hidden rounded-full border border-gold-solid/25 transition-transform duration-300 group-hover:scale-[1.02]">
             <div className="court-lines-layer" aria-hidden />
             <StarEmblem className="animate-spin-slow text-star/15 absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2" />
-            <PlayerSilhouette className="text-gold-solid/90 absolute bottom-0 left-1/2 h-[85%] w-[85%] -translate-x-1/2" />
+            <PlayerSilhouette className="text-gold-solid/90 absolute bottom-0 left-1/2 h-[85%] w-[85%] -translate-x-1/2 transition-transform duration-300 hover:translate-x-[-30%] hover:scale-[1.04]" />
           </div>
 
           {/* orbiting stars -- teams, circling the league */}
