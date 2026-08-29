@@ -28,8 +28,8 @@ export function CountdownTimer({
 
   const mm = Math.floor(left / 60);
   const ss = left % 60;
-  const urgent = left <= 15;
   const expired = left === 0;
+  const urgent = !expired && left <= 15;
 
   const sizeClasses = {
     sm: "text-lg px-2.5 py-1",
@@ -41,13 +41,16 @@ export function CountdownTimer({
     <span
       className={cn(
         "tabular-nums inline-flex items-center gap-1.5 rounded-full border font-bold",
-        urgent ? "border-smash text-smash animate-timer-pulse" : "border-border text-foreground",
-        expired && "opacity-70",
+        expired
+          ? "border-accent text-accent animate-timer-pulse"
+          : urgent
+            ? "border-smash text-smash animate-timer-pulse"
+            : "border-border text-foreground",
         sizeClasses,
         className,
       )}
     >
-      {expired ? "TIME'S UP" : `${mm}:${String(ss).padStart(2, "0")}`}
+      {expired ? "FINAL CALL" : `${mm}:${String(ss).padStart(2, "0")}`}
     </span>
   );
 }
