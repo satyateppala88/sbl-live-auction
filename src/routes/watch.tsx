@@ -299,6 +299,180 @@ function WatchPage() {
       <div className="mt-3 shrink-0">
         <SalesTicker players={players} teams={teams} />
       </div>
+
+      {selectedTeam && (
+        <TeamModal
+          team={selectedTeam}
+          players={players}
+          tiers={tiers}
+          events={events}
+          floorBase={floorBase}
+          onClose={() => setSelectedTeamId(null)}
+        />
+      )}
     </main>
+  );
+}
+
+function TeamModal({
+  team,
+  players,
+  tiers,
+  events,
+  floorBase,
+  onClose,
+}: {
+  team: Team;
+  players: Player[];
+  tiers: Tier[];
+  events: AuctionLogEvent[];
+  floorBase: number;
+  onClose: () => void;
+}) {
+  const roster = rosterOf(players, team.id);
+  const c = categoryCounts(roster);
+  const caps = [
+    { name: team.captain_name, photo: team.captain_photo_url },
+    { name: team.captain2_name, photo: team.captain2_photo_url },
+  ].filter((x) => x.name);
+  const capCount = caps.length;
+  const spent = Number(team.starting_budget) - Number(team.remaining_budget);
+  const maxBid = Math.max(0, maxBidFor(team, roster.length, floorBase));
+
+  const soldAt = new Map(
+    events
+      .filter((e) => e.event_type === "sold" && e.team_id === team.id && e.player_id)
+      .map((e) => [e.player_id as string, e.created_at]),
+  );
+  const bought = roster.slice().sort((a, b) => {
+    const ta = soldAt.get(a.id);
+    const tb = soldAt.get(b.id);
+    if (ta && tb) return new Date(ta).getTime() - new Date(tb).getTime();
+    if (ta) return -1;
+    if (tb) return 1;
+    return Number(b.sold_price ?? 0) - Number(a.sold_price ?? 0);
+  });
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-background/85 p-4 backdrop-blur"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="animate-block-in glow-card w-full max-w-md overflow-hidden rounded-3xl border bg-card"
+        style={{ borderColor: `${team.color}66` }}
+      >
+        <div
+          className="flex items-center gap-3 px-5 py-4"
+          style={{ background: `linear-gradient(90deg, ${team.color}22, transparent)` }}
+        >
+          <TeamCrest team={team} size={40} />
+          <div className="min-w-0 flex-1">
+            <h2 className="font-display truncate text-xl uppercase leading-none">{team.name}</h2>
+            <p className="text-[11px] text-muted-foreground">
+              {roster.length + capCount}/{team.max_roster_size + capCount} squad · {c.male + capCount}M{" "}
+              {c.female}F {c.kid}K on court
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-full border border-border bg-background/50 p-1.5 text-muted-foreground hover:text-foreground"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="px-5 pb-5">
+          <div className="flex flex-wrap items-center gap-4">
+            {caps.length ? (
+              caps.map((cap, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div className="relative">
+                    <PlayerAvatar
+                      name={cap.name || "Captain"}
+                      photoUrl={cap.photo}
+                      className="h-12 w-12 text-base"
+                      accent={team.color}
+                    />
+                    <span
+                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-px text-[8px] font-bold uppercase tracking-wide text-background"
+                      style={{ backgroundColor: team.color }}
+                    >
+                      Captain
+                    </span>
+                  </div>
+                  <span className="text-sm font-semibold">{cap.name}</span>
+                </div>
+              ))
+            ) : (
+              <span className="text-sm text-muted-foreground">No captain assigned</span>
+            )}
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-xl border border-border bg-background/40 px-2 py-2">
+              <p className="text-[9px] uppercase tracking-widest text-muted-foreground">Points left</p>
+              <p className="text-gold-solid font-display text-xl tabular-nums">
+                {Number(team.remaining_budget)}
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-background/40 px-2 py-2">
+              <p className="text-[9px] uppercase tracking-widest text-muted-foreground">Spent</p>
+              <p className="font-display text-xl tabular-nums">{spent}</p>
+            </div>
+            <div className="rounded-xl border border-border bg-background/40 px-2 py-2">
+              <p className="text-[9px] uppercase tracking-widest text-muted-foreground">Max bid</p>
+              <p className="font-display text-xl tabular-nums">{maxBid}</p>
+            </div>
+          </div>
+
+          <div className="mt-3 flex flex-wrap justify-center gap-1.5">
+            {(["male", "female", "kid"] as const).map((cat) => (
+              <span
+                key={cat}
+                className={`rounded-full border px-2.5 py-0.5 text-[11px] ${
+                  c[cat] >= REQUIREMENT[cat]
+                    ? "border-success/50 text-success"
+                    : "border-border text-muted-foreground"
+                }`}
+              >
+                {CATEGORY_LABEL[cat].split(" ")[0]} {c[cat]}/{REQUIREMENT[cat]}
+              </span>
+            ))}
+          </div>
+
+          <p className="mt-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            Players bought ({bought.length})
+          </p>
+          <div className="mt-1.5 max-h-56 space-y-1.5 overflow-y-auto pr-1">
+            {bought.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No players bought yet.</p>
+            ) : (
+              bought.map((p, i) => (
+                <div
+                  key={p.id}
+                  className="flex items-center gap-2 rounded-xl border border-border bg-background/40 px-2 py-1.5"
+                >
+                  <span className="w-4 text-center text-[11px] text-muted-foreground">{i + 1}</span>
+                  <PlayerAvatar name={p.name} photoUrl={p.photo_url} className="h-8 w-8 text-xs" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold">{p.name}</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {CATEGORY_LABEL[p.category]} ·{" "}
+                      {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"}
+                    </p>
+                  </div>
+                  <span className="text-gold font-display shrink-0 tabular-nums">
+                    {Number(p.sold_price)}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
