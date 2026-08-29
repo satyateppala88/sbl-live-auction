@@ -399,7 +399,7 @@ function AdminConsole({
                       Next up (available)
                     </h3>
                     <p className="mt-0.5 text-[11px] text-muted-foreground">
-                      Sorted in draw order: Male → Female → Kid, Icon → Challenger → Game Changer
+                      Random draw order — the highlighted player is up next.
                     </p>
                   </div>
                   <Button
