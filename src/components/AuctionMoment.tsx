@@ -7,10 +7,10 @@ type Moment = {
   key: number;
   kind: "sold" | "unsold";
   name: string;
-  teamName?: string;
-  teamColor?: string;
-  teamLogoUrl?: string | null;
-  price?: number;
+  teamName?: string | undefined;
+  teamColor?: string | undefined;
+  teamLogoUrl?: string | null | undefined;
+  price?: number | undefined;
   detail: string;
 };
 
