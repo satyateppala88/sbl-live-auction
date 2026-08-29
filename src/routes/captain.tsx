@@ -325,7 +325,7 @@ function BiddingRoom({
           <p className="text-gold-solid text-[11px] font-bold uppercase tracking-[0.3em]">
             Play as One · Rise as One
           </p>
-          <TargetPlanner players={players} tiers={tiers} targets={targets} onSave={saveTarget} />
+          <TargetPlanner players={players} tiers={tiers} targets={targets} onSave={saveTarget} team={team} />
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
