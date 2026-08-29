@@ -63,7 +63,7 @@ import {
   rosterOf,
   categoryCounts,
   topBid,
-  sortForAuction,
+  
   CATEGORY_LABEL,
   REQUIREMENT,
   type Cat,
