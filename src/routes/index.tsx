@@ -6,6 +6,9 @@ import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { StarEmblem } from "@/components/StarEmblem";
 import { RulesButton } from "@/components/RulesDialog";
 import { CountUp } from "@/components/CountUp";
+import { Tilt } from "@/components/Tilt";
+import { TeamCrest } from "@/components/TeamCrest";
+import type { Team } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,6 +38,7 @@ function Index() {
   return (
     <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-10 lg:flex lg:min-h-screen lg:items-center lg:py-0">
       <div className="star-field-layer" aria-hidden />
+      <div className="grain-overlay" aria-hidden />
       <div className="absolute right-4 top-4 z-10">
         <RulesButton />
       </div>
@@ -126,7 +130,7 @@ function Index() {
         </div>
 
         {/* ---------- right: the "player planet" ---------- */}
-        <div className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
+        <Tilt max={7} className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
           <div
             className="absolute inset-0 rounded-full"
             style={{ boxShadow: "var(--shadow-glow)" }}
