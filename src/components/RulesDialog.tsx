@@ -60,13 +60,18 @@ export function RulesButton({ className = "" }: { className?: string }) {
                 </Section>
 
                 <Section title="Budget & the reserve rule">
-                  <p>Each team starts with a fixed purse of points (default 100).</p>
                   <p>
-                    A team must always keep at least <strong>1 point in reserve for every empty
-                    slot</strong> it still needs to fill. Example: with 2 of 4 players bought, you
-                    can bid at most your remaining budget minus 1 (one point held back for your last
-                    slot). This is enforced automatically — you can never bid yourself into a corner
-                    where a mandatory slot can't be filled.
+                    Each team starts with a purse of <strong>100 points minus its captain's tier
+                    base price</strong> — an Icon captain leaves 85, a Challenger 92, a Game Changer
+                    98 — because the captain plays as one of the three men.
+                  </p>
+                  <p>
+                    For every slot you'll still need to fill <em>after</em> the player on the block,
+                    the app holds back the <strong>lowest base price in the auction</strong> (one
+                    Game Changer). So if buying the current player would leave you two more slots to
+                    fill, your max bid is your remaining purse minus two Game-Changer bases. This is
+                    enforced automatically — you can never bid so high that you couldn't still sign
+                    your remaining players at their base price.
                   </p>
                 </Section>
 

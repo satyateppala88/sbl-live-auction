@@ -224,7 +224,8 @@ function BiddingRoom({
   const roster = rosterOf(players, team.id);
   const counts = categoryCounts(roster);
   const filled = roster.length;
-  const cap = maxBidFor(team, filled);
+  const floorBase = tiers.length ? Math.min(...tiers.map((t) => Number(t.base_price))) : 1;
+  const cap = maxBidFor(team, filled, floorBase);
   const player = players.find((p) => p.id === state?.current_player_id) ?? null;
   const leading = topBid(bids, player?.id);
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
@@ -247,6 +248,7 @@ function BiddingRoom({
     cap,
     nextAmount,
     leadingIsMe: leading?.team_id === team.id,
+    floorBase,
   });
 
 
