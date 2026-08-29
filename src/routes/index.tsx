@@ -273,9 +273,10 @@ function RoleCard({
 }) {
   const t = TONE_CLASSES[tone];
   return (
+    <Tilt max={9} className={`animate-rise-in ${stagger}`}>
     <Link
       to={to}
-      className={`lift-card animate-rise-in ${stagger} group relative overflow-hidden rounded-[2rem] border border-border bg-card/80 p-6 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
+      className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[2rem] border border-border bg-card/80 p-6 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
     >
       <ShuttleIcon className="pointer-events-none absolute -bottom-4 -right-4 h-20 w-20 rotate-12 text-foreground/[0.04] transition-transform duration-300 group-hover:rotate-45" />
       <div className="relative flex items-center justify-between">
