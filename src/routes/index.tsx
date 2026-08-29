@@ -37,7 +37,7 @@ function Index() {
   const sold = players.filter((p) => p.status === "sold").length;
 
   return (
-    <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-10 lg:flex lg:min-h-screen lg:items-center lg:py-0">
+    <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-6 lg:flex lg:min-h-screen lg:items-center lg:py-0">
       <div className="star-field-layer" aria-hidden />
       <div className="grain-overlay" aria-hidden />
       <div className="absolute right-4 top-4 z-10">
@@ -58,7 +58,7 @@ function Index() {
         className="animate-shuttle-zip text-shuttle/70 pointer-events-none absolute left-[8%] top-[46%] hidden h-10 w-10 lg:block"
       />
 
-      <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
+      <div className="mx-auto grid w-full max-w-7xl gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
         {/* ---------- left: identity + CTAs ---------- */}
         <div className="text-center lg:text-left">
           <div className="animate-shuttle-arc mx-auto flex w-fit items-center gap-2 rounded-full border border-star/40 bg-card/60 px-4 py-1.5 backdrop-blur lg:mx-0">
@@ -68,7 +68,7 @@ function Index() {
             </p>
           </div>
 
-          <p className="font-display animate-rise-in stagger-1 mt-5 text-xl italic text-muted-foreground sm:text-2xl">
+          <p className="font-display animate-rise-in stagger-1 mt-3 text-xl italic text-muted-foreground sm:text-2xl">
             "Where Stars Come to Live"
           </p>
 
@@ -78,22 +78,22 @@ function Index() {
             Auction
           </h1>
 
-          <p className="animate-rise-in stagger-2 mx-auto mt-4 max-w-md text-sm text-muted-foreground lg:mx-0">
+          <p className="animate-rise-in stagger-2 mx-auto mt-3 max-w-md text-sm text-muted-foreground lg:mx-0">
             Ten teams. One captain each. One block. Watch the SMR Badminton
             League squads take shape as captains bid live for every player.
           </p>
 
-          <p className="animate-rise-in stagger-2 text-gold-solid mt-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.28em] lg:justify-start">
+          <p className="animate-rise-in stagger-2 text-gold-solid mt-3 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.28em] lg:justify-start">
             <StarEmblem className="text-star h-3 w-3" />
             Chase the Shuttle · Reach the Stars
             <StarEmblem className="text-star h-3 w-3" />
           </p>
 
-          <div className="animate-rise-in stagger-2 mt-6 flex justify-center lg:justify-start">
+          <div className="animate-rise-in stagger-2 mt-4 flex justify-center lg:justify-start">
             <EventCountdown />
           </div>
 
-          <div className="animate-rise-in stagger-2 mx-auto mt-7 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
+          <div className="animate-rise-in stagger-2 mx-auto mt-4 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
             <HeroStat icon={<Users className="h-4 w-4" />} value={teams.length} label="Teams" />
             <HeroStat
               icon={<ShuttleIcon className="h-4 w-4" />}
@@ -103,32 +103,32 @@ function Index() {
             <HeroStat icon={<Gavel className="h-4 w-4" />} value={sold} label="Sold" gold />
           </div>
 
-          <div className="court-divider mx-auto mt-10 max-w-md lg:mx-0" aria-hidden />
+          <div className="court-divider mx-auto mt-6 max-w-md lg:mx-0" aria-hidden />
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
             <RoleCard
               to="/captain"
-              icon={<Users className="h-6 w-6" />}
+              icon={<Users className="h-5 w-5" />}
               tone="primary"
               stagger="stagger-1"
-              title="I'm a Captain"
-              blurb="Pick your team, enter your PIN and bid live."
+              title="Captain"
+              blurb="Bid live from your phone."
             />
             <RoleCard
               to="/admin"
-              icon={<Gavel className="h-6 w-6" />}
+              icon={<Gavel className="h-5 w-5" />}
               tone="accent"
               stagger="stagger-2"
               title="Organizer"
-              blurb="Run the block, mark sold or unsold."
+              blurb="Run the auction block."
             />
             <RoleCard
               to="/watch"
-              icon={<Tv className="h-6 w-6" />}
+              icon={<Tv className="h-5 w-5" />}
               tone="gold"
               stagger="stagger-3"
-              title="Watch Live"
-              blurb="Spectator broadcast, no login needed."
+              title="Watch"
+              blurb="Live broadcast, no login."
               live
             />
           </div>
@@ -281,26 +281,26 @@ function RoleCard({
     <Tilt max={9} className={`animate-rise-in ${stagger}`}>
     <Link
       to={to}
-      className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[2rem] border border-border bg-card/80 p-6 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
+      className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[1.25rem] border border-border bg-card/80 p-3 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
     >
-      <ShuttleIcon className="pointer-events-none absolute -bottom-4 -right-4 h-20 w-20 rotate-12 text-foreground/[0.04] transition-transform duration-300 group-hover:rotate-45" />
+      <ShuttleIcon className="pointer-events-none absolute -bottom-3 -right-3 h-12 w-12 rotate-12 text-foreground/[0.04] transition-transform duration-300 group-hover:rotate-45" />
       <div className="relative flex items-center justify-between">
         <span
-          className={`flex h-14 w-14 items-center justify-center rounded-full transition-all duration-300 group-hover:-rotate-12 ${t.badge}`}
+          className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 group-hover:-rotate-12 ${t.badge}`}
         >
           {icon}
         </span>
         {live ? (
-          <span className="text-smash flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest">
-            <span className="animate-energy-pulse h-2 w-2 rounded-full bg-smash" />
+          <span className="text-smash flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
+            <span className="animate-energy-pulse h-1.5 w-1.5 rounded-full bg-smash" />
             Live
           </span>
         ) : (
-          <ArrowRight className="h-4 w-4 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" />
+          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" />
         )}
       </div>
-      <h2 className="font-display relative mt-4 text-2xl uppercase">{title}</h2>
-      <p className="relative mt-1 text-sm text-muted-foreground">{blurb}</p>
+      <h2 className="font-display relative mt-2 text-base uppercase sm:text-xl">{title}</h2>
+      <p className="relative mt-0.5 hidden text-xs text-muted-foreground sm:block sm:text-sm">{blurb}</p>
     </Link>
     </Tilt>
   );
