@@ -289,7 +289,7 @@ function AdminConsole({
                   </div>
                   <p
                     key={leading?.id ?? "none"}
-                    className="text-gold font-display animate-bid-pop mt-4 origin-left text-7xl tabular-nums"
+                    className="text-gold font-heavy animate-bid-pop mt-4 origin-left text-7xl tabular-nums"
                   >
                     {leading ? Number(leading.amount) : Number(player.base_price)}
                   </p>

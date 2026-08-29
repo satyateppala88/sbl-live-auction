@@ -353,7 +353,7 @@ function BiddingRoom({
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   Current bid
                 </p>
-                <p className="text-gold font-display text-6xl tabular-nums">
+                <p className="text-gold font-heavy text-6xl tabular-nums">
                   <CountUp value={leading ? Number(leading.amount) : Number(player.base_price)} />
                 </p>
                 <p
