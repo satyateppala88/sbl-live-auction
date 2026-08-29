@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   ArrowLeft,
   Loader2,
-  Shuffle,
+  
   Play,
   Pause,
   RotateCcw,
@@ -36,9 +36,6 @@ import {
   setBidding,
   setIncrement,
   markSold,
-  markUnsold,
-  relistPlayer,
-  lotteryAssign,
   resetAuction,
   resetTimer,
   kickDevice,
@@ -329,14 +326,6 @@ function AdminConsole({
                     <Button onClick={() => void run(() => markSold({ data: { passcode } }), "Sold!")}>
                       Mark SOLD
                     </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() =>
-                        void run(() => markUnsold({ data: { passcode } }), "Moved to unsold pool")
-                      }
-                    >
-                      Mark UNSOLD
-                    </Button>
                   </div>
                   <div className="mt-5">
                     <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
@@ -467,49 +456,11 @@ function AdminConsole({
             <RosterBoard players={players} teams={teams} tiers={tiers} />
           </TabsContent>
 
-          <TabsContent value="tools" className="mt-4 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl border border-border bg-card p-4">
-              <h3 className="font-bold">Unsold pool</h3>
-              <p className="text-xs text-muted-foreground">
-                Re-list at half the original base price.
-              </p>
-              <div className="mt-3 grid gap-1.5">
-                {players
-                  .filter((p) => p.status === "in_unsold_pool" || p.status === "unsold")
-                  .map((p) => (
-                    <div
-                      key={p.id}
-                      className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm"
-                    >
-                      <span className="flex-1">{p.name}</span>
-                      <span className="text-xs text-muted-foreground">
-                        base {Number(p.original_base_price)} →{" "}
-                        {Math.max(1, Number(p.original_base_price) / 2)}
-                      </span>
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          void run(
-                            () => relistPlayer({ data: { passcode, playerId: p.id } }),
-                            `${p.name} re-listed`,
-                          )
-                        }
-                      >
-                        Re-list
-                      </Button>
-                    </div>
-                  ))}
-                {players.filter((p) => p.status === "in_unsold_pool" || p.status === "unsold")
-                  .length === 0 && (
-                  <p className="text-sm text-muted-foreground">Pool is empty.</p>
-                )}
-              </div>
-            </div>
-            <LotteryTool teams={teams} players={players} passcode={passcode} run={run} />
-            <div className="rounded-2xl border border-destructive/40 bg-card p-4 lg:col-span-2">
+          <TabsContent value="tools" className="mt-4">
+            <div className="rounded-2xl border border-destructive/40 bg-card p-4">
               <h3 className="font-bold">Danger zone</h3>
               <p className="mb-3 text-xs text-muted-foreground">
-                Clears all bids, resets budgets and un-sells every player.
+                Clears all bids and resets every team's budget and roster.
               </p>
               <Button
                 variant="destructive"
@@ -1014,74 +965,6 @@ function PlayersTab({
   );
 }
 
-function LotteryTool({
-  teams,
-  players,
-  passcode,
-  run,
-}: {
-  teams: Team[];
-  players: Player[];
-  passcode: string;
-  run: (fn: () => Promise<unknown>, msg?: string) => Promise<void>;
-}) {
-  const [teamId, setTeamId] = useState<string>("");
-  const [category, setCategory] = useState<Cat>("male");
-  const team = teams.find((t) => t.id === teamId);
-  const counts = team ? categoryCounts(rosterOf(players, team.id)) : null;
-
-  return (
-    <div className="rounded-2xl border border-border bg-card p-4">
-      <h3 className="font-bold">Last-resort lottery</h3>
-      <p className="text-xs text-muted-foreground">
-        Randomly assign a remaining player in a category to a team for a flat 1 point.
-      </p>
-      <div className="mt-3 grid gap-3">
-        <Select value={teamId} onValueChange={setTeamId}>
-          <SelectTrigger>
-            <SelectValue placeholder="Choose team" />
-          </SelectTrigger>
-          <SelectContent>
-            {teams.map((t) => (
-              <SelectItem key={t.id} value={t.id}>
-                {t.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={category} onValueChange={(v) => setCategory(v as Cat)}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {(["male", "female", "kid"] as const).map((c) => (
-              <SelectItem key={c} value={c}>
-                {CATEGORY_LABEL[c]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {counts && (
-          <p className="text-xs text-muted-foreground">
-            {team?.name}: {counts[category]}/{REQUIREMENT[category]} in {CATEGORY_LABEL[category]} ·{" "}
-            {Number(team?.remaining_budget)} pts left
-          </p>
-        )}
-        <Button
-          disabled={!teamId}
-          onClick={() =>
-            void run(async () => {
-              const r = await lotteryAssign({ data: { passcode, teamId, category } });
-              toast.success(`${r.player} assigned for 1 pt`);
-            })
-          }
-        >
-          <Shuffle className="mr-2 h-4 w-4" /> Draw player
-        </Button>
-      </div>
-    </div>
-  );
-}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
