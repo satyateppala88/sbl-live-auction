@@ -255,10 +255,12 @@ function WatchPage() {
             {teams.map((t) => {
               const roster = rosterOf(players, t.id);
               const c = categoryCounts(roster);
+              const caps = [t.captain_name, t.captain2_name].filter(Boolean).length;
               return (
-                <div
+                <button
                   key={t.id}
-                  className="flex items-center gap-1.5 rounded-lg border border-border bg-card/85 px-2 py-1"
+                  onClick={() => setSelectedTeamId(t.id)}
+                  className="flex items-center gap-1.5 rounded-lg border border-border bg-card/85 px-2 py-1 text-left transition hover:border-accent/60 hover:bg-card"
                 >
                   <TeamCrest team={t} size={26} />
                   <div className="min-w-0 flex-1">
