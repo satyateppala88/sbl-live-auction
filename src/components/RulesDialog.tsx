@@ -131,22 +131,11 @@ export function RulesButton({ className = "" }: { className?: string }) {
                   </p>
                 </Section>
 
-                <Section title="Sold, unsold & second round">
+                <Section title="Sold">
                   <p>
                     <strong>Sold:</strong> the player joins the winning team and the points are
-                    deducted from that team's purse.
-                  </p>
-                  <p>
-                    <strong>Unsold:</strong> a player with no bids moves to the unsold pool and can
-                    be re-listed later in a second round at half their original base price.
-                  </p>
-                </Section>
-
-                <Section title="Last-resort lottery">
-                  <p>
-                    If a team still has an unfilled mandatory slot and not enough budget to bid, the
-                    organizer can randomly assign a remaining player in that category to the team for
-                    a flat 1 point, so every squad is completed fairly.
+                    deducted from that team's purse. There are exactly enough players for every
+                    squad, so every player is sold — there is no unsold round.
                   </p>
                 </Section>
 
