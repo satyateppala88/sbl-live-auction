@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HoloCard } from "@/components/HoloCard";
+import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { CountUp } from "@/components/CountUp";
 import { TeamCrest } from "@/components/TeamCrest";
 import { CountdownTimer } from "@/components/CountdownTimer";
