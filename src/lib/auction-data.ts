@@ -334,31 +334,6 @@ export function usePresence(role: Viewer["role"], name: string) {
   return { viewers, count, banned };
 }
 
-/** Realtime set of currently-banned device ids (admin-facing + self-check fallback). */
-export function useBannedDevices() {
-  const [banned, setBanned] = useState<Set<string>>(new Set());
-
-  const refresh = useCallback(async () => {
-    const { data } = await supabase.from("banned_devices").select("device_id");
-    setBanned(new Set((data ?? []).map((r) => r.device_id as string)));
-  }, []);
-
-  useEffect(() => {
-    void refresh();
-    const channel = supabase
-      .channel("sbl-bans-list")
-      .on("postgres_changes", { event: "*", schema: "public", table: "banned_devices" }, () =>
-        void refresh(),
-      )
-      .subscribe();
-    return () => {
-      void supabase.removeChannel(channel);
-    };
-  }, [refresh]);
-
-  return banned;
-}
-
 // ---------- captain bidding advisor ----------
 
 export type AdviceTone = "info" | "good" | "warn";
