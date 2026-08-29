@@ -285,7 +285,7 @@ function WatchPage() {
                   <span className="text-gold font-display shrink-0 text-sm tabular-nums leading-none">
                     <CountUp value={Number(t.remaining_budget)} />
                   </span>
-                </div>
+                </button>
               );
             })}
             {teams.length === 0 && (
