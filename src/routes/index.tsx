@@ -37,7 +37,7 @@ function Index() {
   const sold = players.filter((p) => p.status === "sold").length;
 
   return (
-    <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-10 lg:flex lg:min-h-screen lg:items-center lg:py-0">
+    <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-6 lg:flex lg:min-h-screen lg:items-center lg:py-0">
       <div className="star-field-layer" aria-hidden />
       <div className="grain-overlay" aria-hidden />
       <div className="absolute right-4 top-4 z-10">
@@ -58,7 +58,7 @@ function Index() {
         className="animate-shuttle-zip text-shuttle/70 pointer-events-none absolute left-[8%] top-[46%] hidden h-10 w-10 lg:block"
       />
 
-      <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
+      <div className="mx-auto grid w-full max-w-7xl gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
         {/* ---------- left: identity + CTAs ---------- */}
         <div className="text-center lg:text-left">
           <div className="animate-shuttle-arc mx-auto flex w-fit items-center gap-2 rounded-full border border-star/40 bg-card/60 px-4 py-1.5 backdrop-blur lg:mx-0">
