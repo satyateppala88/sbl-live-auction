@@ -184,10 +184,22 @@ function AdminConsole({
     .sort((a, b) => Number(b.amount) - Number(a.amount));
   const leading = topBid(bids, player?.id);
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
-  const availableSorted = sortForAuction(
-    players.filter((p) => p.status === "available"),
-    tiers,
-  );
+  const available = players.filter((p) => p.status === "available");
+  const availIds = available
+    .map((p) => p.id)
+    .sort()
+    .join(",");
+  // Random draw order — reshuffled only when the set of available players changes, so the
+  // highlighted "next up" stays put until someone is blocked or sold.
+  const availableSorted = useMemo(() => {
+    const arr = available.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availIds]);
   const nextUp = availableSorted[0] ?? null;
   const record = useRecordBreaker(bids, teams);
   const war = useBiddingWar(bids, player?.id);
