@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -63,7 +63,7 @@ import {
   rosterOf,
   categoryCounts,
   topBid,
-  sortForAuction,
+  
   CATEGORY_LABEL,
   REQUIREMENT,
   type Cat,
@@ -184,10 +184,24 @@ function AdminConsole({
     .sort((a, b) => Number(b.amount) - Number(a.amount));
   const leading = topBid(bids, player?.id);
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
-  const availableSorted = sortForAuction(
-    players.filter((p) => p.status === "available"),
-    tiers,
-  );
+  const available = players.filter((p) => p.status === "available");
+  const availIds = available
+    .map((p) => p.id)
+    .sort()
+    .join(",");
+  // Random draw order — reshuffled only when the set of available players changes, so the
+  // highlighted "next up" stays put until someone is blocked or sold.
+  const availableSorted = useMemo(() => {
+    const arr = available.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = arr[i]!;
+      arr[i] = arr[j]!;
+      arr[j] = tmp;
+    }
+    return arr;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availIds]);
   const nextUp = availableSorted[0] ?? null;
   const record = useRecordBreaker(bids, teams);
   const war = useBiddingWar(bids, player?.id);
@@ -387,7 +401,7 @@ function AdminConsole({
                       Next up (available)
                     </h3>
                     <p className="mt-0.5 text-[11px] text-muted-foreground">
-                      Sorted in draw order: Male → Female → Kid, Icon → Challenger → Game Changer
+                      Random draw order — the highlighted player is up next.
                     </p>
                   </div>
                   <Button
