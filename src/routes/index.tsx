@@ -297,5 +297,6 @@ function RoleCard({
       <h2 className="font-display relative mt-4 text-2xl uppercase">{title}</h2>
       <p className="relative mt-1 text-sm text-muted-foreground">{blurb}</p>
     </Link>
+    </Tilt>
   );
 }
