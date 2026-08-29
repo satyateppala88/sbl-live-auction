@@ -52,6 +52,12 @@ import { ViewerCount } from "@/components/ViewerCount";
 import { RulesButton } from "@/components/RulesDialog";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { HoloCard } from "@/components/HoloCard";
+import {
+  RecordFlash,
+  useRecordBreaker,
+  BiddingWarBadge,
+  useBiddingWar,
+} from "@/components/BroadcastFX";
 import { BulkPhotoUpload, SinglePhotoButton } from "@/components/admin/PhotoTools";
 import {
   useAuctionData,
@@ -181,6 +187,8 @@ function AdminConsole({
     .sort((a, b) => Number(b.amount) - Number(a.amount));
   const leading = topBid(bids, player?.id);
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
+  const record = useRecordBreaker(bids, teams);
+  const war = useBiddingWar(bids, player?.id);
 
   const run = async (fn: () => Promise<unknown>, msg?: string) => {
     try {
@@ -201,6 +209,7 @@ function AdminConsole({
 
   return (
     <main className="arena-bg min-h-screen px-4 py-6">
+      <RecordFlash hit={record} />
       <div className="mx-auto max-w-7xl">
         <header className="flex flex-wrap items-center gap-3">
           <Link to="/" className="text-sm text-muted-foreground">
@@ -248,6 +257,7 @@ function AdminConsole({
                     <p className="text-smash text-xs font-bold uppercase tracking-widest">
                       On the block {state?.round_type === "unsold" && "· second round"}
                     </p>
+                    <BiddingWarBadge active={war} />
                     <CountdownTimer state={state} size="sm" />
                     <Button
                       size="sm"
