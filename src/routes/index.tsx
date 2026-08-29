@@ -134,15 +134,15 @@ function Index() {
         </div>
 
         {/* ---------- right: the "player planet" ---------- */}
-        <Tilt max={7} className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
+        <Tilt max={11} className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
           <div
             className="absolute inset-0 rounded-full"
             style={{ boxShadow: "var(--shadow-glow)" }}
           />
-          <div className="arena-bg court-lines absolute inset-4 overflow-hidden rounded-full border border-gold-solid/25">
+          <div className="arena-bg court-lines absolute inset-4 overflow-hidden rounded-full border border-gold-solid/25 transition-transform duration-300 group-hover:scale-[1.02]">
             <div className="court-lines-layer" aria-hidden />
             <StarEmblem className="animate-spin-slow text-star/15 absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2" />
-            <PlayerSilhouette className="text-gold-solid/90 absolute bottom-0 left-1/2 h-[85%] w-[85%] -translate-x-1/2" />
+            <PlayerSilhouette className="text-gold-solid/90 absolute bottom-0 left-1/2 h-[85%] w-[85%] -translate-x-1/2 transition-transform duration-300 hover:translate-x-[-30%] hover:scale-[1.04]" />
           </div>
 
           {/* orbiting stars -- teams, circling the league */}
@@ -248,19 +248,25 @@ function HeroStat({
 
 const TONE_CLASSES = {
   primary: {
-    badge: "bg-primary/15 text-primary group-hover:bg-primary/25",
-    border: "hover:border-primary",
-    glow: "hover:[box-shadow:var(--shadow-glow)]",
+    badge: "bg-primary/20 text-primary group-hover:bg-primary/30",
+    border: "border-primary/30 hover:border-primary",
+    glow: "hover:[box-shadow:0_12px_40px_-16px_var(--primary)]",
+    backdrop: "from-primary/25 via-primary/5 to-transparent",
+    icon: "text-primary",
   },
   accent: {
-    badge: "bg-accent/15 text-accent group-hover:bg-accent/25",
-    border: "hover:border-accent",
-    glow: "hover:[box-shadow:var(--shadow-smash)]",
+    badge: "bg-accent/20 text-accent group-hover:bg-accent/30",
+    border: "border-accent/30 hover:border-accent",
+    glow: "hover:[box-shadow:0_12px_40px_-16px_var(--accent)]",
+    backdrop: "from-accent/25 via-accent/5 to-transparent",
+    icon: "text-accent",
   },
   gold: {
-    badge: "bg-gold-solid/15 text-gold-solid group-hover:bg-gold-solid/25",
-    border: "hover:border-gold-solid",
-    glow: "hover:[box-shadow:var(--shadow-glow)]",
+    badge: "bg-gold-solid/20 text-gold-solid group-hover:bg-gold-solid/30",
+    border: "border-gold-solid/30 hover:border-gold-solid",
+    glow: "hover:[box-shadow:0_12px_40px_-16px_var(--gold-solid)]",
+    backdrop: "from-gold-solid/25 via-gold-solid/5 to-transparent",
+    icon: "text-gold-solid",
   },
 } as const;
 
@@ -283,30 +289,41 @@ function RoleCard({
 }) {
   const t = TONE_CLASSES[tone];
   return (
-    <Tilt max={9} className={`animate-rise-in ${stagger}`}>
-    <Link
-      to={to}
-      className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[1.25rem] border border-border bg-card/80 p-3 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
-    >
-      <ShuttleIcon className="pointer-events-none absolute -bottom-3 -right-3 h-12 w-12 rotate-12 text-foreground/[0.04] transition-transform duration-300 group-hover:rotate-45" />
-      <div className="relative flex items-center justify-between">
-        <span
-          className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 group-hover:-rotate-12 ${t.badge}`}
-        >
-          {icon}
-        </span>
-        {live ? (
-          <span className="text-smash flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
-            <span className="animate-energy-pulse h-1.5 w-1.5 rounded-full bg-smash" />
-            Live
+    <Tilt max={8} className={`animate-rise-in ${stagger}`}>
+      <Link
+        to={to}
+        className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[1.25rem] border ${t.border} bg-card/80 p-3 text-left backdrop-blur transition-all duration-300 hover:[transform:translateY(-4px)] sm:p-4 ${t.glow}`}
+      >
+        {/* themed cinematic backdrop wash */}
+        <div
+          className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${t.backdrop} opacity-80`}
+          aria-hidden
+        />
+        {/* corner emblem glow */}
+        <div
+          className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-current opacity-10 blur-2xl"
+          style={{ color: `var(--${tone === "gold" ? "gold-solid" : tone})` }}
+          aria-hidden
+        />
+        <ShuttleIcon className="pointer-events-none absolute -bottom-3 -right-3 h-12 w-12 rotate-12 text-foreground/[0.05] transition-transform duration-300 group-hover:rotate-45 sm:h-16 sm:w-16" />
+        <div className="relative flex items-center justify-between">
+          <span
+            className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 group-hover:-rotate-12 sm:h-12 sm:w-12 ${t.badge}`}
+          >
+            {icon}
           </span>
-        ) : (
-          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" />
-        )}
-      </div>
-      <h2 className="font-display relative mt-2 text-base uppercase sm:text-xl">{title}</h2>
-      <p className="relative mt-0.5 hidden text-xs text-muted-foreground sm:block sm:text-sm">{blurb}</p>
-    </Link>
+          {live ? (
+            <span className="text-smash flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
+              <span className="animate-energy-pulse h-1.5 w-1.5 rounded-full bg-smash" />
+              Live
+            </span>
+          ) : (
+            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" />
+          )}
+        </div>
+        <h2 className="font-display relative mt-2 text-base uppercase sm:text-xl">{title}</h2>
+        <p className="relative mt-0.5 hidden text-xs text-muted-foreground sm:block sm:text-sm">{blurb}</p>
+      </Link>
     </Tilt>
   );
 }

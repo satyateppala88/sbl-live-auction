@@ -43,15 +43,30 @@ export function EventCountdown({
   if (!remaining) return null;
 
   if (remaining.started) {
+    if (compact) {
+      return (
+        <div
+          className={cn(
+            "live-glow relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-smash/60 bg-smash/15 px-3 py-1.5 text-xs font-black uppercase tracking-widest text-smash",
+            className,
+          )}
+        >
+          <span className="absolute inset-0 animate-energy-pulse-bg bg-smash/20" />
+          <span className="relative animate-energy-pulse h-2 w-2 rounded-full bg-smash" />
+          <span className="relative">Live Now</span>
+        </div>
+      );
+    }
     return (
       <div
         className={cn(
-          "inline-flex items-center gap-2 rounded-full border border-smash/50 bg-smash/15 px-4 py-1.5 text-sm font-bold uppercase tracking-widest text-smash",
+          "live-glow relative inline-flex items-center gap-3 overflow-hidden rounded-2xl border border-smash/50 bg-smash/15 px-5 py-2.5 text-sm font-black uppercase tracking-widest text-smash",
           className,
         )}
       >
-        <span className="animate-energy-pulse h-2 w-2 rounded-full bg-smash" />
-        Auction is Live
+        <span className="absolute inset-0 animate-energy-pulse-bg bg-smash/20" />
+        <span className="relative animate-energy-pulse h-2.5 w-2.5 rounded-full bg-smash" />
+        <span className="relative">Auction is Live</span>
       </div>
     );
   }
