@@ -187,6 +187,11 @@ function AdminConsole({
     .sort((a, b) => Number(b.amount) - Number(a.amount));
   const leading = topBid(bids, player?.id);
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
+  const availableSorted = sortForAuction(
+    players.filter((p) => p.status === "available"),
+    tiers,
+  );
+  const nextUp = availableSorted[0] ?? null;
   const record = useRecordBreaker(bids, teams);
   const war = useBiddingWar(bids, player?.id);
 
@@ -363,29 +368,60 @@ function AdminConsole({
                 </div>
 
               ) : (
-                <p className="py-16 text-center text-muted-foreground">
-                  No player on the block. Pick one from the list →
-                </p>
+                <div className="py-16 text-center">
+                  <p className="text-muted-foreground">No player on the block.</p>
+                  {nextUp ? (
+                    <Button
+                      className="mt-4"
+                      onClick={() =>
+                        void run(
+                          () => setOnBlock({ data: { passcode, playerId: nextUp.id } }),
+                          `${nextUp.name} is on the block`,
+                        )
+                      }
+                    >
+                      <Play className="mr-1 h-4 w-4" /> Put next up: {nextUp.name}
+                    </Button>
+                  ) : (
+                    <p className="mt-2 text-xs text-muted-foreground">No available players left.</p>
+                  )}
+                </div>
               )}
             </div>
 
             <div className="grid gap-4">
               <StreamControl passcode={passcode} current={state?.live_stream_url ?? null} run={run} />
               <div className="rounded-2xl border border-border bg-card p-4">
-                <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Next up (available)
-                </h3>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  Sorted in draw order: Male → Female → Kid, Icon → Challenger → Game Changer
-                </p>
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
+                      Next up (available)
+                    </h3>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">
+                      Sorted in draw order: Male → Female → Kid, Icon → Challenger → Game Changer
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    disabled={!nextUp}
+                    onClick={() =>
+                      nextUp &&
+                      void run(
+                        () => setOnBlock({ data: { passcode, playerId: nextUp.id } }),
+                        `${nextUp.name} is on the block`,
+                      )
+                    }
+                  >
+                    <Play className="mr-1 h-3.5 w-3.5" /> Put next up
+                  </Button>
+                </div>
                 <div className="mt-2 grid max-h-80 grid-cols-1 gap-1.5 overflow-auto sm:grid-cols-2">
-                  {sortForAuction(
-                    players.filter((p) => p.status === "available"),
-                    tiers,
-                  ).map((p) => (
+                  {availableSorted.map((p) => (
                     <div
                       key={p.id}
-                      className="flex items-center gap-2 rounded-lg border border-border px-2 py-1.5 text-sm"
+                      className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 text-sm ${
+                        p.id === nextUp?.id ? "border-accent bg-accent/10" : "border-border"
+                      }`}
                     >
                       <div className="min-w-0 flex-1">
                         <span className="block truncate font-medium">{p.name}</span>
@@ -407,7 +443,7 @@ function AdminConsole({
                       </Button>
                     </div>
                   ))}
-                  {players.filter((p) => p.status === "available").length === 0 && (
+                  {availableSorted.length === 0 && (
                     <p className="col-span-full text-sm text-muted-foreground">
                       No available players.
                     </p>
