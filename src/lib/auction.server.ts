@@ -260,6 +260,18 @@ export async function unbanDeviceServer(passcode: string, deviceId: string) {
   return { ok: true };
 }
 
+/** Public self-check: a device asks "am I banned?" — returns only a boolean, never the list. */
+export async function checkBannedServer(deviceId: string) {
+  if (!deviceId) return { banned: false };
+  const db = supabaseAdmin;
+  const { data } = await db
+    .from("banned_devices")
+    .select("device_id")
+    .eq("device_id", deviceId)
+    .maybeSingle();
+  return { banned: !!data };
+}
+
 // ---------- captain pre-auction targets (private per team) ----------
 
 export async function getTargetsServer(teamId: string, pin: string) {
