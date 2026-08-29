@@ -653,6 +653,29 @@
   animation: energy-pulse 1.6s ease-out infinite;
 }
 
+@keyframes energy-pulse-bg {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@utility animate-energy-pulse-bg {
+  animation: energy-pulse-bg 1.6s ease-in-out infinite;
+}
+
+/* glowing ring for "Live Now" / "Auction is Live" badges */
+.live-glow {
+  box-shadow:
+    0 0 0 1px oklch(0.62 0.24 25 / 0.4),
+    0 0 16px 2px oklch(0.62 0.24 25 / 0.35);
+}
+
+
+
 @keyframes spin-slow {
   to {
     transform: rotate(360deg);
