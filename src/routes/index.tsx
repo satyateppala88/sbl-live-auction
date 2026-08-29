@@ -281,26 +281,26 @@ function RoleCard({
     <Tilt max={9} className={`animate-rise-in ${stagger}`}>
     <Link
       to={to}
-      className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[1.5rem] border border-border bg-card/80 p-4 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
+      className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[1.25rem] border border-border bg-card/80 p-3 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
     >
-      <ShuttleIcon className="pointer-events-none absolute -bottom-4 -right-4 h-16 w-16 rotate-12 text-foreground/[0.04] transition-transform duration-300 group-hover:rotate-45" />
+      <ShuttleIcon className="pointer-events-none absolute -bottom-3 -right-3 h-12 w-12 rotate-12 text-foreground/[0.04] transition-transform duration-300 group-hover:rotate-45" />
       <div className="relative flex items-center justify-between">
         <span
-          className={`flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 group-hover:-rotate-12 ${t.badge}`}
+          className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 group-hover:-rotate-12 ${t.badge}`}
         >
           {icon}
         </span>
         {live ? (
-          <span className="text-smash flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest">
-            <span className="animate-energy-pulse h-2 w-2 rounded-full bg-smash" />
+          <span className="text-smash flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
+            <span className="animate-energy-pulse h-1.5 w-1.5 rounded-full bg-smash" />
             Live
           </span>
         ) : (
-          <ArrowRight className="h-4 w-4 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" />
+          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" />
         )}
       </div>
-      <h2 className="font-display relative mt-3 text-xl uppercase">{title}</h2>
-      <p className="relative mt-0.5 text-sm text-muted-foreground">{blurb}</p>
+      <h2 className="font-display relative mt-2 text-base uppercase sm:text-xl">{title}</h2>
+      <p className="relative mt-0.5 hidden text-xs text-muted-foreground sm:block sm:text-sm">{blurb}</p>
     </Link>
     </Tilt>
   );
