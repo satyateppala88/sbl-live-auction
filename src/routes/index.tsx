@@ -8,6 +8,7 @@ import { RulesButton } from "@/components/RulesDialog";
 import { CountUp } from "@/components/CountUp";
 import { Tilt } from "@/components/Tilt";
 import { TeamCrest } from "@/components/TeamCrest";
+import { EventCountdown } from "@/components/EventCountdown";
 import type { Team } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/")({
