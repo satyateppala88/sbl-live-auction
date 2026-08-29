@@ -135,8 +135,10 @@ export function categoryCounts(roster: Player[]) {
   };
 }
 
-export function maxBidFor(team: Team, filled: number) {
-  return Number(team.remaining_budget) - Math.max(0, team.max_roster_size - filled - 1);
+export function maxBidFor(team: Team, filled: number, floorBase = 1) {
+  return (
+    Number(team.remaining_budget) - Math.max(0, team.max_roster_size - filled - 1) * floorBase
+  );
 }
 
 export function topBid(bids: Bid[], playerId: string | null | undefined) {
@@ -348,8 +350,9 @@ export function biddingAdvice(opts: {
   cap: number; // max legal bid right now (reserve rule applied)
   nextAmount: number; // what pressing Bid would cost
   leadingIsMe: boolean;
+  floorBase: number; // lowest tier base price -- reserve held back per empty slot
 }): Advice[] {
-  const { team, players, currentPlayer, filled, cap, nextAmount, leadingIsMe } = opts;
+  const { team, players, currentPlayer, filled, cap, nextAmount, leadingIsMe, floorBase } = opts;
   const out: Advice[] = [];
   const budget = Number(team.remaining_budget);
   const slotsLeft = Math.max(0, team.max_roster_size - filled);
@@ -358,24 +361,6 @@ export function biddingAdvice(opts: {
   const needs = (["male", "female", "kid"] as const)
     .map((c) => ({ c, gap: Math.max(0, REQUIREMENT[c] - counts[c]) }))
     .filter((n) => n.gap > 0);
-
-  // cheapest still-available players per category (excludes the one on the block),
-  // so the reserve reflects real base prices -- e.g. if the only males left are Icons,
-  // you must keep more back for them.
-  const cheapestAvailable = (cat: Cat) =>
-    players
-      .filter((p) => p.status === "available" && p.category === cat && p.id !== currentPlayer?.id)
-      .map((p) => Number(p.base_price))
-      .sort((a, b) => a - b);
-  const reserveForNeeds = (list: { c: Cat; gap: number }[]) => {
-    let total = 0;
-    for (const n of list) {
-      const prices = cheapestAvailable(n.c);
-      for (let i = 0; i < n.gap; i++) total += prices[i] ?? 1;
-    }
-    return total;
-  };
-  const reserveNow = reserveForNeeds(needs);
 
   out.push({
     tone: "info",
@@ -399,9 +384,10 @@ export function biddingAdvice(opts: {
 
   if (needs.length) {
     const label = needs.map((n) => `${n.gap} ${CATEGORY_LABEL[n.c].split(" ")[0]}`).join(", ");
+    const slotsAfter = Math.max(0, slotsLeft - 1);
     out.push({
       tone: "info",
-      text: `Still need: ${label} — keep ~${reserveNow} pts back for them`,
+      text: `Still need: ${label} — ${slotsAfter} slot${slotsAfter === 1 ? "" : "s"} after this, ${slotsAfter * floorBase} pts held back`,
     });
   }
 
@@ -411,18 +397,7 @@ export function biddingAdvice(opts: {
 
   if (currentPlayer && !leadingIsMe && nextAmount > 0) {
     const fillsNeed = REQUIREMENT[currentPlayer.category] - counts[currentPlayer.category] > 0;
-    // required slots still open AFTER buying this player, and what they'll cost at base
-    const needsAfter = needs
-      .map((n) => (n.c === currentPlayer.category && fillsNeed ? { c: n.c, gap: n.gap - 1 } : n))
-      .filter((n) => n.gap > 0);
-    const reserveAfter = reserveForNeeds(needsAfter);
-    const budgetAfter = budget - nextAmount;
-    if (budgetAfter < reserveAfter) {
-      out.push({
-        tone: "warn",
-        text: `Careful — bidding ${nextAmount} leaves ${budgetAfter} pts, but your remaining required players cost ~${reserveAfter} at base. You'd fall short.`,
-      });
-    } else if (fillsNeed && nextAmount <= Math.max(2, Number(currentPlayer.base_price) * 1.5)) {
+    if (fillsNeed && nextAmount <= Math.max(floorBase, Number(currentPlayer.base_price) * 1.5)) {
       out.push({ tone: "good", text: "Good value — fills a need without straining your reserve" });
     }
   }
