@@ -104,6 +104,13 @@ function CaptainLogin({
   const [pin, setPin] = useState("");
   const [busy, setBusy] = useState(false);
 
+  // deep link: /captain?team=<id> preselects the team (from the printed QR card)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const t = new URLSearchParams(window.location.search).get("team");
+    if (t && teams.some((x) => x.id === t)) setTeamId(t);
+  }, [teams]);
+
   async function submit() {
     if (!teamId) return;
     setBusy(true);
