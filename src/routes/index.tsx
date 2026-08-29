@@ -226,7 +226,13 @@ function HeroStat({
   gold?: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card/70 px-2 py-3 backdrop-blur">
+    <div
+      className={`lift-card rounded-2xl border bg-card/70 px-2 py-3 backdrop-blur transition-all duration-300 hover:[transform:translateY(-2px)] ${
+        gold
+          ? "border-gold-solid/40 hover:[box-shadow:0_8px_24px_-12px_var(--gold-solid)]"
+          : "border-border hover:border-primary/40"
+      }`}
+    >
       <span className="flex items-center justify-center gap-1.5 text-muted-foreground">
         {icon}
         <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
