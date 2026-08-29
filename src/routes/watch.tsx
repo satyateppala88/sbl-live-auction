@@ -268,7 +268,8 @@ function WatchPage() {
                       {t.name}
                     </span>
                     <span className="block text-[9px] leading-tight text-muted-foreground">
-                      {roster.length}/{t.max_roster_size} · {c.male}M {c.female}F {c.kid}K
+                      {roster.length + caps}/{t.max_roster_size + caps} · {c.male}M {c.female}F{" "}
+                      {c.kid}K
                     </span>
                     {/* spend bar: fills with the team's colour as the purse drains */}
                     <span className="mt-0.5 block h-[3px] overflow-hidden rounded-full bg-border/60">
