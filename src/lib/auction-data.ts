@@ -141,6 +141,16 @@ export function maxBidFor(team: Team, filled: number, floorBase = 1) {
   );
 }
 
+/** Escalating bid step. The opening bid sits at the base price; each raise after that grows
+ * as bidding heats up — raises 1-5 add 1, 6-10 add 2, 11-15 add 3, and 16+ add 5.
+ * `existingBids` is how many bids are already on the player (i.e. the raise number). */
+export function bidIncrement(existingBids: number): number {
+  if (existingBids <= 5) return 1;
+  if (existingBids <= 10) return 2;
+  if (existingBids <= 15) return 3;
+  return 5;
+}
+
 export function topBid(bids: Bid[], playerId: string | null | undefined) {
   if (!playerId) return null;
   const forPlayer = bids

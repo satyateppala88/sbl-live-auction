@@ -121,14 +121,21 @@ export function RulesButton({ className = "" }: { className?: string }) {
                 </Section>
 
                 <Section title="How a player is called">
-                  <p>Players come up on the block in a set order:</p>
-                  <p className="font-mono text-xs">
-                    Male → Female → Kid, and within each: Icon → Challenger → Game Changer.
+                  <p>
+                    Players come up on the block in <strong>random order</strong> — no fixed
+                    sequence.
                   </p>
                   <p>
-                    Each player has a <strong>2-minute countdown</strong>. Bids raise the price by 1
-                    point at a time. The highest bid when the organizer closes the block wins.
+                    Each player has a <strong>2-minute countdown</strong>. Bidding opens at the base
+                    price, then each raise grows as it heats up:
                   </p>
+                  <ul className="ml-4 list-disc space-y-0.5">
+                    <li>First 5 raises: +1 point each</li>
+                    <li>Next 5 raises: +2 points each</li>
+                    <li>Next 5 raises: +3 points each</li>
+                    <li>After that: +5 points each</li>
+                  </ul>
+                  <p>The highest bid when the organizer closes the block wins.</p>
                 </Section>
 
                 <Section title="Sold">
