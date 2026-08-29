@@ -87,6 +87,9 @@ function WatchPage() {
         <span className="text-gold-solid hidden text-[11px] font-bold uppercase tracking-[0.28em] lg:block">
           One Community · One Court · One Roar
         </span>
+        <div className="hidden md:block">
+          <EventCountdown className="[&_span]:text-xs [&>p]:hidden" />
+        </div>
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <RulesButton />
           <ViewerCount count={count} />
