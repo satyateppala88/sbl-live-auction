@@ -63,7 +63,7 @@ export function TargetPlanner({
       let covered = 0;
       for (let i = 0; i < need; i++) {
         if (i < tg.length) {
-          spend += tg[i];
+          spend += tg[i] ?? 0;
           covered++;
         } else {
           spend += cheapestBase(c);
