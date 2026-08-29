@@ -25,7 +25,13 @@ function calc(): Remaining {
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Live countdown to the auction start. After start, shows "Auction is Live". */
-export function EventCountdown({ className }: { className?: string }) {
+export function EventCountdown({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
   const [remaining, setRemaining] = useState<Remaining | null>(null);
 
   useEffect(() => {
@@ -46,6 +52,23 @@ export function EventCountdown({ className }: { className?: string }) {
       >
         <span className="animate-energy-pulse h-2 w-2 rounded-full bg-smash" />
         Auction is Live
+      </div>
+    );
+  }
+
+  if (compact) {
+    return (
+      <div
+        className={cn(
+          "inline-flex items-center gap-2 rounded-full border border-gold-solid/40 bg-gold-solid/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-gold-solid tabular-nums",
+          className,
+        )}
+      >
+        <span>Starts in</span>
+        <span>
+          {remaining.days > 0 ? `${remaining.days}d ` : ""}
+          {pad(remaining.hours)}:{pad(remaining.mins)}:{pad(remaining.secs)}
+        </span>
       </div>
     );
   }
