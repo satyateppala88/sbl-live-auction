@@ -97,7 +97,6 @@ function Index() {
             <HeroStat
               icon={<ShuttleIcon className="h-4 w-4" />}
               value={players.length + teams.length}
-              suffix="+"
               label="Players"
             />
             <HeroStat icon={<Gavel className="h-4 w-4" />} value={sold} label="Sold" gold />
