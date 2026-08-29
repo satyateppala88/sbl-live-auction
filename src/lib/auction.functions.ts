@@ -416,6 +416,13 @@ export const unbanDevice = createServerFn({ method: "POST" })
     return unbanDeviceServer(data.passcode, data.deviceId);
   });
 
+export const checkBanned = createServerFn({ method: "POST" })
+  .inputValidator((d: { deviceId: string }) => d)
+  .handler(async ({ data }) => {
+    const { checkBannedServer } = await import("./auction.server");
+    return checkBannedServer(data.deviceId);
+  });
+
 export const getTargets = createServerFn({ method: "POST" })
   .inputValidator((d: { teamId: string; pin: string }) => d)
   .handler(async ({ data }) => {

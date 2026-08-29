@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Confetti } from "./Confetti";
+import { TeamCrest } from "./TeamCrest";
 import type { Player, Team } from "@/lib/auction-data";
 
 type Moment = {
   key: number;
   kind: "sold" | "unsold";
   name: string;
-  teamName?: string;
-  captains?: string;
-  price?: number;
+  teamName?: string | undefined;
+  teamColor?: string | undefined;
+  teamLogoUrl?: string | null | undefined;
+  price?: number | undefined;
   detail: string;
 };
 
@@ -32,16 +34,14 @@ export function useAuctionMoment(players: Player[], teams: Team[]) {
       if (!was || was === p.status) continue;
       if (p.status === "sold") {
         const team = teams.find((t) => t.id === p.sold_to_team_id);
-        const captains = team
-          ? [team.captain_name, team.captain2_name].filter(Boolean).join(" & ")
-          : "";
         seq.current += 1;
         setMoment({
           key: seq.current,
           kind: "sold",
           name: p.name,
           teamName: team?.name ?? "the team",
-          captains,
+          teamColor: team?.color,
+          teamLogoUrl: team?.logo_url ?? null,
           price: Number(p.sold_price),
           detail: `${team?.name ?? "Sold"} · ${Number(p.sold_price)} pts`,
         });
@@ -57,7 +57,7 @@ export function useAuctionMoment(players: Player[], teams: Team[]) {
 
   useEffect(() => {
     if (!moment) return;
-    const t = setTimeout(() => setMoment(null), moment.kind === "sold" ? 2600 : 900);
+    const t = setTimeout(() => setMoment(null), moment.kind === "sold" ? 2800 : 1100);
     return () => clearTimeout(t);
   }, [moment]);
 
@@ -74,11 +74,21 @@ export function AuctionMomentOverlay({ moment }: { moment: Moment | null }) {
         className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center"
         aria-live="polite"
       >
+        {/* red scanline sweeping down the whole screen */}
+        <div
+          key={`scan-${moment.key}`}
+          className="animate-scanline-sweep absolute inset-x-0 top-0 h-24"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent, oklch(0.6 0.23 27 / 0.35), transparent)",
+          }}
+          aria-hidden
+        />
         <div
           key={moment.key}
           className="animate-shake-out rounded-2xl border-4 border-destructive bg-background/85 px-8 py-5 text-center text-destructive backdrop-blur-sm"
         >
-          <p className="font-display text-6xl uppercase leading-none tracking-tight sm:text-8xl">
+          <p className="font-heavy text-6xl uppercase leading-none tracking-tight sm:text-8xl">
             Unsold
           </p>
           <p className="mt-2 text-lg font-bold uppercase tracking-wide text-foreground">
@@ -90,32 +100,67 @@ export function AuctionMomentOverlay({ moment }: { moment: Moment | null }) {
     );
   }
 
+  const color = moment.teamColor ?? "oklch(0.83 0.16 85)";
+
   return (
     <div
       className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center"
       aria-live="polite"
     >
       <Confetti />
+      {/* radial flash flooding the screen in the winning team's colour */}
       <div
-        key={moment.key}
-        className="animate-congrats border-gold-line mx-4 max-w-lg rounded-3xl border-4 bg-background/90 px-8 py-6 text-center backdrop-blur-sm"
-      >
-        <p className="text-gold-solid text-xs font-bold uppercase tracking-[0.35em]">
+        key={`flash-${moment.key}`}
+        className="animate-team-flash absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse 70% 60% at 50% 45%, ${color}55, transparent 70%)`,
+        }}
+        aria-hidden
+      />
+      {/* the whole stage shakes as the stamp slams down */}
+      <div className="animate-screen-shake relative flex flex-col items-center">
+        {moment.teamLogoUrl && (
+          <img
+            src={moment.teamLogoUrl}
+            alt=""
+            aria-hidden
+            className="animate-crest-pop absolute -z-10 h-72 w-72 rounded-full object-cover opacity-25 sm:h-96 sm:w-96"
+            style={{ boxShadow: `0 0 120px 30px ${color}66` }}
+          />
+        )}
+        <p
+          key={`c-${moment.key}`}
+          className="text-gold-solid animate-congrats text-xs font-bold uppercase tracking-[0.35em]"
+        >
           🎉 Congratulations 🎉
         </p>
-        <p className="text-gold font-display mt-2 text-5xl uppercase leading-none tracking-tight sm:text-7xl">
+        <p
+          key={moment.key}
+          className="font-heavy animate-stamp-slam text-gold mt-1 text-8xl uppercase leading-none tracking-tight sm:text-[10rem]"
+          style={{ textShadow: `0 6px 40px ${color}88` }}
+        >
           Sold!
         </p>
-        <p className="mt-3 text-2xl font-black uppercase leading-tight text-foreground">
-          {moment.name}
-        </p>
-        <p className="mt-1 text-base text-muted-foreground">
-          goes to <span className="font-bold text-foreground">{moment.teamName}</span>
-          {moment.captains ? ` (${moment.captains})` : ""}
-        </p>
-        <p className="text-gold-solid font-display mt-1 text-3xl tabular-nums">
-          {moment.price} pts
-        </p>
+        <div
+          key={`d-${moment.key}`}
+          className="animate-congrats mt-3 flex items-center gap-3 rounded-3xl border border-border bg-background/90 px-8 py-4 backdrop-blur-sm"
+        >
+          {moment.teamLogoUrl && (
+            <TeamCrest
+              team={{ name: moment.teamName ?? "", color, logo_url: moment.teamLogoUrl }}
+              size={48}
+            />
+          )}
+          <div className="text-left">
+            <p className="text-2xl font-black uppercase leading-tight text-foreground">
+              {moment.name}
+            </p>
+            <p className="text-base text-muted-foreground">
+              goes to <span className="font-bold" style={{ color }}>{moment.teamName}</span>
+            </p>
+          </div>
+          <p className="text-gold font-heavy pl-3 text-4xl tabular-nums">{moment.price}</p>
+        </div>
       </div>
     </div>
   );

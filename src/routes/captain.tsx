@@ -10,6 +10,12 @@ import { RosterSlots } from "@/components/RosterSlots";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
 import { CountUp } from "@/components/CountUp";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
+import {
+  RecordFlash,
+  useRecordBreaker,
+  BiddingWarBadge,
+  useBiddingWar,
+} from "@/components/BroadcastFX";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { TeamCrest } from "@/components/TeamCrest";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
@@ -257,6 +263,8 @@ function BiddingRoom({
   }
 
   const moment = useAuctionMoment(players, teams);
+  const record = useRecordBreaker(bids, teams);
+  const war = useBiddingWar(bids, player?.id);
 
   const wonIds = useRef<Set<string> | null>(null);
   useEffect(() => {
@@ -286,6 +294,7 @@ function BiddingRoom({
     <main className="arena-bg court-lines min-h-screen px-4 pb-32 pt-6 lg:h-[100dvh] lg:overflow-hidden lg:pb-28">
       <div className="court-lines-layer" aria-hidden />
       <AuctionMomentOverlay moment={moment} />
+      <RecordFlash hit={record} />
       <div className="mx-auto max-w-md lg:max-w-6xl">
         <header className="flex items-center gap-3">
           <TeamCrest team={team} size={48} />
@@ -326,6 +335,7 @@ function BiddingRoom({
                 <p className="text-smash text-xs font-bold uppercase tracking-widest">
                   {state?.round_type === "unsold" ? "Second round" : "On the block"}
                 </p>
+                <BiddingWarBadge active={war} />
                 <CountdownTimer state={state} size="sm" />
               </div>
               <PlayerAvatar
@@ -343,7 +353,7 @@ function BiddingRoom({
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   Current bid
                 </p>
-                <p className="text-gold font-display text-6xl tabular-nums">
+                <p className="text-gold font-heavy text-6xl tabular-nums">
                   <CountUp value={leading ? Number(leading.amount) : Number(player.base_price)} />
                 </p>
                 <p
@@ -437,7 +447,7 @@ function BiddingRoom({
           {player && <BidAdvisor advice={advice} />}
           <Button
             size="lg"
-            className="h-16 w-full text-lg font-black uppercase"
+            className="btn-squash h-16 w-full text-lg font-black uppercase active:scale-[0.94] active:brightness-125"
             disabled={!!disabledReason || busy}
             onClick={() => void bid()}
           >

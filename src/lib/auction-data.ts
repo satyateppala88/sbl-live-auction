@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { checkBanned } from "@/lib/auction.functions";
 
 export type Cat = "male" | "female" | "kid";
 
@@ -279,31 +280,17 @@ export function usePresence(role: Viewer["role"], name: string) {
     const deviceId = getChatDeviceId();
     let cancelled = false;
 
-    // watch the ban list for this device
-    const banChannel = supabase
-      .channel("sbl-bans")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "banned_devices" },
-        async () => {
-          const { data } = await supabase
-            .from("banned_devices")
-            .select("device_id")
-            .eq("device_id", deviceId)
-            .maybeSingle();
-          if (!cancelled) setBanned(!!data);
-        },
-      )
-      .subscribe();
-
-    void supabase
-      .from("banned_devices")
-      .select("device_id")
-      .eq("device_id", deviceId)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (!cancelled) setBanned(!!data);
-      });
+    // Ban self-check goes through a server function — the ban list itself is
+    // service-role only, so clients poll their own status (never read the table).
+    const checkBan = () => {
+      void checkBanned({ data: { deviceId } })
+        .then((r) => {
+          if (!cancelled) setBanned(r.banned);
+        })
+        .catch(() => {});
+    };
+    checkBan();
+    const banPoll = setInterval(checkBan, 15000);
 
     const channel = supabase.channel("sbl-presence", {
       config: { presence: { key: deviceId } },
@@ -330,9 +317,9 @@ export function usePresence(role: Viewer["role"], name: string) {
 
     return () => {
       cancelled = true;
+      clearInterval(banPoll);
       void channel.untrack();
       void supabase.removeChannel(channel);
-      void supabase.removeChannel(banChannel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, name]);
@@ -345,31 +332,6 @@ export function usePresence(role: Viewer["role"], name: string) {
 
   const count = viewers.length;
   return { viewers, count, banned };
-}
-
-/** Realtime set of currently-banned device ids (admin-facing + self-check fallback). */
-export function useBannedDevices() {
-  const [banned, setBanned] = useState<Set<string>>(new Set());
-
-  const refresh = useCallback(async () => {
-    const { data } = await supabase.from("banned_devices").select("device_id");
-    setBanned(new Set((data ?? []).map((r) => r.device_id as string)));
-  }, []);
-
-  useEffect(() => {
-    void refresh();
-    const channel = supabase
-      .channel("sbl-bans-list")
-      .on("postgres_changes", { event: "*", schema: "public", table: "banned_devices" }, () =>
-        void refresh(),
-      )
-      .subscribe();
-    return () => {
-      void supabase.removeChannel(channel);
-    };
-  }, [refresh]);
-
-  return banned;
 }
 
 // ---------- captain bidding advisor ----------

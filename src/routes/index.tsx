@@ -6,6 +6,9 @@ import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { StarEmblem } from "@/components/StarEmblem";
 import { RulesButton } from "@/components/RulesDialog";
 import { CountUp } from "@/components/CountUp";
+import { Tilt } from "@/components/Tilt";
+import { TeamCrest } from "@/components/TeamCrest";
+import type { Team } from "@/lib/auction-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,6 +38,7 @@ function Index() {
   return (
     <main className="arena-bg star-field relative min-h-screen overflow-hidden px-4 py-10 lg:flex lg:min-h-screen lg:items-center lg:py-0">
       <div className="star-field-layer" aria-hidden />
+      <div className="grain-overlay" aria-hidden />
       <div className="absolute right-4 top-4 z-10">
         <RulesButton />
       </div>
@@ -126,7 +130,7 @@ function Index() {
         </div>
 
         {/* ---------- right: the "player planet" ---------- */}
-        <div className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
+        <Tilt max={7} className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
           <div
             className="absolute inset-0 rounded-full"
             style={{ boxShadow: "var(--shadow-glow)" }}
@@ -169,11 +173,40 @@ function Index() {
               style={
                 { "--orbit-r": "255px", "--orbit-duration": "22s" } as React.CSSProperties
               }
-            />
-          </span>
-        </div>
-      </div>
+             />
+           </span>
+         </Tilt>
+       </div>
+
+      {/* team crest marquee -- the league rolling by, broadcast-style */}
+      {teams.length > 0 && <CrestMarquee teams={teams} />}
     </main>
+  );
+}
+
+function CrestMarquee({ teams }: { teams: Team[] }) {
+  const strip = (keyPrefix: string) => (
+    <div className="flex shrink-0 items-center" key={keyPrefix}>
+      {teams.map((t) => (
+        <span
+          key={`${keyPrefix}-${t.id}`}
+          className="flex items-center gap-2 whitespace-nowrap px-6"
+        >
+          <TeamCrest team={t} size={30} />
+          <span className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            {t.name}
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+  return (
+    <div className="marquee-mask fixed inset-x-0 bottom-0 z-10 hidden border-t border-border/60 bg-background/70 py-2.5 backdrop-blur sm:block">
+      <div className="animate-marquee flex w-max">
+        {strip("a")}
+        {strip("b")}
+      </div>
+    </div>
   );
 }
 
@@ -240,9 +273,10 @@ function RoleCard({
 }) {
   const t = TONE_CLASSES[tone];
   return (
+    <Tilt max={9} className={`animate-rise-in ${stagger}`}>
     <Link
       to={to}
-      className={`lift-card animate-rise-in ${stagger} group relative overflow-hidden rounded-[2rem] border border-border bg-card/80 p-6 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
+      className={`lift-card glass-panel group relative block h-full overflow-hidden rounded-[2rem] border border-border bg-card/80 p-6 text-left backdrop-blur hover:[transform:translateY(-4px)] ${t.border} ${t.glow}`}
     >
       <ShuttleIcon className="pointer-events-none absolute -bottom-4 -right-4 h-20 w-20 rotate-12 text-foreground/[0.04] transition-transform duration-300 group-hover:rotate-45" />
       <div className="relative flex items-center justify-between">
@@ -263,5 +297,6 @@ function RoleCard({
       <h2 className="font-display relative mt-4 text-2xl uppercase">{title}</h2>
       <p className="relative mt-1 text-sm text-muted-foreground">{blurb}</p>
     </Link>
+    </Tilt>
   );
 }

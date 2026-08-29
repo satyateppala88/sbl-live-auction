@@ -80,11 +80,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "SBL Live Auction — SMR Vinay Galaxy Badminton League" },
+      {
+        name: "description",
+        content:
+          "The SMR Badminton League live player auction: captains bid from their phones while fans watch the broadcast in real time.",
+      },
+      { name: "author", content: "SMR Vinay Galaxy" },
+      { property: "og:title", content: "SBL Live Auction — SMR Vinay Galaxy" },
+      {
+        property: "og:description",
+        content: "Where Stars Come to Live — the SMR Badminton League live player auction.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
@@ -94,7 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap",
       },
       {
         rel: "stylesheet",

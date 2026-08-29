@@ -11,6 +11,13 @@ import { Tv } from "lucide-react";
 import { RulesButton } from "@/components/RulesDialog";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import {
+  RecordFlash,
+  useRecordBreaker,
+  BiddingWarBadge,
+  useBiddingWar,
+  SalesTicker,
+} from "@/components/BroadcastFX";
+import {
   useAuctionData,
   usePresence,
   topBid,
@@ -50,6 +57,8 @@ function WatchPage() {
   const leading = topBid(bids, player?.id);
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
   const moment = useAuctionMoment(players, teams);
+  const record = useRecordBreaker(bids, teams);
+  const war = useBiddingWar(bids, player?.id);
   const amount = leading ? Number(leading.amount) : Number(player?.base_price ?? 0);
   const playerBids = player ? bids.filter((b) => b.player_id === player.id) : [];
 
@@ -57,6 +66,7 @@ function WatchPage() {
     <main className="arena-bg court-lines flex min-h-[100dvh] flex-col px-3 py-3 lg:h-[100dvh] lg:overflow-hidden lg:px-5">
       <div className="court-lines-layer" aria-hidden />
       <AuctionMomentOverlay moment={moment} />
+      <RecordFlash hit={record} />
 
       <header className="flex shrink-0 items-center gap-3">
         <StarEmblem className="text-star h-6 w-6" glow />
@@ -66,6 +76,12 @@ function WatchPage() {
         <span className="border-smash/60 text-smash flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-widest">
           <span className="animate-energy-pulse h-1.5 w-1.5 rounded-full bg-smash" />
           Live
+          {/* broadcast equalizer bars */}
+          <span className="ml-0.5 flex h-3 items-end gap-[2px]" aria-hidden>
+            <span className="animate-eq-bar bg-smash w-[2.5px] rounded-full" style={{ height: "100%" }} />
+            <span className="animate-eq-bar bg-smash w-[2.5px] rounded-full" style={{ height: "100%", animationDelay: "0.25s" }} />
+            <span className="animate-eq-bar bg-smash w-[2.5px] rounded-full" style={{ height: "100%", animationDelay: "0.5s" }} />
+          </span>
         </span>
         <span className="text-gold-solid hidden text-[11px] font-bold uppercase tracking-[0.28em] lg:block">
           One Community · One Court · One Roar
@@ -82,7 +98,7 @@ function WatchPage() {
       <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-2 lg:grid-rows-2">
         {/* top-left: player info */}
         <section
-          className={`flex min-h-[15rem] flex-col rounded-2xl border bg-card/90 p-4 backdrop-blur lg:min-h-0 ${
+          className={`glass-panel flex min-h-[15rem] flex-col rounded-2xl border bg-card/90 p-4 backdrop-blur lg:min-h-0 ${
             player && state?.bidding_open ? "smash-card border-accent/40" : "glow-card border-border"
           }`}
         >
@@ -92,6 +108,7 @@ function WatchPage() {
                 <p className="text-smash text-xs font-bold uppercase tracking-widest">
                   {state?.round_type === "unsold" ? "Second round" : "On the block"}
                 </p>
+                <BiddingWarBadge active={war} />
                 <CountdownTimer state={state} size="sm" />
               </div>
 
@@ -121,11 +138,16 @@ function WatchPage() {
                   <div
                     key={leading?.id ?? "none"}
                     className="animate-bid-pop mt-auto origin-left rounded-xl border border-accent/40 bg-accent/10 px-3 py-2"
+                    style={
+                      leadingTeam
+                        ? { boxShadow: `0 8px 28px -10px ${leadingTeam.color}88` }
+                        : undefined
+                    }
                   >
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
                       Current bid
                     </p>
-                    <p className="text-gold font-display text-5xl leading-none tabular-nums sm:text-6xl">
+                    <p className="text-gold font-heavy text-5xl leading-none tabular-nums sm:text-6xl">
                       <CountUp value={amount} />
                     </p>
                     <p
@@ -205,7 +227,7 @@ function WatchPage() {
         <ChatRoom banned={banned} className="min-h-[18rem] lg:min-h-0" />
 
         {/* bottom-right: team details -- all teams fit, no scroll */}
-        <section className="flex min-h-[15rem] flex-col overflow-hidden rounded-2xl border border-border bg-card/40 p-2 lg:min-h-0">
+        <section className="glass-panel flex min-h-[15rem] flex-col overflow-hidden rounded-2xl border border-border bg-card/40 p-2 lg:min-h-0">
           <div className="mb-1.5 flex shrink-0 items-center gap-2 px-1">
             <span className="font-display text-xs uppercase tracking-wide text-muted-foreground">
               Teams & budgets
@@ -229,6 +251,16 @@ function WatchPage() {
                     <span className="block text-[9px] leading-tight text-muted-foreground">
                       {roster.length}/{t.max_roster_size} · {c.male}M {c.female}F {c.kid}K
                     </span>
+                    {/* spend bar: fills with the team's colour as the purse drains */}
+                    <span className="mt-0.5 block h-[3px] overflow-hidden rounded-full bg-border/60">
+                      <span
+                        className="block h-full rounded-full transition-[width] duration-700"
+                        style={{
+                          width: `${Math.min(100, Math.round(((Number(t.starting_budget) - Number(t.remaining_budget)) / Math.max(1, Number(t.starting_budget))) * 100))}%`,
+                          backgroundColor: t.color,
+                        }}
+                      />
+                    </span>
                   </div>
                   <span className="text-gold font-display shrink-0 text-sm tabular-nums leading-none">
                     <CountUp value={Number(t.remaining_budget)} />
@@ -241,6 +273,11 @@ function WatchPage() {
             )}
           </div>
         </section>
+      </div>
+
+      {/* lower-third sales ticker */}
+      <div className="mt-3 shrink-0">
+        <SalesTicker players={players} teams={teams} />
       </div>
     </main>
   );
