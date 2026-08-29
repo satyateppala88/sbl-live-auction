@@ -243,6 +243,8 @@ function BiddingRoom({
   if (!player) disabledReason = "Waiting for the next player";
   else if (!state?.bidding_open) disabledReason = "Bidding is paused";
   else if (filled >= team.max_roster_size) disabledReason = "Your roster is full";
+  else if (counts[player.category] >= REQUIREMENT[player.category])
+    disabledReason = `${CATEGORY_LABEL[player.category]} quota full (max ${REQUIREMENT[player.category]})`;
   else if (leading?.team_id === team.id) disabledReason = "You're the highest bidder";
   else if (nextAmount > Number(team.remaining_budget)) disabledReason = "Over your budget";
   else if (nextAmount > cap) disabledReason = `Reserve rule — your max bid is ${cap} pts`;

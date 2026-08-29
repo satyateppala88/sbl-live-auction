@@ -49,6 +49,21 @@ export async function placeBidServer(teamId: string, pin: string) {
   const filled = await rosterCount(teamId);
   if (filled >= team.max_roster_size) throw new Error("Your roster is already full");
 
+  // category cap: at most 2 Male, 1 Female, 1 Child per team (the captain is the third man)
+  const CATEGORY_CAP: Record<string, number> = { male: 2, female: 1, kid: 1 };
+  const CATEGORY_NAME: Record<string, string> = { male: "Male", female: "Female", kid: "Child" };
+  const catCap = CATEGORY_CAP[player.category] ?? 99;
+  const { count: catCount } = await db
+    .from("players")
+    .select("id", { count: "exact", head: true })
+    .eq("sold_to_team_id", teamId)
+    .eq("status", "sold")
+    .eq("category", player.category);
+  if ((catCount ?? 0) >= catCap)
+    throw new Error(
+      `Your ${CATEGORY_NAME[player.category] ?? player.category} quota is already full (max ${catCap})`,
+    );
+
   const { data: top } = await db
     .from("bids")
     .select("amount, team_id")
