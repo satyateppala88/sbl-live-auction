@@ -96,7 +96,8 @@ function Index() {
             <HeroStat icon={<Users className="h-4 w-4" />} value={teams.length} label="Teams" />
             <HeroStat
               icon={<ShuttleIcon className="h-4 w-4" />}
-              value={players.length}
+              value={players.length + teams.length}
+              suffix="+"
               label="Players"
             />
             <HeroStat icon={<Gavel className="h-4 w-4" />} value={sold} label="Sold" gold />
@@ -219,11 +220,13 @@ function HeroStat({
   value,
   label,
   gold,
+  suffix,
 }: {
   icon: React.ReactNode;
   value: number;
   label: string;
   gold?: boolean;
+  suffix?: string;
 }) {
   return (
     <div
@@ -241,6 +244,7 @@ function HeroStat({
         className={`font-display mt-1 text-3xl tabular-nums ${gold ? "text-gold-solid" : "text-foreground"}`}
       >
         <CountUp value={value} duration={600} />
+        {suffix}
       </p>
     </div>
   );
