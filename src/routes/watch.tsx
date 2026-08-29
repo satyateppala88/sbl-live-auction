@@ -71,6 +71,10 @@ function WatchPage() {
   const war = useBiddingWar(bids, player?.id);
   const amount = leading ? Number(leading.amount) : Number(player?.base_price ?? 0);
   const playerBids = player ? bids.filter((b) => b.player_id === player.id) : [];
+  const { events } = useAuctionLog();
+  const floorBase = tiers.length ? Math.min(...tiers.map((t) => Number(t.base_price))) : 1;
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
+  const selectedTeam = teams.find((t) => t.id === selectedTeamId) ?? null;
 
   return (
     <main className="arena-bg court-lines flex min-h-[100dvh] flex-col px-3 py-3 lg:h-[100dvh] lg:overflow-hidden lg:px-5">
