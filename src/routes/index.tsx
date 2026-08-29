@@ -173,11 +173,40 @@ function Index() {
               style={
                 { "--orbit-r": "255px", "--orbit-duration": "22s" } as React.CSSProperties
               }
-            />
-          </span>
-        </div>
-      </div>
+             />
+           </span>
+         </Tilt>
+       </div>
+
+      {/* team crest marquee -- the league rolling by, broadcast-style */}
+      {teams.length > 0 && <CrestMarquee teams={teams} />}
     </main>
+  );
+}
+
+function CrestMarquee({ teams }: { teams: Team[] }) {
+  const strip = (keyPrefix: string) => (
+    <div className="flex shrink-0 items-center" key={keyPrefix}>
+      {teams.map((t) => (
+        <span
+          key={`${keyPrefix}-${t.id}`}
+          className="flex items-center gap-2 whitespace-nowrap px-6"
+        >
+          <TeamCrest team={t} size={30} />
+          <span className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            {t.name}
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+  return (
+    <div className="marquee-mask fixed inset-x-0 bottom-0 z-10 hidden border-t border-border/60 bg-background/70 py-2.5 backdrop-blur sm:block">
+      <div className="animate-marquee flex w-max">
+        {strip("a")}
+        {strip("b")}
+      </div>
+    </div>
   );
 }
 
