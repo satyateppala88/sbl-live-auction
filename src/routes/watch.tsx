@@ -98,7 +98,7 @@ function WatchPage() {
       <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-2 lg:grid-rows-2">
         {/* top-left: player info */}
         <section
-          className={`flex min-h-[15rem] flex-col rounded-2xl border bg-card/90 p-4 backdrop-blur lg:min-h-0 ${
+          className={`glass-panel flex min-h-[15rem] flex-col rounded-2xl border bg-card/90 p-4 backdrop-blur lg:min-h-0 ${
             player && state?.bidding_open ? "smash-card border-accent/40" : "glow-card border-border"
           }`}
         >
@@ -108,6 +108,7 @@ function WatchPage() {
                 <p className="text-smash text-xs font-bold uppercase tracking-widest">
                   {state?.round_type === "unsold" ? "Second round" : "On the block"}
                 </p>
+                <BiddingWarBadge active={war} />
                 <CountdownTimer state={state} size="sm" />
               </div>
 
@@ -137,11 +138,16 @@ function WatchPage() {
                   <div
                     key={leading?.id ?? "none"}
                     className="animate-bid-pop mt-auto origin-left rounded-xl border border-accent/40 bg-accent/10 px-3 py-2"
+                    style={
+                      leadingTeam
+                        ? { boxShadow: `0 8px 28px -10px ${leadingTeam.color}88` }
+                        : undefined
+                    }
                   >
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
                       Current bid
                     </p>
-                    <p className="text-gold font-display text-5xl leading-none tabular-nums sm:text-6xl">
+                    <p className="text-gold font-heavy text-5xl leading-none tabular-nums sm:text-6xl">
                       <CountUp value={amount} />
                     </p>
                     <p
