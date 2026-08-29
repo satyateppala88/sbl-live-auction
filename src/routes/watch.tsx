@@ -227,7 +227,7 @@ function WatchPage() {
         <ChatRoom banned={banned} className="min-h-[18rem] lg:min-h-0" />
 
         {/* bottom-right: team details -- all teams fit, no scroll */}
-        <section className="flex min-h-[15rem] flex-col overflow-hidden rounded-2xl border border-border bg-card/40 p-2 lg:min-h-0">
+        <section className="glass-panel flex min-h-[15rem] flex-col overflow-hidden rounded-2xl border border-border bg-card/40 p-2 lg:min-h-0">
           <div className="mb-1.5 flex shrink-0 items-center gap-2 px-1">
             <span className="font-display text-xs uppercase tracking-wide text-muted-foreground">
               Teams & budgets
@@ -251,6 +251,16 @@ function WatchPage() {
                     <span className="block text-[9px] leading-tight text-muted-foreground">
                       {roster.length}/{t.max_roster_size} · {c.male}M {c.female}F {c.kid}K
                     </span>
+                    {/* spend bar: fills with the team's colour as the purse drains */}
+                    <span className="mt-0.5 block h-[3px] overflow-hidden rounded-full bg-border/60">
+                      <span
+                        className="block h-full rounded-full transition-[width] duration-700"
+                        style={{
+                          width: `${Math.min(100, Math.round(((Number(t.starting_budget) - Number(t.remaining_budget)) / Math.max(1, Number(t.starting_budget))) * 100))}%`,
+                          backgroundColor: t.color,
+                        }}
+                      />
+                    </span>
                   </div>
                   <span className="text-gold font-display shrink-0 text-sm tabular-nums leading-none">
                     <CountUp value={Number(t.remaining_budget)} />
@@ -263,6 +273,11 @@ function WatchPage() {
             )}
           </div>
         </section>
+      </div>
+
+      {/* lower-third sales ticker */}
+      <div className="mt-3 shrink-0">
+        <SalesTicker players={players} teams={teams} />
       </div>
     </main>
   );
