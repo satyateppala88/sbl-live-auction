@@ -28,6 +28,7 @@ import {
   rosterOf,
   categoryCounts,
   maxBidFor,
+  bidIncrement,
   topBid,
   usePresence,
   biddingAdvice,
@@ -236,8 +237,12 @@ function BiddingRoom({
   const player = players.find((p) => p.id === state?.current_player_id) ?? null;
   const leading = topBid(bids, player?.id);
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
-  const increment = Number(state?.bid_increment ?? 1);
-  const nextAmount = leading ? Number(leading.amount) + increment : Number(player?.base_price ?? 0);
+  const playerBidCount = player ? bids.filter((b) => b.player_id === player.id).length : 0;
+  const nextAmount = !player
+    ? 0
+    : leading
+      ? Number(leading.amount) + bidIncrement(playerBidCount)
+      : Number(player.base_price);
 
   let disabledReason: string | null = null;
   if (!player) disabledReason = "Waiting for the next player";

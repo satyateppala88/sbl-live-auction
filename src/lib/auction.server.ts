@@ -72,8 +72,13 @@ export async function placeBidServer(teamId: string, pin: string) {
     .limit(1)
     .maybeSingle();
 
-  const increment = Number(state.bid_increment);
-  const amount = top ? Number(top.amount) + increment : Number(player.base_price);
+  const { count: bidCount } = await db
+    .from("bids")
+    .select("id", { count: "exact", head: true })
+    .eq("player_id", player.id);
+  const raises = bidCount ?? 0;
+  const inc = raises <= 5 ? 1 : raises <= 10 ? 2 : raises <= 15 ? 3 : 5;
+  const amount = top ? Number(top.amount) + inc : Number(player.base_price);
   if (top && top.team_id === teamId) throw new Error("You are already the highest bidder");
 
   const cap = maxAllowedBid(Number(team.remaining_budget), team.max_roster_size, filled);

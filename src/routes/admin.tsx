@@ -34,7 +34,7 @@ import {
   saveTier,
   setOnBlock,
   setBidding,
-  setIncrement,
+  
   markSold,
   resetAuction,
   resetTimer,
@@ -235,17 +235,6 @@ function AdminConsole({
             <span className="text-gold">SBL</span> Control Room
           </h1>
           <div className="ml-auto flex items-center gap-2">
-            <Label className="text-xs text-muted-foreground">Increment</Label>
-            <Input
-              type="number"
-              className="w-20"
-              defaultValue={Number(state?.bid_increment ?? 1)}
-              onBlur={(e) =>
-                void run(() =>
-                  setIncrement({ data: { passcode, increment: Number(e.target.value) || 1 } }),
-                 )
-               }
-             />
             <RulesButton />
             <ViewerCount count={count} />
             <Button variant="secondary" size="sm" onClick={onSignOut}>
