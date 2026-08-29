@@ -68,7 +68,7 @@ function Index() {
             </p>
           </div>
 
-          <p className="font-display animate-rise-in stagger-1 mt-5 text-xl italic text-muted-foreground sm:text-2xl">
+          <p className="font-display animate-rise-in stagger-1 mt-3 text-xl italic text-muted-foreground sm:text-2xl">
             "Where Stars Come to Live"
           </p>
 
@@ -78,22 +78,22 @@ function Index() {
             Auction
           </h1>
 
-          <p className="animate-rise-in stagger-2 mx-auto mt-4 max-w-md text-sm text-muted-foreground lg:mx-0">
+          <p className="animate-rise-in stagger-2 mx-auto mt-3 max-w-md text-sm text-muted-foreground lg:mx-0">
             Ten teams. One captain each. One block. Watch the SMR Badminton
             League squads take shape as captains bid live for every player.
           </p>
 
-          <p className="animate-rise-in stagger-2 text-gold-solid mt-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.28em] lg:justify-start">
+          <p className="animate-rise-in stagger-2 text-gold-solid mt-3 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.28em] lg:justify-start">
             <StarEmblem className="text-star h-3 w-3" />
             Chase the Shuttle · Reach the Stars
             <StarEmblem className="text-star h-3 w-3" />
           </p>
 
-          <div className="animate-rise-in stagger-2 mt-6 flex justify-center lg:justify-start">
+          <div className="animate-rise-in stagger-2 mt-4 flex justify-center lg:justify-start">
             <EventCountdown />
           </div>
 
-          <div className="animate-rise-in stagger-2 mx-auto mt-7 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
+          <div className="animate-rise-in stagger-2 mx-auto mt-4 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
             <HeroStat icon={<Users className="h-4 w-4" />} value={teams.length} label="Teams" />
             <HeroStat
               icon={<ShuttleIcon className="h-4 w-4" />}
@@ -103,9 +103,9 @@ function Index() {
             <HeroStat icon={<Gavel className="h-4 w-4" />} value={sold} label="Sold" gold />
           </div>
 
-          <div className="court-divider mx-auto mt-10 max-w-md lg:mx-0" aria-hidden />
+          <div className="court-divider mx-auto mt-6 max-w-md lg:mx-0" aria-hidden />
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <RoleCard
               to="/captain"
               icon={<Users className="h-6 w-6" />}
