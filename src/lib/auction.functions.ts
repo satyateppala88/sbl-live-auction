@@ -241,6 +241,26 @@ export const markSold = createServerFn({ method: "POST" })
   });
 
 
+export const clearBids = createServerFn({ method: "POST" })
+  .inputValidator((d: { passcode: string }) => d)
+  .handler(async ({ data }) => {
+    const { assertAdmin } = await import("./auction.server");
+    await assertAdmin(data.passcode);
+    const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+    await db.from("bids").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    return { ok: true };
+  });
+
+export const deleteBid = createServerFn({ method: "POST" })
+  .inputValidator((d: { passcode: string; id: string }) => d)
+  .handler(async ({ data }) => {
+    const { assertAdmin } = await import("./auction.server");
+    await assertAdmin(data.passcode);
+    const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+    await db.from("bids").delete().eq("id", data.id);
+    return { ok: true };
+  });
+
 export const resetAuction = createServerFn({ method: "POST" })
   .inputValidator((d: { passcode: string }) => d)
   .handler(async ({ data }) => {

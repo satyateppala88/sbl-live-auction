@@ -13,6 +13,7 @@ import {
   Users,
   UserX,
   Tv,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,8 @@ import {
   setBidding,
   
   markSold,
+  clearBids,
+  deleteBid,
   resetAuction,
   resetTimer,
   kickDevice,
@@ -349,6 +352,17 @@ function AdminConsole({
                             />
                             <span className="flex-1">{t?.name}</span>
                             <span className="font-mono font-bold">{Number(b.amount)} pts</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                              title="Delete this bid"
+                              onClick={() =>
+                                void run(() => deleteBid({ data: { passcode, id: b.id } }), "Bid removed")
+                              }
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </Button>
                           </div>
                         );
                       })}
@@ -459,7 +473,23 @@ function AdminConsole({
             <RosterBoard players={players} teams={teams} tiers={tiers} />
           </TabsContent>
 
-          <TabsContent value="tools" className="mt-4">
+          <TabsContent value="tools" className="mt-4 grid gap-4">
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <h3 className="font-bold">Clear bids</h3>
+              <p className="mb-3 text-xs text-muted-foreground">
+                Wipe every bid from the table. Does not un-sell players. To remove a single bid,
+                use the ✕ next to it in the live bids list on the Auction tab.
+              </p>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  if (confirm("Delete ALL bids?"))
+                    void run(() => clearBids({ data: { passcode } }), "All bids cleared");
+                }}
+              >
+                Clear all bids
+              </Button>
+            </div>
             <div className="rounded-2xl border border-destructive/40 bg-card p-4">
               <h3 className="font-bold">Danger zone</h3>
               <p className="mb-3 text-xs text-muted-foreground">
