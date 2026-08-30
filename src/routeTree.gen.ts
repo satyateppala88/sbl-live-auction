@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CaptainRouteImport } from './routes/captain'
 import { Route as LineupRouteImport } from './routes/lineup'
+import { Route as ResultsRouteImport } from './routes/results'
 import { Route as WatchRouteImport } from './routes/watch'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const LineupRoute = LineupRouteImport.update({
   path: '/lineup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResultsRoute = ResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WatchRoute = WatchRouteImport.update({
   id: '/watch',
   path: '/watch',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/captain': typeof CaptainRoute
   '/lineup': typeof LineupRoute
+  '/results': typeof ResultsRoute
   '/watch': typeof WatchRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/captain': typeof CaptainRoute
   '/lineup': typeof LineupRoute
+  '/results': typeof ResultsRoute
   '/watch': typeof WatchRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,16 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/captain': typeof CaptainRoute
   '/lineup': typeof LineupRoute
+  '/results': typeof ResultsRoute
   '/watch': typeof WatchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/captain' | '/lineup' | '/watch'
+  fullPaths: '/' | '/admin' | '/captain' | '/lineup' | '/results' | '/watch'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/captain' | '/lineup' | '/watch'
-  id: '__root__' | '/' | '/admin' | '/captain' | '/lineup' | '/watch'
+  to: '/' | '/admin' | '/captain' | '/lineup' | '/results' | '/watch'
+  id:
+    '__root__' | '/' | '/admin' | '/captain' | '/lineup' | '/results' | '/watch'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +86,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   CaptainRoute: typeof CaptainRoute
   LineupRoute: typeof LineupRoute
+  ResultsRoute: typeof ResultsRoute
   WatchRoute: typeof WatchRoute
 }
 
@@ -109,6 +120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LineupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/results': {
+      id: '/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/watch': {
       id: '/watch'
       path: '/watch'
@@ -124,6 +142,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   CaptainRoute: CaptainRoute,
   LineupRoute: LineupRoute,
+  ResultsRoute: ResultsRoute,
   WatchRoute: WatchRoute,
 }
 export const routeTree = rootRouteImport
