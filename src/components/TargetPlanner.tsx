@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { PlayerAvatar } from "./PlayerAvatar";
+import { TierRating } from "./TierRating";
 import { Target, X, ChevronDown } from "lucide-react";
 import {
   CATEGORY_LABEL,
@@ -201,9 +203,12 @@ export function TargetPlanner({
                             if (group.length === 0) return null;
                             return (
                               <div key={tier.id} className="mb-2">
-                                <p className="px-1 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                                  {tier.label} · base {Number(tier.base_price)}
-                                </p>
+                                <div className="flex items-center gap-2 px-1 py-1">
+                                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                    {tier.label} · base {Number(tier.base_price)}
+                                  </p>
+                                  <TierRating tier={tier.label} size="h-3 w-3" />
+                                </div>
                                 <div className="space-y-1.5">
                                   {group.map((p) => (
                                     <PlayerRow key={p.id} p={p} t={targets[p.id]} onSave={onSave} />
@@ -259,10 +264,11 @@ function PlayerRow({
   const set = cur.min !== null || cur.max !== null;
   return (
     <div
-      className={`grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-2 rounded-xl border px-3 py-2 ${
+      className={`grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-x-2 rounded-xl border px-2.5 py-2 ${
         set ? "border-accent/50 bg-accent/5" : "border-border bg-card/70"
       }`}
     >
+      <PlayerAvatar name={p.name} photoUrl={p.photo_url} className="h-8 w-8 text-xs" />
       <p className="truncate text-sm font-semibold">{p.name}</p>
       <label className="flex items-center gap-1 text-[10px] uppercase text-muted-foreground">
         Min

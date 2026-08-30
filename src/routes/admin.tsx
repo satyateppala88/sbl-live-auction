@@ -54,6 +54,7 @@ import { ViewerCount } from "@/components/ViewerCount";
 import { RulesButton } from "@/components/RulesDialog";
 import { PlayerSilhouette } from "@/components/PlayerSilhouette";
 import { HoloCard } from "@/components/HoloCard";
+import { TierRating } from "@/components/TierRating";
 import {
   RecordFlash,
   useRecordBreaker,
@@ -301,6 +302,11 @@ function AdminConsole({
                         {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"} · base{" "}
                         {Number(player.base_price)}
                       </p>
+                      <TierRating
+                        tier={tiers.find((t) => t.id === player.tier_id)?.label}
+                        size="h-4 w-4"
+                        className="mt-1"
+                      />
                     </div>
                   </div>
                   <p
@@ -461,6 +467,11 @@ function AdminConsole({
                           {CATEGORY_LABEL[p.category]} ·{" "}
                           {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"}
                         </span>
+                        <TierRating
+                          tier={tiers.find((t) => t.id === p.tier_id)?.label}
+                          size="h-3 w-3"
+                          className="mt-0.5"
+                        />
                       </div>
                       <Button
                         size="sm"
@@ -978,6 +989,7 @@ function PlayersTab({
             <span className="text-xs text-muted-foreground">
               {tiers.find((t) => t.id === p.tier_id)?.label ?? "—"}
             </span>
+            <TierRating tier={tiers.find((t) => t.id === p.tier_id)?.label} size="h-3 w-3" />
             <span className="font-mono text-xs">{Number(p.base_price)}</span>
             <span
               className={`rounded-full px-2 py-0.5 text-[11px] ${

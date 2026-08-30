@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HoloCard } from "@/components/HoloCard";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
+import { TierRating } from "@/components/TierRating";
 import { CountUp } from "@/components/CountUp";
 import { TeamCrest } from "@/components/TeamCrest";
 import { CountdownTimer } from "@/components/CountdownTimer";
@@ -149,6 +150,10 @@ function WatchPage() {
                       <p className="text-[11px] text-muted-foreground">
                         base {Number(player.base_price)} pts
                       </p>
+                      <TierRating
+                        tier={tiers.find((t) => t.id === player.tier_id)?.label}
+                        className="mt-1"
+                      />
                     </div>
                   </div>
 
@@ -463,6 +468,11 @@ function TeamModal({
                       {CATEGORY_LABEL[p.category]} ·{" "}
                       {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"}
                     </p>
+                    <TierRating
+                      tier={tiers.find((t) => t.id === p.tier_id)?.label}
+                      size="h-3 w-3"
+                      className="mt-0.5"
+                    />
                   </div>
                   <span className="text-gold font-display shrink-0 tabular-nums">
                     {Number(p.sold_price)}
