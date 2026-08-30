@@ -249,6 +249,7 @@ export type Database = {
           base_price: number
           category: Database["public"]["Enums"]["player_category"]
           created_at: string
+          deferred: boolean
           id: string
           name: string
           original_base_price: number
@@ -262,6 +263,7 @@ export type Database = {
           base_price?: number
           category?: Database["public"]["Enums"]["player_category"]
           created_at?: string
+          deferred?: boolean
           id?: string
           name: string
           original_base_price?: number
@@ -275,6 +277,7 @@ export type Database = {
           base_price?: number
           category?: Database["public"]["Enums"]["player_category"]
           created_at?: string
+          deferred?: boolean
           id?: string
           name?: string
           original_base_price?: number
