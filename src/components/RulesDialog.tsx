@@ -128,14 +128,8 @@ export function RulesButton({ className = "" }: { className?: string }) {
                   <p>
                     Each player gets a <strong>2-minute free-bidding window</strong>: bid whenever
                     you like and take your time — no auctioneer count, no pressure. Bidding opens at
-                    the base price and each raise grows as it heats up:
+                    the base price, and each bid raises the price by <strong>1 point</strong>.
                   </p>
-                  <ul className="ml-4 list-disc space-y-0.5">
-                    <li>First 5 raises: +1 point each</li>
-                    <li>Next 5 raises: +2 points each</li>
-                    <li>Next 5 raises: +3 points each</li>
-                    <li>After that: +5 points each</li>
-                  </ul>
                   <p>
                     Once the 2 minutes are up, bidding stays open but the auctioneer takes over with
                     a <strong>&ldquo;going once, going twice&rdquo;</strong> call on each new bid. The
