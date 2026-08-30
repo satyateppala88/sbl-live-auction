@@ -74,6 +74,7 @@ export function RosterBoard({
                         {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"} · base{" "}
                         {Number(p.base_price)}
                       </p>
+                      <TierRating tier={tiers.find((t) => t.id === p.tier_id)?.label} size="h-3 w-3" className="mt-0.5" />
                       <span
                         className={`mt-1 inline-flex max-w-full items-center gap-1 rounded-full px-2 py-0.5 text-[10px] ${meta.className}`}
                       >

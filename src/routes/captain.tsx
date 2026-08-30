@@ -8,6 +8,7 @@ import { captainLogin, placeBid, getTargets, setTarget } from "@/lib/auction.fun
 import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { RosterSlots } from "@/components/RosterSlots";
 import { ShuttleIcon } from "@/components/ShuttleIcon";
+import { TierRating } from "@/components/TierRating";
 import { CountUp } from "@/components/CountUp";
 import { AuctionMomentOverlay, useAuctionMoment } from "@/components/AuctionMoment";
 import {
@@ -365,6 +366,9 @@ function BiddingRoom({
                 {tiers.find((t) => t.id === player.tier_id)?.label ?? "No tier"} · base{" "}
                 {Number(player.base_price)}
               </p>
+              <div className="mt-2 flex justify-center">
+                <TierRating tier={tiers.find((t) => t.id === player.tier_id)?.label} size="h-4 w-4" />
+              </div>
               <div key={leading?.id ?? "none"} className="animate-bid-pop mt-5">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   Current bid
