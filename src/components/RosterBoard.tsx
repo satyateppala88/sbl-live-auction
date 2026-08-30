@@ -1,5 +1,6 @@
 import { PlayerAvatar } from "./PlayerAvatar";
 import { TeamCrest } from "./TeamCrest";
+import { TierRating } from "./TierRating";
 import { CATEGORY_LABEL, type Player, type Team, type Tier } from "@/lib/auction-data";
 
 function tierRank(p: Player, tiers: Tier[]) {
