@@ -261,6 +261,26 @@ export const deleteBid = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const skipPlayer = createServerFn({ method: "POST" })
+  .inputValidator((d: { passcode: string }) => d)
+  .handler(async ({ data }) => {
+    const { assertAdmin } = await import("./auction.server");
+    await assertAdmin(data.passcode);
+    const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+    const { data: state } = await db.from("auction_state").select("*").eq("id", 1).maybeSingle();
+    if (!state?.current_player_id) throw new Error("No player on the block");
+    await db.from("bids").delete().eq("player_id", state.current_player_id);
+    await db
+      .from("players")
+      .update({ status: "available", deferred: true })
+      .eq("id", state.current_player_id);
+    await db
+      .from("auction_state")
+      .update({ current_player_id: null, bidding_open: false, block_started_at: null })
+      .eq("id", 1);
+    return { ok: true };
+  });
+
 export const resetAuction = createServerFn({ method: "POST" })
   .inputValidator((d: { passcode: string }) => d)
   .handler(async ({ data }) => {
@@ -270,7 +290,7 @@ export const resetAuction = createServerFn({ method: "POST" })
     await db.from("bids").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     await db
       .from("players")
-      .update({ status: "available", sold_to_team_id: null, sold_price: null })
+      .update({ status: "available", sold_to_team_id: null, sold_price: null, deferred: false })
       .neq("id", "00000000-0000-0000-0000-000000000000");
     const { data: teams } = await db.from("teams").select("id, starting_budget");
     for (const t of teams ?? []) {

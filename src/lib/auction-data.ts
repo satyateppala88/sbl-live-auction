@@ -31,6 +31,7 @@ export type Player = {
   sold_to_team_id: string | null;
   sold_price: number | null;
   photo_url: string | null;
+  deferred: boolean;
 };
 export type Bid = {
   id: string;

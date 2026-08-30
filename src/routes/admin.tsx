@@ -14,6 +14,7 @@ import {
   UserX,
   Tv,
   X,
+  SkipForward,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,7 @@ import {
   setBidding,
   
   markSold,
+  skipPlayer,
   clearBids,
   deleteBid,
   resetAuction,
@@ -189,20 +191,26 @@ function AdminConsole({
   const leadingTeam = teams.find((t) => t.id === leading?.team_id);
   const available = players.filter((p) => p.status === "available");
   const availIds = available
-    .map((p) => p.id)
+    .map((p) => `${p.id}:${p.deferred ? "d" : "a"}`)
     .sort()
     .join(",");
-  // Random draw order — reshuffled only when the set of available players changes, so the
-  // highlighted "next up" stays put until someone is blocked or sold.
+  // Random draw order. Skipped ("deferred") players drop to the end — they only come up once
+  // every other available player is gone. Reshuffled when the pool changes.
   const availableSorted = useMemo(() => {
-    const arr = available.slice();
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const tmp = arr[i]!;
-      arr[i] = arr[j]!;
-      arr[j] = tmp;
-    }
-    return arr;
+    const shuffle = (list: Player[]) => {
+      const arr = list.slice();
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = arr[i]!;
+        arr[i] = arr[j]!;
+        arr[j] = tmp;
+      }
+      return arr;
+    };
+    return [
+      ...shuffle(available.filter((p) => !p.deferred)),
+      ...shuffle(available.filter((p) => p.deferred)),
+    ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [availIds]);
   const nextUp = availableSorted[0] ?? null;
@@ -332,6 +340,17 @@ function AdminConsole({
                     <Button onClick={() => void run(() => markSold({ data: { passcode } }), "Sold!")}>
                       Mark SOLD
                     </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() =>
+                        void run(
+                          () => skipPlayer({ data: { passcode } }),
+                          `${player.name} skipped — moved to the end of the line`,
+                        )
+                      }
+                    >
+                      <SkipForward className="mr-1 h-4 w-4" /> Skip
+                    </Button>
                   </div>
                   <div className="mt-5">
                     <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
@@ -430,7 +449,14 @@ function AdminConsole({
                       }`}
                     >
                       <div className="min-w-0 flex-1">
-                        <span className="block truncate font-medium">{p.name}</span>
+                        <span className="block truncate font-medium">
+                          {p.name}
+                          {p.deferred && (
+                            <span className="text-primary ml-1.5 text-[9px] font-bold uppercase tracking-wide">
+                              skipped
+                            </span>
+                          )}
+                        </span>
                         <span className="block text-[10px] text-muted-foreground">
                           {CATEGORY_LABEL[p.category]} ·{" "}
                           {tiers.find((t) => t.id === p.tier_id)?.label ?? "No tier"}
