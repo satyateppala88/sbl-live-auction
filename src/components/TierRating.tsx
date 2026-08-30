@@ -8,7 +8,7 @@ export function TierRating({
   size = "h-3.5 w-3.5",
   className = "",
 }: {
-  tier?: string | null;
+  tier?: string | null | undefined;
   size?: string;
   className?: string;
 }) {
