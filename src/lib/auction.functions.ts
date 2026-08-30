@@ -248,6 +248,19 @@ export const clearBids = createServerFn({ method: "POST" })
     await assertAdmin(data.passcode);
     const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
     await db.from("bids").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    // un-sell every player and reset each team's purse to its starting (captain-discounted) budget
+    await db
+      .from("players")
+      .update({ status: "available", sold_to_team_id: null, sold_price: null, deferred: false })
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+    const { data: teamsToReset } = await db.from("teams").select("id, starting_budget");
+    for (const t of teamsToReset ?? []) {
+      await db.from("teams").update({ remaining_budget: t.starting_budget }).eq("id", t.id);
+    }
+    await db
+      .from("auction_state")
+      .update({ current_player_id: null, bidding_open: false, block_started_at: null })
+      .eq("id", 1);
     return { ok: true };
   });
 

@@ -512,16 +512,17 @@ function AdminConsole({
 
           <TabsContent value="tools" className="mt-4 grid gap-4">
             <div className="rounded-2xl border border-border bg-card p-4">
-              <h3 className="font-bold">Clear bids</h3>
+              <h3 className="font-bold">Clear bids & reset purses</h3>
               <p className="mb-3 text-xs text-muted-foreground">
-                Wipe every bid from the table. Does not un-sell players. To remove a single bid,
-                use the ✕ next to it in the live bids list on the Auction tab.
+                Wipes every bid, un-sells all players, and resets every team's purse to full — a
+                clean restart. To remove just one bid instead, use the ✕ next to it in the live bids
+                list on the Auction tab.
               </p>
               <Button
                 variant="secondary"
                 onClick={() => {
-                  if (confirm("Delete ALL bids?"))
-                    void run(() => clearBids({ data: { passcode } }), "All bids cleared");
+                  if (confirm("Clear all bids, un-sell all players, and reset every purse?"))
+                    void run(() => clearBids({ data: { passcode } }), "Bids cleared · purses reset");
                 }}
               >
                 Clear all bids
